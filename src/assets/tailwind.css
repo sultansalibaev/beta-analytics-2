@@ -68,6 +68,10 @@ body {
     margin-bottom: 15px;
 }
 
+.m-b-5 {
+    margin-bottom: 5px;
+}
+
 .w-half {
     width: 50%;
 }

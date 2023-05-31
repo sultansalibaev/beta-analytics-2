@@ -152,8 +152,11 @@ export const selected_page = reactive(ref(1));
 export const selected_label_page = reactive(ref(1));
 export const item_modal = reactive(ref(false));
 export const resources_count = reactive(ref(0));
+export const similar_items = reactive(ref([]));
+export const similar_items_loading = reactive(ref(true));
 export const items = reactive(ref([]));
 export const items_loading = reactive(ref(true));
+export const isGrouped = reactive(ref(false));
 
 export const filtered_news = reactive(ref({filtered:[]}));
 export const filtered_resources = reactive(ref({filtered:0}));

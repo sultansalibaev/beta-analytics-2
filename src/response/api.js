@@ -1,6 +1,6 @@
 import axios from 'axios'
-import { project, socials, countries, regions, social_categories, generals_count, smi_categories, r_type, main_sentiments_count, selected_main_sentiments, languages_count, languages_general_data, categories_general_data, smi_category } from '@/response/header'
-import { dateRange, selected_social_categories, places, selected_categories, selected_languages, resource_count, resource_full_news_count, column_news_count, resources, offsetLeft, offsetRight, resource_clipped_news_count, selected_resources, selected_resource_sentiment, bars_sentiments_selected, selected_date_mode, dynamics, soc_metrics, enable_metrics, is_high_news_count, news_count, resources_count, items, items_loading, selected_page, selected_soc_metrics, resource_count_loading, laoding_metrics, selected_regions, reset_all, get_selected_smi_categories } from '@/response/data/index'
+import { project, socials, countries, regions, social_categories, generals_count, smi_categories, r_type, main_sentiments_count, selected_main_sentiments, languages_count, languages_general_data, categories_general_data, smi_category, search_tags } from '@/response/header'
+import { dateRange, selected_social_categories, places, selected_categories, selected_languages, resource_count, resource_full_news_count, column_news_count, resources, offsetLeft, offsetRight, resource_clipped_news_count, selected_resources, selected_resource_sentiment, bars_sentiments_selected, selected_date_mode, dynamics, soc_metrics, enable_metrics, is_high_news_count, news_count, resources_count, items, items_loading, selected_page, selected_soc_metrics, resource_count_loading, laoding_metrics, selected_regions, reset_all, get_selected_smi_categories, isGrouped, similar_items, similar_items_loading } from '@/response/data/index'
 import { getResourceData, selected_top_resources, start_top_resources, end_top_resources, each_number, max } from '@/response/options/columnOptions'
 import { get_map_params } from '@/response/options/mapOptions'
 import { selected_dates_query, selected_sentiment_dates_query } from '@/response/options/lineOptions'
@@ -69,6 +69,8 @@ export function getProjectCounts() {
 	axios
 		.get(`/ru/analyticstats/get-project-count?p_id=${project.value.id}&s_date=${dateRange.value.startDate.format("Y-m-d")} ${s_time.value}&f_date=${dateRange.value.endDate.format("Y-m-d")} ${f_time.value}`)
 		.then(response => {
+			console.log(response.data.search_tags);
+			search_tags.value = response.data.search_tags
 			socials.value = response.data.socials.reduce((prev, social) => {
 				prev[social.id].count = parseInt(social.count) || 0
 				prev[social.id]['-1'] = parseInt(social.negative) || 0
@@ -311,7 +313,7 @@ export function getMainSmiCategoriesAndLanguagesCount() {
 			smi_category.value = Object.keys(categories_general_data.value).map(cat_id => {
 				return {
 					id_cat: cat_id,
-					name: smi_categories.value[cat_id].name_cat,
+					name: smi_categories.value[cat_id]?.name_cat,
 					y: Object.values(categories_general_data.value[cat_id]).reduce((a,b) => (a+b))
 				}
 			})
@@ -534,8 +536,10 @@ export const getGeneralCount = () => {
     ].join('_');
 
     return axios
-        .get(`/ru/analyticstats/get-project-general-count?p_id=${project.value.id}&r_type=${r_type.value}&category_id=${category_id}&countries=${countries}&regions=${regions}&sentiments=${sentiments}&language=${language}&s_date=${dateRange.value.startDate.format("Y-m-d")} ${s_time.value}&f_date=${dateRange.value.endDate.format("Y-m-d")} ${f_time.value}&from=${from}&to=${end_clipped.value}&resource_length=${resource_count.value}&resources=${_resources}&specifying_sentiments=${specifying_sentiments}&date_mode=${selected_date_mode.value}&dates_filter=${selected_dates_query.value}&sentiment_dates_filter=${temp_sentiment_dates_query}&from_page=${(selected_page.value - 1) * 20}`)
+        .get(`/ru/analyticstats/get-project-general-count?p_id=${project.value.id}&r_type=${r_type.value}&category_id=${category_id}&countries=${countries}&regions=${regions}&sentiments=${sentiments}&language=${language}&s_date=${dateRange.value.startDate.format("Y-m-d")} ${s_time.value}&f_date=${dateRange.value.endDate.format("Y-m-d")} ${f_time.value}&from=${from}&to=${end_clipped.value}&resource_length=${resource_count.value}&resources=${_resources}&specifying_sentiments=${specifying_sentiments}&date_mode=${selected_date_mode.value}&dates_filter=${selected_dates_query.value}&sentiment_dates_filter=${temp_sentiment_dates_query}&from_page=${(selected_page.value - 1) * 20}&grouped=${isGrouped.value}`)
         .then(response => {
+
+			console.log('getGeneralCount - ', response);
             news_count.value = parseInt(response.data.news_count)
 			check_full_news_count(news_count.value)
             resources_count.value = parseInt(response.data.resources_count)
@@ -553,6 +557,25 @@ watch(enable_metrics, (newValue) => {
 	}
 	else {
 		getSocialMetrics()
+	}
+})
+watch(isGrouped, () => {
+            
+	getGeneralCount()
+		.catch(error => {
+			console.error(error);
+		})
+		.finally(() => {
+			if (r_type.value == 2) {
+				getSocialMetrics()
+			}
+		})
+
+	if (selected_page.value == 1) {
+		getItems()
+	}
+	else {
+		selected_page.value = 1
 	}
 })
 
@@ -638,7 +661,7 @@ export const getSocialMetrics = () => {
 	}
 
 	axios
-		.get(`/ru/analyticstats/get-project-metrics-data?p_id=${project.value.id}&r_type=${r_type.value}&category_id=${category_id}&countries=${countries}&regions=${regions}&sentiments=${sentiments}&language=${language}&s_date=${dateRange.value.startDate.format("Y-m-d")} ${s_time.value}&f_date=${dateRange.value.endDate.format("Y-m-d")} ${f_time.value}&from=${from}&to=${end_clipped.value}&resource_length=${resource_count.value}&resources=${_resources}&specifying_sentiments=${specifying_sentiments}&date_mode=${selected_date_mode.value}&dates_filter=${selected_dates_query.value}&sentiment_dates_filter=${temp_sentiment_dates_query}`)
+		.get(`/ru/analyticstats/get-project-metrics-data?p_id=${project.value.id}&r_type=${r_type.value}&category_id=${category_id}&countries=${countries}&regions=${regions}&sentiments=${sentiments}&language=${language}&s_date=${dateRange.value.startDate.format("Y-m-d")} ${s_time.value}&f_date=${dateRange.value.endDate.format("Y-m-d")} ${f_time.value}&from=${from}&to=${end_clipped.value}&resource_length=${resource_count.value}&resources=${_resources}&specifying_sentiments=${specifying_sentiments}&date_mode=${selected_date_mode.value}&dates_filter=${selected_dates_query.value}&sentiment_dates_filter=${temp_sentiment_dates_query}&grouped=${isGrouped.value}`)
 		.then(response => {
 			soc_metrics.value = response.data.metrics
 			laoding_metrics.value = false
@@ -708,7 +731,7 @@ export const getItems = () => {
 	items_loading.value = true
 
     axios
-        .get(`/ru/analyticstats/get-project-items?p_id=${project.value.id}&r_type=${r_type.value}&category_id=${category_id}&countries=${countries}&regions=${regions}&sentiments=${sentiments}&language=${language}&s_date=${dateRange.value.startDate.format("Y-m-d")} ${s_time.value}&f_date=${dateRange.value.endDate.format("Y-m-d")} ${f_time.value}&from=${from}&to=${end_clipped.value}&resource_length=${resource_count.value}&resources=${_resources}&specifying_sentiments=${specifying_sentiments}&date_mode=${selected_date_mode.value}&dates_filter=${selected_dates_query.value}&sentiment_dates_filter=${temp_sentiment_dates_query}&metrics=${selected_soc_metrics.value}&from_page=${(selected_page.value - 1) * 20}`)
+        .get(`/ru/analyticstats/get-project-items?p_id=${project.value.id}&r_type=${r_type.value}&category_id=${category_id}&countries=${countries}&regions=${regions}&sentiments=${sentiments}&language=${language}&s_date=${dateRange.value.startDate.format("Y-m-d")} ${s_time.value}&f_date=${dateRange.value.endDate.format("Y-m-d")} ${f_time.value}&from=${from}&to=${end_clipped.value}&resource_length=${resource_count.value}&resources=${_resources}&specifying_sentiments=${specifying_sentiments}&date_mode=${selected_date_mode.value}&dates_filter=${selected_dates_query.value}&sentiment_dates_filter=${temp_sentiment_dates_query}&metrics=${selected_soc_metrics.value}&from_page=${(selected_page.value - 1) * 20}&grouped=${isGrouped.value}`)
         .then(response => {
             console.log('get-project-items', response);
             let obj_items_items = response?.data?.items?.reduce((prev, item) => ({ ...prev, [item.news_id]: item }), {})
@@ -726,7 +749,7 @@ export const getItems = () => {
 					name: item_folder.name
 				}]
 			) }), {})
-            let temp_items = response?.data?.params?.map(item => ({
+            let temp_items = response?.data?.params?.filter(item => (item?.item_id?.length))?.map(item => ({
 				likes: 0,
 				comments: 0,
 				reposts: 0,
@@ -759,20 +782,20 @@ export const getItems = () => {
         })
 };
 
-export const getGptLogs = (item_ids = items.value?.map(item => item?.item_id)?.join(',')) => {
+export const getGptLogs = (item_ids = items.value?.map(item => item?.item_id)?.join(','), items_array = items.value) => {
 	
 	axios
 		.get(`/ru/gpt-service/get-logs?news_type=${r_type.value}&news_id=${item_ids}`)
 		.then(response => {
 			console.log('gpt-service-logs', response);
-			items.value.forEach(item => {
+			items_array.forEach(item => {
 				item.logs = {}
 			})
 
 			if (response?.data?.length) {
 				let logs = response?.data?.reduce((prev, log) => ({ ...prev, [log.news_id]: prev[log.news_id] == undefined ? [log] : [...prev[log.news_id], log] }), {})
 				
-				items.value.forEach(item => {
+				items_array.forEach(item => {
 					item.logs = logs[item.item_id]
 						? logs[item.item_id].reduce((prev, log) => ({...prev, [log.promt]: log}), {})
 						: {}
@@ -780,12 +803,70 @@ export const getGptLogs = (item_ids = items.value?.map(item => item?.item_id)?.j
 			}
         })
         .catch(error => {
-			items.value.forEach(item => {
+			items_array.forEach(item => {
 				item.logs = null
 			})
             console.error(error);
         })
         .finally(() => {
 			reset_all.value = false
+        })
+};
+
+
+
+export const getSimilarItems = (item_id) => {
+
+	similar_items_loading.value = true;
+
+    axios
+        .get(`/ru/similar-items/get-items?project_id=${project.value.id}&r_type=${r_type.value}&item_id=${item_id}`)
+        .then(response => {
+            console.log('similar-items/get-items', response);
+            let obj_items_items = response?.data?.items?.reduce((prev, item) => ({ ...prev, [item.news_id]: item }), {})
+            let obj_items_metrics = response?.data?.metrics?.metrics?.reduce((prev, item) => ({ ...prev, [item.news_id]: item }), {})
+            let obj_items_members = response?.data?.metrics?.members?.reduce((prev, item) => ({ ...prev, [item.id]: item }), {})
+			let obj_item_folders = response?.data?.folders?.reduce((prev, item_folder) => ({ ...prev, [item_folder.item_id]: prev[item_folder.item_id] ? [
+				...prev[item_folder.item_id],
+				{
+					id: item_folder.folder_id,
+					name: item_folder.name
+				}
+			] : (
+				[{
+					id: item_folder.folder_id,
+					name: item_folder.name
+				}]
+			) }), {})
+            let temp_similar_items = response?.data?.params?.filter(item => (item?.item_id?.length))?.map(item => ({
+				likes: 0,
+				comments: 0,
+				reposts: 0,
+				members: 0,
+				...item,
+				...obj_items_items[item.item_id],
+				...obj_items_metrics[item.item_id],
+				...obj_items_members[item.res_id],
+				folders: obj_item_folders[item.item_id] ?? [],
+			}))
+			// if (selected_soc_metrics.value.length) {
+			// 	temp_items?.sort((a,b) => (b[selected_soc_metrics.value] - a[selected_soc_metrics.value]))
+			// }
+			// else {
+			// 	temp_items?.sort((a,b) => (new Date(b.date).valueOf() - new Date(a.date).valueOf()))
+			// }
+			similar_items.value = temp_similar_items
+
+			console.log('similar_items', similar_items.value);
+        })
+        .catch(error => {
+            console.error(error);
+        })
+        .finally(() => {
+			similar_items_loading.value = false;
+
+			const item_ids = similar_items.value.map(item => item.item_id).join(',');
+
+			if (item_ids) getGptLogs(item_ids, similar_items.value)
         })
 };

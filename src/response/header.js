@@ -54,6 +54,7 @@ export const social_categories = reactive(ref([
 // }));
 
 
+export const search_tags = reactive(ref([]));
 export const smi_category = reactive(ref([]));
 export const languages_count = reactive(ref({
     10: {

@@ -643,6 +643,7 @@ export default {
 
 .fa-spinner {
     animation: lds-ellipsis1 1s infinite linear;
+    height: 1em;
 }
 
 @keyframes lds-ellipsis1 {

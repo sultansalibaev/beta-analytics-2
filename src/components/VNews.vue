@@ -108,6 +108,16 @@
             </i>
         </div>
 
+        
+        <div class="switcher ml-auto">
+            <div @click="isGrouped = false" :class="{
+                active: !isGrouped
+            }">все</div>
+            <div @click="isGrouped = true" :class="{
+                active: isGrouped
+            }">сгруппированные</div><!-- сгруппировано -->
+        </div>
+
         <div class="nav-pagination">
             <div class="hovered-angle">
                 <i
@@ -150,6 +160,7 @@
         </div>
     </div>
 
+    <!-- Удаление источника -->
     <div
         class="delete-resource-modal"
         style="z-index: 100000"
@@ -222,7 +233,325 @@
             </div>
         </div>
     </div>
+    
+    <!-- Дубликаты -->
+    <div
+        class="favorites-modal"
+        :class="{
+            active: similars_modal,
+        }"
+        style="padding: 8px"
+        @click.stop="similars_modal = false"
+    >
+        <div
+            style="
+                background: white;
+                max-width: 900px;
+                min-height: 90%;
+                max-height: 90%;
+                min-width: 400px;
+                border-radius: 5px;
+                position: relative;
+                overflow: hidden;
+                box-shadow: 0 0 11px #ffffff6e;
+            "
+            @click.stop="item_modal = false"
+        >
+            <div class="delete-resource-title" style="background: #1cb394;">
+                Дубликаты
+                <i class="fa fa-close close-item-modal" @click="similars_modal = false"></i>
+            </div>
+            <div style="padding: 15.5px 8px;height: calc(100% - 43px);background: #f3f3f4;">
+                <div class="favorite-buttons flex scrollbar" style="overflow-y: scroll;height: 100%;">
+                    
+                    
+                    <div
+                        class="flex justify-center items-center h-full w-full"
+                        v-if="similar_items_loading"
+                    >
+                        <i class="fa-solid fa-spinner" style="font-size: 25px"></i>
+                    </div>
+                    <div class="items m-b-15" id="project_news" v-else>
+                        <div class="item-container w-full" v-for="similar_item in similar_items" :key="similar_item.item_id">
+                            <div
+                                class="item"
+                                style="height: unset"
+                                :class="{
+                                    // 'item-favorites-min-height': favorites_modal == similar_item.item_id
+                                }"
+                            >
+                                <div class="inline-flex justify-between m-b-10">
+                                    <div class="inline-flex">
+                                        <div
+                                            class="item-title__icon"
+                                            :style="
+                                                getResourceLogo(similar_item.res_logo, similar_item.category_id)
+                                            "
+                                        ></div>
+                                        <div
+                                            class="item-title__text hover-underline"
+                                            :title="similar_item.title"
+                                            @click="modal_item = similar_item"
+                                        >
+                                            {{ similar_item.title }}
+                                        </div>
+                                    </div>
+                                    <div
+                                        class="item-title__menu"
+                                        @click.stop="
+                                            item_modal =
+                                                item_modal == similar_item.item_id
+                                                    ? false
+                                                    : similar_item.item_id
+                                        "
+                                    >
+                                        <i class="fa-solid fa-ellipsis-vertical"></i>
+                                        <div
+                                            class="item-modal"
+                                            :class="{
+                                                active: item_modal == similar_item.item_id,
+                                            }"
+                                            @click.stop
+                                        >
+                                            <div
+                                                class="item-action"
+                                                style="color: #ec5d5d"
+                                                @click="delete_item(similar_item.item_id)"
+                                            >
+                                                <i
+                                                    class="fa fa-trash-o"
+                                                    style="font-size: 17px"
+                                                ></i>
+                                                <span>Удалить новость</span>
+                                            </div>
+                                            <div
+                                                class="item-action"
+                                                style="color: #ec5d5d"
+                                                @click="
+                                                    confirm_delete_resource(
+                                                        similar_item.res_id,
+                                                        similar_item,
+                                                        getResourceLogo(
+                                                            similar_item.res_logo,
+                                                            similar_item.category_id
+                                                        )
+                                                    )
+                                                "
+                                            >
+                                                <i
+                                                    class="fa fa-minus-circle"
+                                                    style="font-size: 17px"
+                                                ></i>
+                                                <!-- <i class="fa fa-trash-o" style="font-size: 17px;"></i> -->
+                                                <span>Удалить источник</span>
+                                            </div>
+                                            <div
+                                                class="item-action"
+                                                @click="copy_item_id(similar_item.item_id)"
+                                            >
+                                                <i
+                                                    class="fa fa-copy"
+                                                    style="font-size: 15px"
+                                                ></i>
+                                                <span>Скопировать id-новости</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
 
+                                <div class="flex item-info items-center m-b-10">
+                                    <a
+                                        target="_blank"
+                                        :href="similar_item.link"
+                                        class="item-date hover-underline whitespace-nowrap"
+                                        >{{ getItemDate(new Date(similar_item.date * 1000)) }}</a
+                                    >
+                                    <template
+                                        v-if="
+                                            r_type == 2 &&
+                                            similar_item.likes +
+                                                similar_item.comments +
+                                                similar_item.reposts +
+                                                similar_item.members >
+                                                0
+                                        "
+                                    >
+                                        &nbsp;|&nbsp;
+                                        <span
+                                            class="item-likes whitespace-nowrap"
+                                            v-if="similar_item.likes > 0"
+                                        >
+                                            <i class="fa-solid fa-thumbs-o-up"></i>
+                                            {{ similar_item.likes }}&nbsp;
+                                            <!-- <i class="fa fa-heart"></i> {{ similar_item.likes }}&nbsp; -->
+                                        </span>
+                                        <span
+                                            class="item-comments whitespace-nowrap"
+                                            v-if="similar_item.comments > 0"
+                                        >
+                                            &nbsp;<i class="fa fa-comments"></i>
+                                            {{ similar_item.comments }}&nbsp;
+                                        </span>
+                                        <span
+                                            class="item-share whitespace-nowrap"
+                                            v-if="similar_item.reposts > 0"
+                                        >
+                                            &nbsp;<i class="fa fa-share"></i>
+                                            {{ similar_item.reposts }}&nbsp;
+                                        </span>
+                                        <span
+                                            class="item-users whitespace-nowrap"
+                                            v-if="similar_item.members > 0"
+                                        >
+                                            &nbsp;<i class="fa fa-users"></i>
+                                            {{ similar_item.members }}&nbsp;
+                                        </span>
+                                    </template>
+                                    &nbsp;|&nbsp;
+                                    <i
+                                        v-if="r_type == 2"
+                                        :class="`fa fa-${
+                                            social_categories_obj[similar_item.category_id]
+                                        }`"
+                                    ></i>
+                                    <template v-if="r_type == 2">&nbsp;</template>
+                                    <a
+                                        target="_blank"
+                                        :href="similar_item.res_link"
+                                        class="item-resource"
+                                        :title="similar_item.resource_name"
+                                        >{{ similar_item.resource_name }}</a
+                                    >
+                                    &nbsp;|&nbsp;<img
+                                        :src="`/media/img/country/${
+                                            countries[similar_item.country_id]?.hc
+                                        }.png`"
+                                        width="23"
+                                        height="23"
+                                        alt=""
+                                    />&nbsp;
+                                    <span class="truncate">{{
+                                        `${
+                                            similar_item.country_id == 57 && similar_item.region_id != 0
+                                                ? regions[similar_item.region_id]?.name
+                                                : countries[similar_item.country_id]?.name
+                                        } | ${similar_item.resource_category}`
+                                    }}</span>
+                                </div>
+
+                                <div class="item-content m-b-10" v-html="each_replace_all(similar_item.text)"></div>
+                                <div class="flex item-btns">
+                                    <div class="item-sentiments flex items-center">
+                                        <i
+                                            @click="update_item_sentiment(similar_item, -1)"
+                                            class="negative negative-btn fa metrik_btn"
+                                            :class="{
+                                                'fa-check-circle': -1 == similar_item.sentiment,
+                                                'checked-btn': -1 == similar_item.sentiment,
+                                                'fa-circle': -1 != similar_item.sentiment,
+                                            }"
+                                        ></i>
+                                        <i
+                                            @click="update_item_sentiment(similar_item, 0)"
+                                            class="neutral neutral-btn fa metrik_btn"
+                                            :class="{
+                                                'fa-check-circle': 0 == similar_item.sentiment,
+                                                'checked-btn': 0 == similar_item.sentiment,
+                                                'fa-circle': 0 != similar_item.sentiment,
+                                            }"
+                                        ></i>
+                                        <i
+                                            @click="update_item_sentiment(similar_item, 1)"
+                                            class="positive positive-btn fa metrik_btn"
+                                            :class="{
+                                                'fa-check-circle': 1 == similar_item.sentiment,
+                                                'checked-btn': 1 == similar_item.sentiment,
+                                                'fa-circle': 1 != similar_item.sentiment,
+                                            }"
+                                        ></i>
+                                    </div>
+                                    <div class="flex items-center item-folders">
+                                        <span
+                                            class="inline-flex items-center item-folder select-none"
+                                            :title="item_folder.name"
+                                            v-for="item_folder in similar_item.folders"
+                                            :key="item_folder.id"
+                                            style="color: #6fa2cf"
+                                        >
+                                            <span class="h-full">{{ item_folder.name }}</span>
+                                            <i
+                                                class="fa-solid fa-xmark remove-item-folder"
+                                                @click="
+                                                    remove_item_from_folder(
+                                                        similar_item,
+                                                        item_folder.id
+                                                    )
+                                                "
+                                            ></i>
+                                        </span>
+                                    </div>
+                                    <!-- <button :class="`item-sentiment item-sentiment_${similar_item.sentiment}`">{{ sentiment_name[similar_item.sentiment] }}</button> -->
+                                    <div class="flex">
+                                        <!-- <form
+                                            method="POST"
+                                            action="/ru/gpt-service"
+                                            target="_blank"
+                                        >
+                                            <input
+                                                style="display: none"
+                                                type="text"
+                                                name="item_id"
+                                                :value="similar_item.item_id"
+                                            />
+                                            <input
+                                                style="display: none"
+                                                type="text"
+                                                name="r_type"
+                                                :value="r_type"
+                                            />
+                                            <input
+                                                style="display: none"
+                                                type="text"
+                                                name="p_id"
+                                                :value="project.id"
+                                            />
+                                            <button
+                                                class="favorites"
+                                                type="submit"
+                                                style="margin-right: 8px"
+                                            >
+                                                Анализ новости
+                                            </button>
+                                        </form> -->
+                                        <button
+                                            class="favorites"
+                                            style="margin-right: 8px"
+                                            @click="chatgpt_item = similar_item"
+                                            v-show="similar_item?.logs !== null"
+                                            :disabled="similar_item?.logs === undefined"
+                                            :style="similar_item?.logs === undefined ? 'cursor: wait;' : ''"
+                                        >
+                                            Анализ новости
+                                            <i v-if="Object.values(similar_item?.logs || {}).includes('loading')" class="fa-solid fa-spinner" style="margin-right: -2px;padding-top: 1px;"></i>
+                                            <i v-else-if="Object.keys(similar_item?.logs || {}).length" class="fa fa-check" style="color: #18a689;margin-right: -2px;"></i>
+                                        </button>
+                                        <button
+                                            class="favorites"
+                                            @click="get_item_favorites(similar_item.item_id)"
+                                        >
+                                            Избранное
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ChatGPT -->
     <div
         class="delete-resource-modal"
         style="z-index: 100000"
@@ -264,6 +593,7 @@
         </div>
     </div>
 
+    <!-- One-Item -->
     <div
         class="delete-resource-modal justify-end"
         v-show="modal_item != null"
@@ -591,10 +921,16 @@
                     v-html="
                         r_type == 1 && modal_item?.category_id == 13
                             ? ''
-                            : (
+                            : each_replace_all(
                                 modal_item?.full_text.replaceAll(
                                     `href=&quot;/`,
                                     `href=&quot;${modal_item?.res_link}/`
+                                ).replaceAll(
+                                    `src=&quot;/`,
+                                    `src=&quot;${modal_item?.res_link}/`
+                                ).replaceAll(
+                                    `srcset=&quot;/`,
+                                    `srcset=&quot;${modal_item?.res_link}/`
                                 ) + '<br/><br/><br/><br/>'
                             )
                     "
@@ -827,6 +1163,7 @@
         </div>
     </div>
 
+    <!-- Выберите избранное -->
     <div
         class="favorites-modal"
         :class="{
@@ -1024,6 +1361,7 @@
         </div>
     </div>
 
+    <!-- Loading... -->
     <div
         class="flex justify-center"
         v-if="items_loading"
@@ -1031,7 +1369,8 @@
     >
         <i class="fa-solid fa-spinner" style="font-size: 25px"></i>
     </div>
-    <div class="items m-b-15" id="project_news" v-else>
+    <!-- Items -->
+    <div class="items m-b-5" id="project_news" v-else>
         <div class="item-container" v-for="item in items" :key="item.item_id">
             <div
                 class="item"
@@ -1116,6 +1455,7 @@
                             </div>
                         </div>
                     </div>
+                    <div class="similars-count" @click="similars_modal = item.item_id" v-if="item.similars_count > 0">дубликаты: {{ item.similars_count }}</div>
                 </div>
 
                 <div class="flex item-info items-center m-b-10">
@@ -1192,13 +1532,13 @@
                     <span class="truncate">{{
                         `${
                             item.country_id == 57 && item.region_id != 0
-                                ? regions[item.region_id].name
-                                : countries[item.country_id].name
+                                ? regions[item.region_id]?.name
+                                : countries[item.country_id]?.name
                         } | ${item.resource_category}`
                     }}</span>
                 </div>
 
-                <div class="item-content m-b-10" v-html="item.text"></div>
+                <div class="item-content m-b-10" v-html="each_replace_all(item.text)"></div>
                 <div class="flex item-btns">
                     <div class="item-sentiments flex items-center">
                         <i
@@ -1305,6 +1645,50 @@
             </div>
         </div>
     </div>
+
+    
+    <div class="wrap-body m-b-15 flex items-center">
+        <div class="nav-pagination">
+            <div class="hovered-angle">
+                <i
+                    class="fa-solid fa-angles-left first-page icon-w-0"
+                    @click="selected_page = 1"
+                ></i>
+                <i
+                    class="fa fa-angle-left first-page border-radius-0"
+                    @click="
+                        selected_page =
+                            selected_page == 1 ? 1 : selected_page - 1
+                    "
+                ></i>
+            </div>
+            <span
+                v-for="page in pagination"
+                :key="page"
+                :class="{
+                    active: page == selected_page,
+                }"
+                @click="selected_page = page"
+                >{{ page }}</span
+            >
+            <div class="hovered-angle">
+                <i
+                    class="fa fa-angle-right second-page border-radius-0"
+                    :title="`Последняя страница: ${getPaginationCount}`"
+                    @click="
+                        selected_page =
+                            selected_page == getPaginationCount
+                                ? getPaginationCount
+                                : selected_page + 1
+                    "
+                ></i>
+                <i
+                    class="fa-solid fa-angles-right second-page icon-w-0"
+                    @click="selected_page = getPaginationCount"
+                ></i>
+            </div>
+        </div>
+    </div>
     <!-- <i class="fa-solid fa-arrow-up-wide-short"></i> -->
 </template>
 
@@ -1316,6 +1700,7 @@ import {
     resources_count,
     items,
     items_loading,
+    similar_items_loading,
     selected_page,
     selected_label_page,
     item_modal,
@@ -1323,8 +1708,10 @@ import {
     soc_metrics,
     chatgpt_tab,
     chatgpt_item,
+    isGrouped,
+    similar_items,
 } from "@/response/data/index";
-import { getItems } from "@/response/api";
+import { getItems, getSimilarItems } from "@/response/api";
 // import items from '@/response/json/items';
 import {
     r_type,
@@ -1332,6 +1719,7 @@ import {
     countries,
     social_categories,
     project,
+    search_tags,
 } from "@/response/header";
 import axios from "axios";
 import TextAnalyze from '@/components/ChatGPT/TextAnalyze.vue'
@@ -1352,6 +1740,7 @@ export default {
             resources_count,
             items,
             items_loading,
+            similar_items_loading,
             r_type,
             regions,
             countries,
@@ -1363,12 +1752,17 @@ export default {
             soc_metrics,
             getItems,
             project,
+            search_tags,
+            getSimilarItems,
             chatgpt_tab,
             chatgpt_item,
+            isGrouped,
+            similar_items,
         };
     },
     data() {
         return {
+            similars_modal: false,
             sentiment_name: {
                 1: "Позитив",
                 0: "Нейтрал",
@@ -1407,6 +1801,31 @@ export default {
         };
     },
     methods: {
+        each_replace_all(text) {
+            if (!text) return text;
+
+            this.search_tags.forEach(tag => {
+                text = text?.replaceAll(new RegExp(tag, 'g'), (temp) => temp ? `<span class="imas-tag">${temp}</span>` : '')
+            })
+
+            let tagIndex = text.indexOf('<span class="imas-tag">')
+
+            if (tagIndex != -1) {
+                let start = tagIndex - 200;
+                let end = tagIndex + 300;
+                if (start < 0) {
+                    start = 0;
+                    end = 500
+                }
+                else if (end > text.length) {
+                    start = text.length - 500;
+                }
+                text = text.slice(start, end)
+            }
+            
+
+            return text;
+        },
         get_one_comments() {
             let formData = new FormData();
 
@@ -1567,8 +1986,8 @@ export default {
                 id: res_id,
                 place:
                     item.country_id == 57 && item.region_id != 0
-                        ? this.regions[item.region_id].name
-                        : this.countries[item.country_id].name,
+                        ? this.regions[item.region_id]?.name
+                        : this.countries[item.country_id]?.name,
                 category: item.resource_category,
                 country_id: item.country_id,
                 link: item.res_link,
@@ -1817,6 +2236,9 @@ export default {
         },
     },
     watch: {
+        similars_modal(newValue) {
+            this.getSimilarItems(newValue)
+        },
         selected_page() {
             this.getItems();
         },
@@ -2909,5 +3331,35 @@ i.positive {
     height: 100%;
     overflow-y: scroll;
     margin: 2px 2px 0 0;
+}
+.imas-tag {
+    display: inline !important;
+    background: #6FA2CF !important;
+    color: #fff !important;
+    padding: 0 4px !important;
+    border-radius: 3px !important;
+}
+.similars-count {
+    position: absolute;
+    right: 50px;
+    top: -10px;
+    
+    color: #ffffffd9;
+    background: #3b5998c4;
+
+    height: 24px;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    padding: 1px 6px 0;
+    border-radius: 4px;
+    cursor: pointer;
+    user-select: none;
+    box-shadow: 0 0 5px #3b5998b3;
+    transition: .15s;
+}
+.similars-count:hover {
+    color: #fff;
+    background: #3b5998;
 }
 </style>
