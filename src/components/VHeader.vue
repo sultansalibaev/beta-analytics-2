@@ -120,9 +120,13 @@ export default {
                 this.selected_main_sentiments['1'] = false
                 this.selected_main_sentiments[id] = true
             }
+            console.log(this.selected_main_sentiments);
+            setTimeout(() => {
+                console.log(this.selected_main_sentiments);
+            }, 1000);
 
             // this.main_watcher = true
-            this.getMainPlacesCount()
+            this.getMainPlacesCount(false)
         },
     },
     watch: {

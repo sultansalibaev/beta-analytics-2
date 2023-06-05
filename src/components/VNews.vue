@@ -2,7 +2,7 @@
     <div class="wrap-body m-b-15 flex items-center">
         <span style="font-size: 16px">Результат фильтра:&nbsp;&nbsp;</span>
         <span class="result-count result-count__items"
-            >{{ news_count.push_space() }}&nbsp;&nbsp;</span
+            >{{ news_count.push_space() }}{{ similars_count ? ` + ${similars_count}` : '' }}&nbsp;&nbsp;</span
         >
         <span class="result-count result-count__resource"
             >({{ resources_count.push_space() }})</span
@@ -380,31 +380,35 @@
                                         <span
                                             class="item-likes whitespace-nowrap"
                                             v-if="similar_item.likes > 0"
+                                            :title="similar_item.likes.push_space()"
                                         >
                                             <i class="fa-solid fa-thumbs-o-up"></i>
-                                            {{ similar_item.likes }}&nbsp;
+                                            {{ similar_item.likes.short() }}&nbsp;
                                             <!-- <i class="fa fa-heart"></i> {{ similar_item.likes }}&nbsp; -->
                                         </span>
                                         <span
                                             class="item-comments whitespace-nowrap"
                                             v-if="similar_item.comments > 0"
+                                            :title="similar_item.comments.push_space()"
                                         >
                                             &nbsp;<i class="fa fa-comments"></i>
-                                            {{ similar_item.comments }}&nbsp;
+                                            {{ similar_item.comments.short() }}&nbsp;
                                         </span>
                                         <span
                                             class="item-share whitespace-nowrap"
                                             v-if="similar_item.reposts > 0"
+                                            :title="similar_item.reposts.push_space()"
                                         >
                                             &nbsp;<i class="fa fa-share"></i>
-                                            {{ similar_item.reposts }}&nbsp;
+                                            {{ similar_item.reposts.short() }}&nbsp;
                                         </span>
                                         <span
                                             class="item-users whitespace-nowrap"
                                             v-if="similar_item.members > 0"
+                                            :title="similar_item.members.push_space()"
                                         >
                                             &nbsp;<i class="fa fa-users"></i>
-                                            {{ similar_item.members }}&nbsp;
+                                            {{ similar_item.members.short() }}&nbsp;
                                         </span>
                                     </template>
                                     &nbsp;|&nbsp;
@@ -520,7 +524,7 @@
                                                 type="submit"
                                                 style="margin-right: 8px"
                                             >
-                                                Анализ новости
+                                                Анализ
                                             </button>
                                         </form> -->
                                         <button
@@ -531,7 +535,7 @@
                                             :disabled="similar_item?.logs === undefined"
                                             :style="similar_item?.logs === undefined ? 'cursor: wait;' : ''"
                                         >
-                                            Анализ новости
+                                            Анализ
                                             <i v-if="Object.values(similar_item?.logs || {}).includes('loading')" class="fa-solid fa-spinner" style="margin-right: -2px;padding-top: 1px;"></i>
                                             <i v-else-if="Object.keys(similar_item?.logs || {}).length" class="fa fa-check" style="color: #18a689;margin-right: -2px;"></i>
                                         </button>
@@ -562,7 +566,7 @@
             <div class="tab-head">
                 <div class="tab-item" @click="chatgpt_tab = 'TextAnalyze'" :class="{
                     selected: chatgpt_tab == 'TextAnalyze'
-                }">Анализ новости</div>
+                }">Анализ</div>
                 <div class="tab-item" @click="chatgpt_tab = 'TextReaction'" :class="{
                     selected: chatgpt_tab == 'TextReaction'
                 }">Реакция</div>
@@ -673,31 +677,35 @@
                                 <span
                                     class="item-likes whitespace-nowrap"
                                     v-if="modal_item?.likes > 0"
+                                    :title="modal_item?.likes.push_space()"
                                 >
                                     <i class="fa-solid fa-thumbs-o-up"></i>
-                                    {{ modal_item?.likes }}&nbsp;
+                                    {{ modal_item?.likes.short() }}&nbsp;
                                     <!-- <i class="fa fa-heart"></i> {{ modal_item?.likes }}&nbsp; -->
                                 </span>
                                 <span
                                     class="item-comments whitespace-nowrap"
                                     v-if="modal_item?.comments > 0"
+                                    :title="modal_item?.comments.push_space()"
                                 >
                                     &nbsp;<i class="fa fa-comments"></i>
-                                    {{ modal_item?.comments }}&nbsp;
+                                    {{ modal_item?.comments.short() }}&nbsp;
                                 </span>
                                 <span
                                     class="item-share whitespace-nowrap"
                                     v-if="modal_item?.reposts > 0"
+                                    :title="modal_item?.reposts.push_space()"
                                 >
                                     &nbsp;<i class="fa fa-share"></i>
-                                    {{ modal_item?.reposts }}&nbsp;
+                                    {{ modal_item?.reposts.short() }}&nbsp;
                                 </span>
                                 <span
                                     class="item-users whitespace-nowrap"
                                     v-if="modal_item?.members > 0"
+                                    :title="modal_item?.members.push_space()"
                                 >
                                     &nbsp;<i class="fa fa-users"></i>
-                                    {{ modal_item?.members }}&nbsp;
+                                    {{ modal_item?.members.short() }}&nbsp;
                                 </span>
                             </template>
                             &nbsp;&nbsp;|&nbsp;&nbsp;
@@ -1455,7 +1463,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="similars-count" @click="similars_modal = item.item_id" v-if="item.similars_count > 0">дубликаты: {{ item.similars_count }}</div>
+                    <!-- <div class="similars-count" @click="similars_modal = item.item_id" v-if="item.similars_count > 0">дубликаты: {{ item.similars_count }}</div> -->
                 </div>
 
                 <div class="flex item-info items-center m-b-10">
@@ -1479,31 +1487,35 @@
                         <span
                             class="item-likes whitespace-nowrap"
                             v-if="item.likes > 0"
+                            :title="item.likes.push_space()"
                         >
                             <i class="fa-solid fa-thumbs-o-up"></i>
-                            {{ item.likes }}&nbsp;
+                            {{ item.likes.short() }}&nbsp;
                             <!-- <i class="fa fa-heart"></i> {{ item.likes }}&nbsp; -->
                         </span>
                         <span
                             class="item-comments whitespace-nowrap"
                             v-if="item.comments > 0"
+                            :title="item.comments.push_space()"
                         >
                             &nbsp;<i class="fa fa-comments"></i>
-                            {{ item.comments }}&nbsp;
+                            {{ item.comments.short() }}&nbsp;
                         </span>
                         <span
                             class="item-share whitespace-nowrap"
                             v-if="item.reposts > 0"
+                            :title="item.reposts.push_space()"
                         >
                             &nbsp;<i class="fa fa-share"></i>
-                            {{ item.reposts }}&nbsp;
+                            {{ item.reposts.short() }}&nbsp;
                         </span>
                         <span
                             class="item-users whitespace-nowrap"
                             v-if="item.members > 0"
+                            :title="item.members.push_space()"
                         >
                             &nbsp;<i class="fa fa-users"></i>
-                            {{ item.members }}&nbsp;
+                            {{ item.members.short() }}&nbsp;
                         </span>
                     </template>
                     &nbsp;|&nbsp;
@@ -1619,9 +1631,18 @@
                                 type="submit"
                                 style="margin-right: 8px"
                             >
-                                Анализ новости
+                                Анализ
                             </button>
                         </form> -->
+                        <button
+                            class="favorites"
+                            style="margin-right: 8px"
+                            @click="similars_modal = item.item_id"
+                            v-if="item.similars_count > 0"
+                        >
+                            <i class="fa fa-clone" style="margin-right: 5px;"></i>
+                            {{ item.similars_count }}
+                        </button>
                         <button
                             class="favorites"
                             style="margin-right: 8px"
@@ -1630,7 +1651,7 @@
                             :disabled="item?.logs === undefined"
                             :style="item?.logs === undefined ? 'cursor: wait;' : ''"
                         >
-                            Анализ новости
+                            Анализ
                             <i v-if="Object.values(item?.logs || {}).includes('loading')" class="fa-solid fa-spinner" style="margin-right: -2px;padding-top: 1px;"></i>
                             <i v-else-if="Object.keys(item?.logs || {}).length" class="fa fa-check" style="color: #18a689;margin-right: -2px;"></i>
                         </button>
@@ -1646,7 +1667,7 @@
         </div>
     </div>
 
-    
+    <!-- Pagination -->
     <div class="wrap-body m-b-15 flex items-center">
         <div class="nav-pagination">
             <div class="hovered-angle">
@@ -1697,6 +1718,7 @@
 //import axios from 'axios'
 import {
     news_count,
+    similars_count,
     resources_count,
     items,
     items_loading,
@@ -1737,6 +1759,7 @@ export default {
     setup() {
         return {
             news_count,
+            similars_count,
             resources_count,
             items,
             items_loading,
@@ -1802,6 +1825,7 @@ export default {
     },
     methods: {
         each_replace_all(text) {
+            text = text.trim();
             if (!text) return text;
 
             this.search_tags.forEach(tag => {
@@ -1817,12 +1841,11 @@ export default {
                     start = 0;
                     end = 500
                 }
-                else if (end > text.length) {
+                else if (end > text.length && start + 190 > text.length) {
                     start = text.length - 500;
                 }
                 text = text.slice(start, end)
             }
-            
 
             return text;
         },
@@ -2297,6 +2320,8 @@ export default {
     display: flex;
     flex-direction: column;
     position: relative;
+    box-shadow: 0 0 7px #7f7f7f59;
+    border-radius: 4px;
 }
 .m-b-10 {
     margin-bottom: 10px;
@@ -3361,5 +3386,10 @@ i.positive {
 .similars-count:hover {
     color: #fff;
     background: #3b5998;
+}
+@media (max-width: 1440px) {
+    .item-container {
+        width: 100%;
+    }
 }
 </style>
