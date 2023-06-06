@@ -177,10 +177,23 @@
                             let formData = new FormData();
 
                             formData.append('news_id', temp_chatgpt_item?.item_id)
+
                             formData.append('news_type', this.r_type)
+
                             formData.append('type', 'analyze')
+
                             formData.append('promt', 'Обобщение')
+
                             formData.append('result', temp_output)
+
+
+                            console.log({
+                                'news_id': temp_chatgpt_item?.item_id, 
+                                'news_type': this.r_type, 
+                                'type': 'analyze', 
+                                'promt': 'Обобщение', 
+                                'result': temp_output, 
+                            });
 
                             axios.post(`/ru/gpt-service/create-log`, formData)
                                 .then((response) => {

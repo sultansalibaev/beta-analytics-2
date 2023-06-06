@@ -939,7 +939,7 @@
                                 ).replaceAll(
                                     `srcset=&quot;/`,
                                     `srcset=&quot;${modal_item?.res_link}/`
-                                ) + '<br/><br/><br/><br/>'
+                                ) + '<br/><br/><br/><br/>', false
                             )
                     "
                     class="full-item-text w-full"
@@ -1824,7 +1824,7 @@ export default {
         };
     },
     methods: {
-        each_replace_all(text) {
+        each_replace_all(text, slice_text = true) {
             text = text.trim();
             if (!text) return text;
 
@@ -1834,15 +1834,15 @@ export default {
 
             let tagIndex = text.indexOf('<span class="imas-tag">')
 
-            if (tagIndex != -1) {
-                let start = tagIndex - 200;
-                let end = tagIndex + 300;
+            if (tagIndex != -1 && slice_text) {
+                let start = tagIndex - 250;
+                let end = tagIndex + 350;
                 if (start < 0) {
                     start = 0;
-                    end = 500
+                    end = 600
                 }
-                else if (end > text.length && start + 190 > text.length) {
-                    start = text.length - 500;
+                else if (end > text.length && start + 190 > text.length || end >= text.length) {
+                    start = text.length - 600;
                 }
                 text = text.slice(start, end)
             }
