@@ -82,7 +82,6 @@
                         <button
                             type="button"
                             class="f-z-16 btn btn-success btn-control"
-                            :style="input != '' ? 'background: #ccc;border:1px solid #ccc;pointer-events:none' : ''"
                             @click="push_news"
                             :disabled="load_circle_analyze || chatgpt_item?.logs[input != '' ? input : condition]?.result">
                             Запуск
