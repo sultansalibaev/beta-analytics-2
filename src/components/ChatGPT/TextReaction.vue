@@ -197,9 +197,9 @@
                                 ],
                             });
                             console.log('completion', completion);
-                            this.output = completion.data.choices[0].message.content
+                            let temp_output = completion.data.choices[0].message.content
 
-                            if (!this.output) return
+                            if (!temp_output) return
 
                             let formData = new FormData();
 
@@ -207,7 +207,7 @@
                             formData.append('news_type', temp_r_type)
                             formData.append('type', 'reaction')
                             formData.append('promt', temp_promt)
-                            formData.append('result', this.output)
+                            formData.append('result', temp_output)
 
                             axios.post(`/ru/gpt-service/create-log`, formData)
                                 .then((response) => {
@@ -218,6 +218,11 @@
                                 })
                                 .catch(error => {
                                     console.log('error', error);
+                                })
+                                .finally(() => {
+                                    if (temp_chatgpt_item?.item_id == this.chatgpt_item?.item_id) {
+                                        this.output = temp_output
+                                    }
                                 })
                         }
                         else {

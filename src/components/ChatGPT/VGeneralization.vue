@@ -170,9 +170,9 @@
                             console.log(completion.data.choices[0].message.content)
                             prepared_data = prepared_data + "\n\n" + completion.data.choices[0].message.content + "\n\n================================"
 
-                            this.output = prepared_data
+                            let temp_output = prepared_data
 
-                            if (!this.output) return
+                            if (!temp_output) return
 
                             let formData = new FormData();
 
@@ -180,7 +180,7 @@
                             formData.append('news_type', this.r_type)
                             formData.append('type', 'analyze')
                             formData.append('promt', 'Обобщение')
-                            formData.append('result', this.output)
+                            formData.append('result', temp_output)
 
                             axios.post(`/ru/gpt-service/create-log`, formData)
                                 .then((response) => {
@@ -191,6 +191,11 @@
                                 })
                                 .catch(error => {
                                     console.log('error', error);
+                                })
+                                .finally(() => {
+                                    if (temp_chatgpt_item?.item_id == this.chatgpt_item?.item_id) {
+                                        this.output = temp_output
+                                    }
                                 })
                         }
                         else {
