@@ -147,9 +147,9 @@
                 used_prompt_list_modal: false,
                 used_prompt_list: [],
                 analyze_select: [
-                    "C точки зрения бизнеса",
-                    "C точки зрения государства",
-                    "C точки зрения силовых структур",
+                    "С точки зрения бизнеса",
+                    "С точки зрения государства",
+                    "С точки зрения силовых структур",
                     "C разных точек зрения"
                 ],
             }
@@ -190,9 +190,9 @@
             select_analyzed_prompt(used_prompt) {
 
                 if (
-                    used_prompt == "C точки зрения бизнеса" ||
-                    used_prompt == "C точки зрения государства" ||
-                    used_prompt == "C точки зрения силовых структур" ||
+                    used_prompt == "С точки зрения бизнеса" ||
+                    used_prompt == "С точки зрения государства" ||
+                    used_prompt == "С точки зрения силовых структур" ||
                     used_prompt == "C разных точек зрения"
                 ) {
                     this.input = ''
@@ -213,9 +213,9 @@
                 textArea.value = ""
             },
             change_condition(statement) {
-                if (statement == "бизнес") {this.condition = "C точки зрения бизнеса"} 
-                if (statement == "государство") {this.condition = "C точки зрения государства"} 
-                if (statement == "сил.структуры") {this.condition = "C точки зрения силовых структур"} 
+                if (statement == "бизнес") {this.condition = "С точки зрения бизнеса"} 
+                if (statement == "государство") {this.condition = "С точки зрения государства"} 
+                if (statement == "сил.структуры") {this.condition = "С точки зрения силовых структур"} 
                 if (statement == "разные т.з.") {this.condition = "C разных точек зрения"} 
 
             },
