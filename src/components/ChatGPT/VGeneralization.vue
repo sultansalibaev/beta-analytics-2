@@ -14,31 +14,31 @@
                         <span class="visually-hidden">Loading...</span>
                     </div> -->
                     <div style="display: inline-block">Что передается в ChatGPT: <i>Предоставь мне главное из новости в 3-4 предложениях и выдели ключевые лица, игроков, компании и т.д. в новости</i></div>
-                    <div for="textarea_home" class="form-label" style="margin: 12px 0;">Ввод:</div>
-                    <textarea class="form-control" id="textarea_home" rows="10" :value="chatgpt_item?.text.maxLength(4_000)" disabled></textarea>
+                    <div for="textarea_home" class="form-label" style="margin: 12px 0;display: none;">Ввод:</div>
+                    <textarea class="form-control" style="display: none;" id="textarea_home" rows="10" :value="chatgpt_item?.text.maxLength(4_000)" disabled></textarea>
                     <!-- <div>
                         <button type="button" class="f-z-16 btn btn-success btn-control" @click="add_text">Добавить новость</button>
                         <button type="button" class="f-z-16 btn btn-success btn-control" style="margin-left: 10px;" @click="clear">Очистить</button>
                     </div> -->
                 </div>
                 <div class="mb-3">
-                    <label for="home_textarea2" class="form-label" style="margin: 7px 0 12px;">Вывод: 
+                    <label for="home_textarea2" class="form-label" style="margin: 7px 0 12px;display: none;">Вывод: 
                         <span class="chatgpt-error" v-show="chatgpt_error">Ошибка со стороны сервера ChatGPT! &nbsp;&nbsp; (попробуйте позже)</span>
                     </label>
-                    <textarea class="form-control" id="home_textarea2" rows="10" :value="output" disabled></textarea>
-                    <div :style="chatgpt_item?.logs['Обобщение']?.result ? 'display:none;' : ''">
+                    <textarea class="form-control" style="margin-top: 20px;border-radius: 5px;" id="home_textarea2" rows="10" :value="output" disabled></textarea>
+                    <div class="flex" :style="chatgpt_item?.logs['Обобщение']?.result ? 'display:none;' : ''">
                         <button type="button" class="f-z-16 btn btn-success btn-control" :disabled="load_circle || chatgpt_item?.logs['Обобщение']?.result" @click="prepare_data">
                             Запуск
                             <i id="load-circle"
                             v-show="load_circle"
                             class="fa-solid fa-spinner"></i>
                         </button>
+                        <button type="button" style="margin: 20px 0 0 auto !important;" class="f-z-16 btn btn-info btn-help" data-bs-toggle="modal" data-bs-target="#exampleModal" @click="home_view_modal = true">
+                            Информация и пояснение
+                        </button>
                     </div>
                 </div>
             </div>
-            <button type="button" class="f-z-16 btn btn-info btn-help" data-bs-toggle="modal" data-bs-target="#exampleModal" @click="home_view_modal = true">
-                Информация и пояснение
-            </button>
             <div
                 class="modal fade left-0 right-0 top-0 bottom-0"
                 id="exampleModal"

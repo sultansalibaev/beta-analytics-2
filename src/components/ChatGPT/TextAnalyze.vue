@@ -61,8 +61,8 @@
                     <!-- <div class="spinner-border text-success" role="status" id="load-circle-analyze">
                         <span class="visually-hidden">Loading...</span>
                     </div> -->
-                    <div for="textarea_analyze" class="form-label" style="margin: 12px 0;">Ввод:</div>
-                    <textarea class="form-control" id="textarea_analyze" rows="10" :value="chatgpt_item?.text.maxLength(4_000)" disabled></textarea>
+                    <div for="textarea_analyze" class="form-label" style="margin: 12px 0;display:none;">Ввод:</div>
+                    <textarea class="form-control" id="textarea_analyze" style="display:none;" rows="10" :value="chatgpt_item?.text.maxLength(4_000)" disabled></textarea>
                     <!-- <div>
                         <button
                             type="button"
@@ -73,12 +73,12 @@
                     </div> -->
                 </div>
                 <div class="mb-3">
-                    <label for="textarea2" class="form-label" style="margin: 7px 0 12px;">Вывод:
+                    <label for="textarea2" class="form-label" style="margin: 7px 0 12px;display:none;">Вывод:
                         <span class="chatgpt-error" v-show="chatgpt_error">Ошибка со стороны сервера ChatGPT! &nbsp;&nbsp; (попробуйте позже)</span>
                     </label>
-                    <textarea class="form-control" id="textarea2" rows="10" :value="output" disabled></textarea>
+                    <textarea class="form-control" style="margin-top: 20px;border-radius: 5px;" id="textarea2" rows="10" :value="output" disabled></textarea>
 
-                    <div :style="chatgpt_item?.logs[input != '' ? input : condition]?.result ? 'display:none;' : ''">
+                    <div class="flex" :style="chatgpt_item?.logs[input != '' ? input : condition]?.result ? 'display:none;' : ''">
                         <button
                             type="button"
                             class="f-z-16 btn btn-success btn-control"
@@ -87,11 +87,11 @@
                             Запуск
                             <i id="load-circle-analyze" v-show="load_circle_analyze" class="fa-solid fa-spinner"></i>
                         </button>
+                        <button type="button" style="margin: 20px 0 0 auto !important;" class="f-z-16 btn btn-info btn-help" data-bs-toggle="modal" data-bs-target="#exampleModal" @click="text_analyze_modal = true">
+                            Информация и пояснение
+                        </button>
                     </div>
                 </div>
-                <button type="button" class="f-z-16 btn btn-info btn-help" data-bs-toggle="modal" data-bs-target="#exampleModal" @click="text_analyze_modal = true">
-                    Информация и пояснение
-                </button>
                 <div
                     class="modal fade left-0 right-0 top-0 bottom-0"
                     id="exampleModal"
@@ -136,7 +136,7 @@
     });
     // let prepared_data = ""
     const openai = new OpenAIApi(configuration);
-    export default{
+    export default {
         data() {
             return {
                 condition: "",

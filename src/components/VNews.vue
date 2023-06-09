@@ -110,10 +110,10 @@
 
         
         <div class="switcher ml-auto">
-            <div @click="isGrouped = false" :class="{
+            <div style="border-radius: 3px 0 0 3px;" @click="isGrouped = false" :class="{
                 active: !isGrouped
             }">все</div>
-            <div @click="isGrouped = true" :class="{
+            <div style="border-radius: 0 3px 3px 0;" @click="isGrouped = true" :class="{
                 active: isGrouped
             }">сгруппированные</div><!-- сгруппировано -->
         </div>
