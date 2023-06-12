@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { project, socials, countries, regions, social_categories, generals_count, smi_categories, r_type, main_sentiments_count, selected_main_sentiments, languages_count, languages_general_data, categories_general_data, smi_category, search_tags } from '@/response/header'
-import { dateRange, selected_social_categories, places, selected_categories, selected_languages, resource_count, resource_full_news_count, column_news_count, resources, offsetLeft, offsetRight, resource_clipped_news_count, selected_resources, selected_resource_sentiment, bars_sentiments_selected, selected_date_mode, dynamics, soc_metrics, enable_metrics, is_high_news_count, news_count, similars_count, resources_count, items, items_loading, selected_page, selected_soc_metrics, resource_count_loading, laoding_metrics, selected_regions, reset_all, get_selected_smi_categories, isGrouped, similar_items, similar_items_loading } from '@/response/data/index'
+import { dateRange, selected_social_categories, places, selected_categories, selected_languages, resource_count, resource_full_news_count, column_news_count, resources, offsetLeft, offsetRight, resource_clipped_news_count, selected_resources, selected_resource_sentiment, bars_sentiments_selected, selected_date_mode, dynamics, soc_metrics, enable_metrics, is_high_news_count, news_count, similars_count, resources_count, items, items_loading, selected_page, selected_soc_metrics, resource_count_loading, laoding_metrics, selected_regions, reset_all, get_selected_smi_categories, isGrouped, similar_items, similar_items_loading, thumbnail_dates } from '@/response/data/index'
 import { getResourceData, selected_top_resources, start_top_resources, end_top_resources, each_number, max } from '@/response/options/columnOptions'
 import { get_map_params } from '@/response/options/mapOptions'
 import { selected_dates_query, selected_sentiment_dates_query } from '@/response/options/lineOptions'
@@ -461,7 +461,13 @@ export const getDynamicsData = () => {
     axios
         .get(`/ru/analyticstats/get-project-dynamics-data?p_id=${project.value.id}&r_type=${r_type.value}&category_id=${category_id}&countries=${countries}&regions=${regions}&sentiments=${sentiments}&language=${language}&s_date=${dateRange.value.startDate.format("Y-m-d")} ${s_time.value}&f_date=${dateRange.value.endDate.format("Y-m-d")} ${f_time.value}&from=${from}&to=${end_clipped.value}&resource_length=${resource_count.value}&resources=${_resources}&specifying_sentiments=${specifying_sentiments}&date_mode=${selected_date_mode.value}`)
         .then(response => {
-            dynamics.value = response.data.dates.map(date => {
+			console.log('thumbnail-dates', thumbnail_dates.value);
+
+			let obj_dates = response.data.dates.reduce((prev, date) => ({ ...prev, [date.date]: date }))
+
+			console.log('get-project-dynamics-data', response);
+
+			dynamics.value = thumbnail_dates.value.map(date => {
 
 				let temp_start_date = new Date(dateRange.value.startDate)
 
@@ -479,16 +485,45 @@ export const getDynamicsData = () => {
 				}
 
 				return {
-					y: parseInt(date.y),
-					'-1': parseInt(date['-1']),
-					'0': parseInt(date['0']),
-					'1': parseInt(date['1']),
-					date: date.date,
+					y: parseInt((obj_dates[date] && obj_dates[date].y) ?? 0),
+					'-1': parseInt((obj_dates[date] && obj_dates[date]['-1']) ?? 0),
+					'0': parseInt((obj_dates[date] && obj_dates[date]['0']) ?? 0),
+					'1': parseInt((obj_dates[date] && obj_dates[date]['1']) ?? 0),
+					date: date,
 					x: selected_date_mode.value == 'weekly'
 						? temp_start_date.valueOf()
-						: new Date(`${date.date}${selected_date_mode.value == 'hourly' ? ':00:00' : ''}`).valueOf(),
+						: new Date(`${date}${selected_date_mode.value == 'hourly' ? ':00:00' : ''}`).valueOf(),
 				};
 			})
+			console.log('dynamics', dynamics.value);
+            // dynamics.value = response.data.dates.map(date => {
+
+			// 	let temp_start_date = new Date(dateRange.value.startDate)
+
+			// 	if (date.date >= 1) {
+
+			// 		temp_start_date = new Date(temp_start_date.valueOf() + ((7*24*3600*1000) * date.date))
+
+			// 		let minus_days = temp_start_date.getDay()
+			
+			// 		if (minus_days == 0) minus_days = 7
+
+			// 		if (minus_days != 1) {
+			// 			temp_start_date = temp_start_date.minus('date', minus_days - 1)
+			// 		}
+			// 	}
+
+			// 	return {
+			// 		y: parseInt(date.y),
+			// 		'-1': parseInt(date['-1']),
+			// 		'0': parseInt(date['0']),
+			// 		'1': parseInt(date['1']),
+			// 		date: date.date,
+			// 		x: selected_date_mode.value == 'weekly'
+			// 			? temp_start_date.valueOf()
+			// 			: new Date(`${date.date}${selected_date_mode.value == 'hourly' ? ':00:00' : ''}`).valueOf(),
+			// 	};
+			// })
 
             resource_clipped_news_count.value = parseInt(response.data.resource_clipped_news_count);
 			resource_count_loading.value = false

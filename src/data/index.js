@@ -1,5 +1,5 @@
-import { reactive, ref } from "vue";
-import { dateRange, selected_date_mode } from '@/response/data/index'
+import { reactive, ref, watch } from "vue";
+import { dateRange, selected_date_mode, thumbnail_dates } from '@/response/data/index'
 import { project } from '@/response/header'
 import { getProjectCounts } from "@/response/api"
 
@@ -56,9 +56,32 @@ export function setDateRange() {
         dateRange.value.endDate = date_keys[1]
     }
 
+	update_thumbnail_dates()
+
     getProjectCounts()
 }
 
+function update_thumbnail_dates() {
+	let temp_thumbnail_dates = [];
+	let s_date__string = selected_date_mode.value == 'monthly' ? dateRange.value.startDate.format('Y-m') : dateRange.value.startDate;
+	let temp_start_date = new Date(s_date__string);
+	let plus_type = {
+		daily: 'date',
+		hourly: 'hour',
+		monthly: 'month'
+	}[selected_date_mode.value];
+	while (temp_start_date.valueOf() <= new Date(dateRange.value.endDate + ` ${f_time.value}`).valueOf()) {
+		let temp_format = (selected_date_mode.value == 'monthly' ? 'Y-m' : 'Y-m-d') + (selected_date_mode.value == 'hourly' ? ' h' : '')
+		temp_thumbnail_dates.push(temp_start_date.plus(plus_type, 1).format(temp_format));
+	}
+	thumbnail_dates.value = temp_thumbnail_dates;
+}
+watch(
+	() => selected_date_mode.value,
+	() => {
+		update_thumbnail_dates()
+	}
+)
 
 
 export const s_time = reactive(ref('00:00'))
@@ -96,3 +119,8 @@ export const ranges = reactive(ref({
 	'Last month': [new Date(today.getFullYear(), today.getMonth() - 1, 1).format("Y-m-d"), new Date(today.getFullYear(), today.getMonth(), 0).format("Y-m-d")],
 	//'This year': [new Date(today.getFullYear(), 0, 1), new Date(today.getFullYear(), 11, 31)],
 }))
+
+
+
+
+update_thumbnail_dates()

@@ -715,7 +715,7 @@ body {
 }
 
 .drp > .date-mode_container:hover > .flex.items-center:not(i.flex.items-center) {
-    width: 85px;
+    width: 55px;
     border: 1px solid rgb(59, 89, 152);
     border-radius: 4px 0 0 4px;
     overflow-x: visible;

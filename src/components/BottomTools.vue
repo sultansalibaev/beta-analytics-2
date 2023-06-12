@@ -134,7 +134,7 @@
                     </div>
                 </div>
             </div>
-            <div class="bg-white w-full">
+            <div class="bg-white w-full overflow-hidden">
                 <div
                     class="flex justify-between items-center title p-10-14"
                     style="padding-bottom: 0"

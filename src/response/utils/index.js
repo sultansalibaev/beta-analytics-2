@@ -1,5 +1,6 @@
 
 const dateTypes = {
+    hour: "etHours",
     date: "etDate",
     "week-day": "etDay",
     month: "etMonth",
