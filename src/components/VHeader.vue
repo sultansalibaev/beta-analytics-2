@@ -215,18 +215,18 @@ export default {
 
                 countries.forEach(country_id => {
                     let country = this.places['countries'][this.countries[country_id].hc];
-                    this.languages_count[10].filled_count += country.kz
-                    this.languages_count[4].filled_count += country.ru
-                    this.languages_count[5].filled_count += country.en
-                    this.languages_count[3].filled_count += country.others
+                    this.languages_count[10].filled_count += country?.kz || 0;
+                    this.languages_count[4].filled_count += country?.ru || 0;
+                    this.languages_count[5].filled_count += country?.en || 0;
+                    this.languages_count[3].filled_count += country?.others || 0;
                 })
 
                 regions.forEach(region_id => {
                     let region = this.places['regions'][this.regions[region_id].hc];
-                    this.languages_count[10].filled_count += region.kz
-                    this.languages_count[4].filled_count += region.ru
-                    this.languages_count[5].filled_count += region.en
-                    this.languages_count[3].filled_count += region.others
+                    this.languages_count[10].filled_count += region?.kz || 0;
+                    this.languages_count[4].filled_count += region?.ru || 0;
+                    this.languages_count[5].filled_count += region?.en || 0;
+                    this.languages_count[3].filled_count += region?.others || 0;
                 })
             },
             deep: true

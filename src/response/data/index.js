@@ -11,6 +11,8 @@
         endDate: project.value.f_date,
     }))
 
+
+    export const country_regions_loading = reactive(ref(false))
     export const thumbnail_dates = reactive(ref([]))
 
     export const selected_categories = reactive(ref({}));

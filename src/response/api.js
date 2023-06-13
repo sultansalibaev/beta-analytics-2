@@ -134,6 +134,9 @@ export function getProjectCounts() {
 				return prev
 			}, {})
 
+			console.log('countries', countries.value);
+			console.log('regions', regions.value);
+
 			smi_categories.value = response.data.smi_categories.reduce((prev,smi_cat) => {
 				prev[smi_cat.id_cat] = smi_cat
 				return prev
@@ -215,9 +218,17 @@ export function getMainPlacesCount(reset_all_anyway = true) {
 			languages_count.value[3].count = 0
 
 			response.data.forEach(place => {
-				if (place.country_id == 57 && regions.value[place.region_id]) {
-					map_kz[regions.value[place.region_id].hc] = {
-						id: "kz_" + place.region_id,
+				if (
+					regions.value[place.region_id] &&
+					(
+						place.country_id == regions.value[place.region_id].country_id ||
+						0 == regions.value[place.region_id].country_id
+					)
+				) {
+					let temp_hc = regions.value[place.region_id].hc;
+					if (0 == regions.value[place.region_id].country_id) temp_hc = countries.value[place.country_id]?.hc
+					map_kz[temp_hc] = {
+						id: place.country_id + "_" + place.region_id,
 						value: parseInt(place.count) || 0,
 						resources: parseInt(place.resources) || 0,
 						negative: parseInt(place.negative) || 0,
@@ -229,9 +240,9 @@ export function getMainPlacesCount(reset_all_anyway = true) {
 						en: parseInt(place.en) || 0,
 						others: parseInt(place.others) || 0,
 
-						"hc-key": regions.value[place.region_id].hc,
+						"hc-key": temp_hc,
 						"country": regions.value[place.region_id].name,
-						"isKZ": true
+						"isRegion": true
 					}
 				}
 
@@ -280,6 +291,8 @@ export function getMainPlacesCount(reset_all_anyway = true) {
 
 			places.value['countries'] = map_world;
 			places.value['regions'] = map_kz;
+
+			console.log('regions count is - ', map_kz);Object.en
 
 			if (r_type.value == 1) {
 				getMainSmiCategoriesAndLanguagesCount()
@@ -442,18 +455,20 @@ export const getDynamicsData = () => {
         let place_obj = bars_sentiments_selected.value.sentiment_places[sentiment]
 
         let countries = [];
+        let regions_countries = [];
         let regions = [];
 
         Object.keys(place_obj).filter(place_id => place_obj[place_id]).forEach(place_id => {
-            if (place_id.includes('kz_')) {
-                regions.push(place_id.slice(3, place_id.length))
+            if (place_id.includes('_')) {
+                regions.push(place_id.split('_')[1])
+                regions_countries.push(place_id.split('_')[0])
             }
             else {
                 countries.push(place_id)
             }
         })
 
-        return `${sentiment}_${res_ids}_${regions.join(',')}_${countries.join(',')}`
+        return `${sentiment}_${res_ids}_${regions.join(',')}_${[...countries, ...regions_countries].join(',')}`
     })
 
     specifying_sentiments = specifying_sentiments.join(';')
@@ -581,18 +596,20 @@ export const getGeneralCount = () => {
         let place_obj = bars_sentiments_selected.value.sentiment_places[sentiment]
 
         let countries = [];
+        let regions_countries = [];
         let regions = [];
 
         Object.keys(place_obj).filter(place_id => place_obj[place_id]).forEach(place_id => {
-            if (place_id.includes('kz_')) {
-                regions.push(place_id.slice(3, place_id.length))
+            if (place_id.includes('_')) {
+                regions.push(place_id.split('_')[1])
+                regions_countries.push(place_id.split('_')[0])
             }
             else {
                 countries.push(place_id)
             }
         })
 
-        return `${sentiment}_${res_ids}_${regions.join(',')}_${countries.join(',')}`
+        return `${sentiment}_${res_ids}_${regions.join(',')}_${[...countries, ...regions_countries].join(',')}`
     })
 
     specifying_sentiments = specifying_sentiments.join(';')
@@ -703,18 +720,20 @@ export const getSocialMetrics = () => {
         let place_obj = bars_sentiments_selected.value.sentiment_places[sentiment]
 
         let countries = [];
+        let regions_countries = [];
         let regions = [];
 
         Object.keys(place_obj).filter(place_id => place_obj[place_id]).forEach(place_id => {
-            if (place_id.includes('kz_')) {
-                regions.push(place_id.slice(3, place_id.length))
+            if (place_id.includes('_')) {
+                regions.push(place_id.split('_')[1])
+                regions_countries.push(place_id.split('_')[0])
             }
             else {
                 countries.push(place_id)
             }
         })
 
-        return `${sentiment}_${res_ids}_${regions.join(',')}_${countries.join(',')}`
+        return `${sentiment}_${res_ids}_${regions.join(',')}_${[...countries, ...regions_countries].join(',')}`
     })
 
     specifying_sentiments = specifying_sentiments.join(';')
@@ -779,18 +798,20 @@ export const getItems = () => {
         let place_obj = bars_sentiments_selected.value.sentiment_places[sentiment]
 
         let countries = [];
+        let regions_countries = [];
         let regions = [];
 
         Object.keys(place_obj).filter(place_id => place_obj[place_id]).forEach(place_id => {
-            if (place_id.includes('kz_')) {
-                regions.push(place_id.slice(3, place_id.length))
+            if (place_id.includes('_')) {
+                regions.push(place_id.split('_')[1])
+                regions_countries.push(place_id.split('_')[0])
             }
             else {
                 countries.push(place_id)
             }
         })
 
-        return `${sentiment}_${res_ids}_${regions.join(',')}_${countries.join(',')}`
+        return `${sentiment}_${res_ids}_${regions.join(',')}_${[...countries, ...regions_countries].join(',')}`
     })
 
     specifying_sentiments = specifying_sentiments.join(';')

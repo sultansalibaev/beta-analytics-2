@@ -32,6 +32,7 @@
                                 [country['hc-key']]: true,
                                 // 'before-to-kz': country.country == 'Казахстан',
                             }"
+                            v-if="!country.isRegion || (country.isRegion && country.id.split('_')[0] == 57)"
                              :title="[
                                 `Регион: ${country.country}`,
                                 `Публикаций: ${country.value.push_space()}`,
@@ -39,7 +40,7 @@
                             ].join('\n')">
 
                             <div class="flex items-center" style="white-space: nowrap;text-overflow: ellipsis;overflow: hidden;padding-right: 5px;">
-                                <img :src="`/media/img/country/${country['hc-key']}.png`" v-if="country.isKZ != true" width="25" height="25" class="m-r-7" alt="">
+                                <img :src="`/media/img/country/${country['hc-key']}.png`" v-if="country.isRegion != true" width="25" height="25" class="m-r-7" alt="">
                                 <span style="text-overflow: ellipsis;overflow: hidden;">{{ country.country }}</span>
                             </div>
 
@@ -53,7 +54,12 @@
                     </div>
                 </div>
                 <div class="w-full">
-                    <keep-alive>
+                    
+                    <i
+                        class="fa-solid fa-spinner"
+                        v-if="country_regions_loading && map_switch"
+                    ></i>
+                    <keep-alive v-else>
                         <component :is="map ? 'MapChart' : 'BarChart'" />
                     </keep-alive>
                     
@@ -173,7 +179,7 @@ import DateRangePicker from '@/components/UI/DateRangePicker';
 import LineChart from '@/components/UI/LineChart.vue';
 import MapChart from "@/components/UI/MapChart";
 import BarChart from "@/components/UI/BarChart";
-import { selected_regions, places, map, date_modes, selected_date_mode, dateRange } from "@/response/data/index"
+import { selected_regions, places, map, date_modes, selected_date_mode, dateRange, country_regions_loading } from "@/response/data/index"
 import { min_height, has_selected_sentiment, reset_sentiment, inBarPercentage, showBarPercentage } from "@/response/options/barOptions"
 import { select_region, select_one_region, reset_regions, region_active, region__MouseOver, region__MouseOut, toggle_map_switcher, map_type_switcher, map_switch } from "@/response/options/mapOptions"
 import { has_selected_date, reset_dynamics, basic_line, has_selected_sentiment_date, reset_sentiment_dynamics } from "@/response/options/lineOptions"
@@ -220,7 +226,7 @@ export default {
         },
     },
     setup() {
-        return { dateRange, modal, hasKazakstan, isKazakstan, places, map, date_modes, selected_date_mode, select_region, select_one_region, reset_regions, region_active, selected_regions, region__MouseOver, region__MouseOut, min_height, has_selected_sentiment, reset_sentiment, has_selected_date, reset_dynamics, has_selected_sentiment_date, reset_sentiment_dynamics, basic_line, toggle_map_switcher, inBarPercentage, showBarPercentage, map_type_switcher, map_switch }
+        return { country_regions_loading, dateRange, modal, hasKazakstan, isKazakstan, places, map, date_modes, selected_date_mode, select_region, select_one_region, reset_regions, region_active, selected_regions, region__MouseOver, region__MouseOut, min_height, has_selected_sentiment, reset_sentiment, has_selected_date, reset_dynamics, has_selected_sentiment_date, reset_sentiment_dynamics, basic_line, toggle_map_switcher, inBarPercentage, showBarPercentage, map_type_switcher, map_switch }
     }
 }
 </script>

@@ -1,5 +1,5 @@
 
-import world_json from '@/response/json/world_countries.js'
+// import world_json from '@/response/json/world_countries.js'
 
 import { computed, reactive, ref, watch } from 'vue';
 import Highcharts from "highcharts";
@@ -7,8 +7,9 @@ import Highcharts from "highcharts";
 import { reset_sentiment } from "@/response/options/barOptions"
 
 import { selected_regions, places } from "@/response/data/index"
-import { isKazakstan } from "@/response/header"
+import { isKazakstan, countries } from "@/response/header"
 import { create_global_filter, global_filter } from '../filter';
+// import { countries } from '../data';
 
 export const map_switch = reactive(ref(isKazakstan.value))
 
@@ -41,8 +42,8 @@ export const get_map_params = computed(() => {
         .filter(id => selected_regions.value[id]);
 
     map_params = map_params.reduce((prev, id) => {
-        if (id.includes('kz_')) {
-            prev.regions.push(id.slice(3, id.length))
+        if (id.includes('_')) {
+            prev.regions.push(id.split('_')[1])
         }
         else {
             prev.countries.push(id)
@@ -78,12 +79,12 @@ export const select_one_region = (id, selected) => {
 
 export const select_region = (id, selected) => {
     selected_regions.value[id] = selected == 'clicked-item-from-region-list' ? !selected_regions.value[id] : selected;
-    if ((id + '').includes('kz_') && selected_regions.value[id]) {
-        selected_regions.value[57] = false
+    if ((id + '').includes('_') && selected_regions.value[id]) {
+        selected_regions.value[id.split('_')[0]] = false
     }
-    else if (id == 57 && selected_regions.value[id]) {
+    else if (!(id + '').includes('_') && selected_regions.value[id]) {
         Object.keys(selected_regions.value).forEach(region_id => {
-            if ((region_id + '').includes('kz_') && selected_regions.value[region_id]) {
+            if ((region_id + '').includes('_') && selected_regions.value[region_id]) {
                 selected_regions.value[region_id] = false
             }
         })
@@ -119,9 +120,15 @@ export const regionMouseOut = function (id) {
     region_active.value[id] = false;
 }
 
+function getMapData(obj) {
+    return obj.features.map(region => ({
+        'hc-key': region?.properties['hc-key'],
+        value: null,
+    }))
+}
 export let mapOptions = computed(() => ({
     chart: {
-        map: (map_switcher.value ? "map-kz" : "map-world"),
+        map: (map_switcher.value ? `map-${countries.value[57]?.regions_file_name}` : "map-world"),
         animation: false,
         margin: 0,
     },
@@ -211,9 +218,9 @@ export let mapOptions = computed(() => ({
                 },
             },
 
-            mapData: Highcharts.maps[map_switcher.value ? "map-kz" : "map-world"],
+            mapData: Highcharts.maps[map_switcher.value ? `map-${countries.value[57]?.regions_file_name}` : "map-world"],
             //allAreas: false,
-            data: world_json[(map_switcher.value ? "map-kz" : "map-world")].map(item => {
+            data: getMapData(Highcharts.maps[(map_switcher.value ? `map-${countries.value[57]?.regions_file_name}` : "map-world")]).map(item => {
                 let find_cntry = places.value[map_type_switcher.value][item['hc-key']];
                 if (find_cntry != undefined) {
                     find_cntry.selected = selected_regions.value[find_cntry.id];
