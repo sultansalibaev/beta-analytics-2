@@ -1,6 +1,6 @@
 import { computed, reactive, ref } from "vue";
 
-import { bars_sentiments_selected, selected_regions, places, map } from "@/response/data/index"
+import { bars_sentiments_selected, selected_regions, places, map, current_country_id } from "@/response/data/index"
 import { map_type_switcher } from "@/response/options/mapOptions"
 import { selected_main_sentiments } from "@/response/header";
 
@@ -31,7 +31,7 @@ let sentiment_type = {
 }
 
 let barOptions = computed(() => {
-    let temp_regions = [...Object.values(places.value[map_type_switcher.value])]
+    let temp_regions = [...Object.values(places.value[map_type_switcher.value]).filter(country => country.id.split('_')[0] == current_country_id.value)]
     
     temp_regions.sort((a, b) => (b.value - a.value))
     let temp_regions_bool = [...Object.values(places.value[map_type_switcher.value])].find(obj => (selected_regions.value[obj.id])) != undefined

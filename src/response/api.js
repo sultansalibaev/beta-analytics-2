@@ -1,6 +1,6 @@
 import axios from 'axios'
-import { project, socials, countries, regions, social_categories, generals_count, smi_categories, r_type, main_sentiments_count, selected_main_sentiments, languages_count, languages_general_data, categories_general_data, smi_category, search_tags } from '@/response/header'
-import { dateRange, selected_social_categories, places, selected_categories, selected_languages, resource_count, resource_full_news_count, column_news_count, resources, offsetLeft, offsetRight, resource_clipped_news_count, selected_resources, selected_resource_sentiment, bars_sentiments_selected, selected_date_mode, dynamics, soc_metrics, enable_metrics, is_high_news_count, news_count, similars_count, resources_count, items, items_loading, selected_page, selected_soc_metrics, resource_count_loading, laoding_metrics, selected_regions, reset_all, get_selected_smi_categories, isGrouped, similar_items, similar_items_loading, thumbnail_dates } from '@/response/data/index'
+import { project, socials, countries, regions, social_categories, generals_count, smi_categories, r_type, main_sentiments_count, selected_main_sentiments, languages_count, languages_general_data, categories_general_data, smi_category, search_tags, isKazakstan } from '@/response/header'
+import { dateRange, selected_social_categories, places, selected_categories, selected_languages, resource_count, resource_full_news_count, column_news_count, resources, offsetLeft, offsetRight, resource_clipped_news_count, selected_resources, selected_resource_sentiment, bars_sentiments_selected, selected_date_mode, dynamics, soc_metrics, enable_metrics, is_high_news_count, news_count, similars_count, resources_count, items, items_loading, selected_page, selected_soc_metrics, resource_count_loading, laoding_metrics, selected_regions, reset_all, get_selected_smi_categories, isGrouped, similar_items, similar_items_loading, thumbnail_dates, countries_with_regions, getCountryRegions } from '@/response/data/index'
 import { getResourceData, selected_top_resources, start_top_resources, end_top_resources, each_number, max } from '@/response/options/columnOptions'
 import { get_map_params } from '@/response/options/mapOptions'
 import { selected_dates_query, selected_sentiment_dates_query } from '@/response/options/lineOptions'
@@ -163,6 +163,18 @@ export function getProjectCounts() {
 				1: 0,
 			}
 		})
+		.finally(() => {
+			
+			let temp_regions_file_name = '';
+			if (isKazakstan.value) {
+				temp_regions_file_name = countries.value[project.value.place_id]?.regions_file_name;
+			}
+			else {
+				temp_regions_file_name = Object.keys(countries_with_regions.value)[0];
+			}
+
+			if (temp_regions_file_name) getCountryRegions(temp_regions_file_name)
+		})
 }
 
 export function setSentimentsCount() {
@@ -174,7 +186,7 @@ export function setSentimentsCount() {
 	if (r_type.value == 1) {
 		temp_main_sentiments_count["-1"] = generals_count.value[1]["-1"] ?? 0
 		temp_main_sentiments_count["0"] = generals_count.value[1]["0"] ?? 0
-		temp_main_sentiments_count["1"] = generals_count.value[1]["-1"] ?? 0
+		temp_main_sentiments_count["1"] = generals_count.value[1]["1"] ?? 0
 	}
 	else {
 		let filtered_selected_socials = Object.keys(selected_social_categories.value)
@@ -191,7 +203,7 @@ export function setSentimentsCount() {
 		else {
 			temp_main_sentiments_count["-1"] = generals_count.value[2]["-1"] ?? 0
 			temp_main_sentiments_count["0"] = generals_count.value[2]["0"] ?? 0
-			temp_main_sentiments_count["1"] = generals_count.value[2]["-1"] ?? 0
+			temp_main_sentiments_count["1"] = generals_count.value[2]["1"] ?? 0
 		}
 	}
 	main_sentiments_count.value = temp_main_sentiments_count
@@ -212,6 +224,8 @@ export function getMainPlacesCount(reset_all_anyway = true) {
 			let map_world = {};
 			let map_kz = {};
 
+			countries_with_regions.value = {};
+
 			languages_count.value[10].count = 0
 			languages_count.value[4].count = 0
 			languages_count.value[5].count = 0
@@ -225,8 +239,15 @@ export function getMainPlacesCount(reset_all_anyway = true) {
 						0 == regions.value[place.region_id].country_id
 					)
 				) {
+
 					let temp_hc = regions.value[place.region_id].hc;
-					if (0 == regions.value[place.region_id].country_id) temp_hc = countries.value[place.country_id]?.hc
+
+					if (0 == regions.value[place.region_id].country_id) temp_hc = countries.value[place.country_id]?.hc;
+
+					if (place.region_id != 0) {
+						countries_with_regions.value[place.country_id] = true;
+					}
+
 					map_kz[temp_hc] = {
 						id: place.country_id + "_" + place.region_id,
 						value: parseInt(place.count) || 0,
@@ -292,7 +313,7 @@ export function getMainPlacesCount(reset_all_anyway = true) {
 			places.value['countries'] = map_world;
 			places.value['regions'] = map_kz;
 
-			console.log('regions count is - ', map_kz);Object.en
+			console.log('regions count is - ', map_kz);
 
 			if (r_type.value == 1) {
 				getMainSmiCategoriesAndLanguagesCount()
@@ -478,9 +499,9 @@ export const getDynamicsData = () => {
         .then(response => {
 			console.log('thumbnail-dates', thumbnail_dates.value);
 
-			let obj_dates = response.data.dates.reduce((prev, date) => ({ ...prev, [date.date]: date }))
+			let obj_dates = response.data.dates.reduce((prev, date) => ({ ...prev, [date.date]: date }), {})
 
-			console.log('get-project-dynamics-data', response);
+			console.log('get-project-dynamics-data', response, obj_dates);
 
 			dynamics.value = thumbnail_dates.value.map(date => {
 

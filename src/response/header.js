@@ -82,8 +82,8 @@ export const project = reactive(ref({
     place_id: document.querySelector('#place_id').value ?? 0,
 }));
 
-export const hasKazakstan = computed(() => project.value.place_id == 0 || String(project.value.place_id)?.split(',')?.find(place_id => place_id == '57') == 57)
-export const isKazakstan = computed(() => project.value.place == 2 && project.value.place_id == 57)
+// export const hasKazakstan = computed(() => project.value.place_id == 0 || String(project.value.place_id)?.split(',')?.find(place_id => place_id == '57') == 57)
+export const isKazakstan = computed(() => project.value.place == 2 && !project.value.place_id.includes(','))
 
 export const selected_social_categories = reactive(ref({}));
 export const selected_main_sentiments = reactive(

@@ -46,6 +46,25 @@
         }
     }
 
+    export const current_country_id = reactive(ref(57))
+    export const countries_with_regions = reactive(ref({}))
+    import axios from 'axios';
+    import Highcharts from "highcharts";
+
+    export const getCountryRegions = (file_name = 'kz-all.js') => {
+        country_regions_loading.value = true;
+        axios.get(`/myjs_css/js/highcharts/countries/${file_name}on`)
+            .then(response => {
+                console.log('response', response);
+                
+                if (response?.data) Highcharts.maps[`map-${file_name}`] = response?.data;
+        
+                console.log('Highcharts.maps after - ', Highcharts.maps);
+            })
+            .finally(() => {
+                country_regions_loading.value = false;
+            })
+    }
     export const places = reactive(ref({
         "regions": {},
         "countries": {},

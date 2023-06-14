@@ -1,14 +1,16 @@
 <template>
-    <div class="wrap-body m-b-15 flex items-center">
-        <span style="font-size: 16px">Результат фильтра:&nbsp;&nbsp;</span>
-        <span class="result-count result-count__items"
-            >{{ news_count.push_space() }}{{ similars_count ? ` + ${similars_count}` : '' }}&nbsp;&nbsp;</span
-        >
-        <span class="result-count result-count__resource"
-            >({{ resources_count.push_space() }})</span
-        >
+    <div class="wrap-body m-b-15 flex items-center result-info-1400">
+        <span>
+            <span style="font-size: 16px">Результат фильтра:&nbsp;&nbsp;</span>
+            <span class="result-count result-count__items"
+                >{{ news_count.push_space() }}{{ similars_count ? ` + ${similars_count}` : '' }}&nbsp;&nbsp;</span
+            >
+            <span class="result-count result-count__resource"
+                >({{ resources_count.push_space() }})</span
+            >
+        </span>
 
-        <div class="sort-by-metrics flex items-center" v-show="r_type == 2">
+        <div class="sort-by-metrics flex items-center result-info-m-l-0-1400" v-show="r_type == 2">
             <i
                 class="fa fa-thumbs-o-up sort-by-metric prompt-parent"
                 @click="select_metric('likes')"
@@ -118,7 +120,7 @@
             }">сгруппированные</div><!-- сгруппировано -->
         </div>
 
-        <div class="nav-pagination">
+        <div class="nav-pagination result-info-m-r-auto-1400">
             <div class="hovered-angle">
                 <i
                     class="fa-solid fa-angles-left first-page icon-w-0"
@@ -1669,7 +1671,7 @@
 
     <!-- Pagination -->
     <div class="wrap-body m-b-15 flex items-center">
-        <div class="nav-pagination">
+        <div class="nav-pagination result-info-m-r-auto-1400">
             <div class="hovered-angle">
                 <i
                     class="fa-solid fa-angles-left first-page icon-w-0"
@@ -3300,6 +3302,7 @@ i.positive {
     background: white;
     z-index: -1;
     margin: auto;
+    border-radius: 2px;
 }
 .modal-item-social-icon.fa-odnoklassniki-square::after {
     height: 14px;

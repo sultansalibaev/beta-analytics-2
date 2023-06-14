@@ -1,8 +1,8 @@
 <template>
-    <div class="flex">
-        <div class="flex map w-half m-r-15" style="height: 312px;">
+    <div class="flex media-header-1400">
+        <div class="flex map w-half m-r-15 media-header-item-1400 media-header-margin-1400 media-metrics-885_769" style="height: 312px;">
             <div
-                class="bg-white p-10-14 m-r-15"
+                class="bg-white p-10-14 m-r-15 tool-shadow media-lang-margin-885_769"
                 style="min-width: 240px; width: 70%"
             >
                 <div class="flex justify-between items-center title">
@@ -134,7 +134,7 @@
                     </div>
                 </div>
             </div>
-            <div class="bg-white w-full overflow-hidden">
+            <div class="bg-white w-full overflow-hidden tool-shadow">
                 <div
                     class="flex justify-between items-center title p-10-14"
                     style="padding-bottom: 0"
@@ -263,7 +263,7 @@
             </div>
         </div>
         <div
-            class="flex flex-col map bg-white w-half pos-r"
+            class="flex flex-col map bg-white w-half pos-r tool-shadow media-header-item-1400"
             style="overflow-y: clip;height: 312px;/* height: calc(250px + 35px + 10px + 15px);  */"
         >
             <div
@@ -287,6 +287,7 @@
 
                 <div class="switcher" v-show="!staced_column">
                     <div
+                        style="border-radius: 3px 0 0 3px;"
                         @click="inColumnPercentage = !inColumnPercentage"
                         :class="{
                             active: !inColumnPercentage,
@@ -308,7 +309,7 @@
                             marginLeft: inColumnPercentage ? '3px' : 0,
                             padding: inColumnPercentage ? '0 5px 0 6px' : 0,
                         }"
-                        style='overflow: hidden;fontWeight: 900;fontFamily: "Font Awesome 5 Free";transition: .25s'
+                        style='overflow: hidden;fontWeight: 900;fontFamily: "Font Awesome 5 Free";transition: .25s;border-radius: 0 3px 3px 0;'
                         :class="{
                             active: inColumnPercentage && showColumnPercentage
                         }" @click="showColumnPercentage = !showColumnPercentage">%</div>
@@ -657,9 +658,9 @@ export default {
 
 .please_wait_metrics {
     margin: 3px 14px 14px 14px;
-    line-height: 21px;
-    font-size: 14px;
-    padding: 10px;
+    line-height: 16px;
+    font-size: 12.5px;
+    padding: 8px;
     background: #cccccc54;
     border-radius: 5px;
     border: 3px solid #ccc;

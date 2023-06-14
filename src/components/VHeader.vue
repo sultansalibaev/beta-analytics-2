@@ -1,6 +1,6 @@
 <template>
-    <div class="flex select-none">
-        <div class="flex w-half m-r-15">
+    <div class="flex select-none media-header-1400">
+        <div class="flex w-half m-r-15 media-header-item-1400 media-header-margin-1400 media-header-top-875">
             <div class="r_type m-r-2" :class="{
                 selected: r_type == 1
             }" @click="r_type = 1;selected_social_categories = {}">
@@ -24,45 +24,56 @@
             </div>
         </div>
 
-        <div class="w-half flex items-center justify-between">
+        <div class="w-half flex items-center justify-between media-header-item-1400 media-header-bottom-875">
             <div class="sentiments flex">
                 <div class="negative" :class="{
                     off: !selected_main_sentiments['-1']
-                }" @click="select_main_sentiment($event, '-1')">Негатив: {{ main_sentiments_count['-1'].push_space() }}</div>
+                }" @click="select_main_sentiment($event, '-1')">
+                    <i style="margin-right: 5px;font-size: 15.5px;" class="fa-solid fa-face-angry"></i>
+                    <!-- Негатив:  -->
+                    {{ main_sentiments_count['-1'].push_space() }}
+                </div>
                 <div class="neutral" :class="{
                     off: !selected_main_sentiments['0']
-                }" @click="select_main_sentiment($event, '0')">Нейтрал: {{ main_sentiments_count['0'].push_space() }}</div>
+                }" @click="select_main_sentiment($event, '0')">
+                    <i style="margin-right: 5px;font-size: 15.5px;" class="fa-solid fa-face-meh"></i>
+                    <!-- Нейтрал:  -->
+                    {{ main_sentiments_count['0'].push_space() }}
+                </div>
                 <div class="positive" :class="{
                     off: !selected_main_sentiments['1']
-                }" @click="select_main_sentiment($event, '1')">Позитив: {{ main_sentiments_count['1'].push_space() }}</div>
+                }" @click="select_main_sentiment($event, '1')">
+                    <i style="margin-right: 5px;font-size: 15.5px;" class="fa-solid fa-face-smile"></i>
+                    <!-- Позитив:  -->
+                    {{ main_sentiments_count['1'].push_space() }}
+                </div>
             </div>
+            
+            <span style="
+                position: relative;
+                ">
+                <span @click="modal = !modal" style="
+                    background: rgb(59, 89, 152);
+                    color: rgb(255, 255, 255);
+                    font-size: 13px;
+                    display: flex;
+                    align-items: center;
+                    height: 23.5px;
+                    padding: 0 5px;
+                    border-radius: 3.5px;
+                    user-select: none;
+                    cursor: pointer;">
+                    <i class="fa fa-calendar" style="margin: 0 7px 0 2.4px;"></i>
+                    {{ dateRange.startDate.format("d.m.Y") }} - {{ dateRange.endDate.format("d.m.Y") }}
+                </span>
+                <date-range-picker :modal="modal" v-show="modal"></date-range-picker>
+            </span>
             <div class="flex items-center export">
-                <div class="export-text pos-r">
-                    <div class="p-b-1 w-200" @click="filter_modal = !filter_modal">
-                        Экспорт с фильтра
-                    </div>
-                    <div class="m-l-5">
-                        <!-- <img src="@/assets/bars-filter.svg" alt="bars-filter" width="18"> -->
-                    </div>
-                    <div class="filter-params pos-a" style="z-index: 1" v-show="filter_modal">
-                        <!-- <div class="filter-item" v-for="param in Object.values(filter)" :key="param.title">
-                            <div class="pin">
-                                <img :src="img_url(param.pinned ? 'pinned' : 'pin')" width="14" height="14">
-                            </div>
-                            <div class="filter-info" :class="{
-                                pinned: param.pinned
-                            }">
-                                <div class="filter-title">{{ param.title }}:</div>
-                                <div class="filter-value text-dots" :title="param.value.join_title()">{{
-                                    param.value.join(',') }}</div>
-                            </div>
-                        </div> -->
-                        <div class="export-with-filter">
-                            Экспорт
-                        </div>
+                <div class="export-text">
+                    <div class="p-b-1" @click="filter_modal = !filter_modal">
+                        Экспорт
                     </div>
                 </div>
-                <div class="reset-filters">×</div>
             </div>
         </div>
     </div>
@@ -70,6 +81,8 @@
 
 <script>
 // import axios from 'axios'
+import DateRangePicker from '@/components/UI/DateRangePicker';
+import { modal } from '@/data'
 import { places, selected_regions, selected_categories, selected_languages, resources, resource_names, resource_count, resource_clipped_news_count, resource_full_news_count, column_news_count, selected_social_categories, dynamics, offsetLeft, offsetRight, selected_resources, selected_resource_sentiment, bars_sentiments_selected, selected_date_mode, dateRange, reset_all, get_selected_smi_categories } from "@/response/data/index"
 import { r_type, project, languages_count, languages_general_data, categories_general_data, smi_category, smi_categories, selected_main_sentiments, socials, countries, regions, social_categories, generals_count, main_sentiments_count } from "@/response/header"
 import { getProjectCounts, getMainPlacesCount, getDynamicsData, setSentimentsCount, getMainSmiCategoriesAndLanguagesCount, getResourceCount } from "@/response/api"
@@ -78,8 +91,11 @@ import { selected_top_resources, each_number, start_top_resources, end_top_resou
 // import { main_watcher, main_watcher_updates } from "@/response/data/watchers"
 
 export default {
+    components: {
+        DateRangePicker,
+    },
     setup() {
-        return { get_selected_smi_categories, getProjectCounts, getMainPlacesCount, getDynamicsData, setSentimentsCount, getMainSmiCategoriesAndLanguagesCount, getResourceCount, selected_top_resources, each_number, places, map_type_switcher, start_top_resources, end_top_resources, max, selected_regions, selected_categories, selected_languages, resources, getResourceData, resource_names, resource_count, resource_clipped_news_count, resource_full_news_count, column_news_count, selected_social_categories, social_categories, generals_count, main_sentiments_count, dynamics, offsetLeft, offsetRight, selected_resources, selected_resource_sentiment, bars_sentiments_selected, selected_date_mode, dateRange, reset_all, r_type, project, languages_count, get_map_params, languages_general_data, categories_general_data, smi_category, smi_categories, selected_main_sentiments, socials, countries, regions }
+        return { get_selected_smi_categories, getProjectCounts, getMainPlacesCount, getDynamicsData, setSentimentsCount, getMainSmiCategoriesAndLanguagesCount, getResourceCount, selected_top_resources, each_number, places, map_type_switcher, start_top_resources, end_top_resources, max, selected_regions, selected_categories, selected_languages, resources, getResourceData, resource_names, resource_count, resource_clipped_news_count, resource_full_news_count, column_news_count, selected_social_categories, social_categories, generals_count, main_sentiments_count, dynamics, offsetLeft, offsetRight, selected_resources, selected_resource_sentiment, bars_sentiments_selected, selected_date_mode, dateRange, modal, reset_all, r_type, project, languages_count, get_map_params, languages_general_data, categories_general_data, smi_category, smi_categories, selected_main_sentiments, socials, countries, regions }
     },
     data() {
         return {

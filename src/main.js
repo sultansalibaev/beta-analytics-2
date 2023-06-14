@@ -40,7 +40,7 @@ import { createApp } from 'vue'
 import App from '@/App.vue'
 import '@/assets/tailwind.css'
 
-import { country_regions_loading } from "@/response/data/index"
+// import { country_regions_loading } from "@/response/data/index"
 
 
 import HighchartsVue from "highcharts-vue";
@@ -51,6 +51,9 @@ import map_world from "@highcharts/map-collection/custom/world.geo.json";
 // import map_ru from "@highcharts/map-collection/countries/ru/ru-all.geo.json";
 // import map_kz from "@/response/json/kz-all.json";
 
+// import { getCountryRegions, countries_with_regions } from "@/response/data/index"
+// import { project, countries, isKazakstan } from "@/response/header"
+
 mapInit(Highcharts);
 accessibilityInit(Highcharts);
 
@@ -59,24 +62,6 @@ Highcharts.maps["map-world"] = map_world;
 // Highcharts.maps["map-ru"] = map_ru;
 
 console.log('Highcharts.maps', Highcharts.maps);
-
-import axios from 'axios';
-
-const getCountryRegions = (file_name = 'kz-all.js') => {
-    country_regions_loading.value = true;
-    axios.get(`/myjs_css/js/highcharts/countries/${file_name}on`)
-        .then(response => {
-            console.log('response', response);
-            
-            if (response?.data) Highcharts.maps[`map-${file_name}`] = response?.data;
-    
-            console.log('Highcharts.maps after - ', Highcharts.maps);
-        })
-        .finally(() => {
-            country_regions_loading.value = false;
-        })
-}
-getCountryRegions()
 
 
 console.log('finish first axios request');

@@ -72,7 +72,8 @@ function update_thumbnail_dates() {
 	}[selected_date_mode.value];
 	while (temp_start_date.valueOf() <= new Date(dateRange.value.endDate + ` ${f_time.value}`).valueOf()) {
 		let temp_format = (selected_date_mode.value == 'monthly' ? 'Y-m' : 'Y-m-d') + (selected_date_mode.value == 'hourly' ? ' h' : '')
-		temp_thumbnail_dates.push(temp_start_date.plus(plus_type, 1).format(temp_format));
+		temp_thumbnail_dates.push(temp_start_date.format(temp_format));
+		temp_start_date.plus(plus_type, 1)
 	}
 	thumbnail_dates.value = temp_thumbnail_dates;
 }

@@ -6,7 +6,7 @@ import Highcharts from "highcharts";
 
 import { reset_sentiment } from "@/response/options/barOptions"
 
-import { selected_regions, places } from "@/response/data/index"
+import { selected_regions, places, current_country_id, getCountryRegions, country_regions_loading } from "@/response/data/index"
 import { isKazakstan, countries } from "@/response/header"
 import { create_global_filter, global_filter } from '../filter';
 // import { countries } from '../data';
@@ -17,8 +17,12 @@ watch(selected_regions, () => {
     get_map_keys.value.map(key => key);
 });
 
-export const toggle_map_switcher = () => {
+export const toggle_map_switcher = (country_id, regions_file_name) => {
     map_switch.value = !map_switch.value;
+    if (country_id) {
+        current_country_id.value = country_id
+        getCountryRegions(regions_file_name)
+    }
 }
 
 const map_switcher = computed(() => (
@@ -121,6 +125,7 @@ export const regionMouseOut = function (id) {
 }
 
 function getMapData(obj) {
+    if (!obj?.features) return [];
     return obj.features.map(region => ({
         'hc-key': region?.properties['hc-key'],
         value: null,
@@ -128,7 +133,7 @@ function getMapData(obj) {
 }
 export let mapOptions = computed(() => ({
     chart: {
-        map: (map_switcher.value ? `map-${countries.value[57]?.regions_file_name}` : "map-world"),
+        map: (map_switcher.value ? `map-${countries.value[current_country_id.value]?.regions_file_name}` : "map-world"),
         animation: false,
         margin: 0,
     },
@@ -218,9 +223,9 @@ export let mapOptions = computed(() => ({
                 },
             },
 
-            mapData: Highcharts.maps[map_switcher.value ? `map-${countries.value[57]?.regions_file_name}` : "map-world"],
+            mapData: Highcharts.maps[map_switcher.value ? `map-${countries.value[current_country_id.value]?.regions_file_name}` : "map-world"],
             //allAreas: false,
-            data: getMapData(Highcharts.maps[(map_switcher.value ? `map-${countries.value[57]?.regions_file_name}` : "map-world")]).map(item => {
+            data: (country_regions_loading.value ? [] : getMapData(Highcharts.maps[(map_switcher.value ? `map-${countries.value[current_country_id.value]?.regions_file_name}` : "map-world")])).map(item => {
                 let find_cntry = places.value[map_type_switcher.value][item['hc-key']];
                 if (find_cntry != undefined) {
                     find_cntry.selected = selected_regions.value[find_cntry.id];
