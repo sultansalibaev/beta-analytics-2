@@ -33,7 +33,7 @@ let sentiment_type = {
 let barOptions = computed(() => {
     let temp_places = Object.values(places.value[map_type_switcher.value])
 
-    if (!map_switch) {
+    if (map_switch && map_type_switcher.value != 'countries') {
         temp_places = temp_places.filter(country => country.id.split('_')[0] == current_country_id.value)
     }
 
