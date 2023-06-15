@@ -1,5 +1,5 @@
 <template>
-    <div class="wrap-body m-b-15 flex items-center result-info-1400">
+    <div class="wrap-body m-b-15 flex items-center result-info-1435">
         <span>
             <span style="font-size: 16px">Результат фильтра:&nbsp;&nbsp;</span>
             <span class="result-count result-count__items"
@@ -10,7 +10,7 @@
             >
         </span>
 
-        <div class="sort-by-metrics flex items-center result-info-m-l-0-1400" v-show="r_type == 2">
+        <div class="sort-by-metrics flex items-center result-info-m-l-0-1435" v-show="r_type == 2">
             <i
                 class="fa fa-thumbs-o-up sort-by-metric prompt-parent"
                 @click="select_metric('likes')"
@@ -120,7 +120,7 @@
             }">сгруппированные</div><!-- сгруппировано -->
         </div>
 
-        <div class="nav-pagination result-info-m-r-auto-1400">
+        <div class="nav-pagination result-info-m-r-auto-1435">
             <div class="hovered-angle">
                 <i
                     class="fa-solid fa-angles-left first-page icon-w-0"
@@ -606,9 +606,9 @@
         @click.stop="modal_item = null"
     >
         <div
-            class="flex flex-col relative"
+            class="flex flex-col relative item-modal-window"
             style="
-                min-width: 900px;
+                /* min-width: 900px; */
                 width: 75%;
                 height: 90%;
                 margin-bottom: 20px;
@@ -1671,7 +1671,7 @@
 
     <!-- Pagination -->
     <div class="wrap-body m-b-15 flex items-center">
-        <div class="nav-pagination result-info-m-r-auto-1400">
+        <div class="nav-pagination result-info-m-r-auto-1435">
             <div class="hovered-angle">
                 <i
                     class="fa-solid fa-angles-left first-page icon-w-0"
@@ -3324,7 +3324,8 @@ i.positive {
 
 @media (max-width: 1000px) {
     .chat-gpt-modal {
-        min-width: 800px;
+        min-width: 540px;
+        width: calc(100% - 20px) !important;
     }
 }
 .tab-head {

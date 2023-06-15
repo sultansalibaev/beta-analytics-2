@@ -1,6 +1,6 @@
 <template>
-    <div class="flex media-header-1400">
-        <div class="map bg-white p-10-14 w-half m-r-15 pos-r tool-shadow media-header-item-1400 media-header-margin-1400" style="padding-bottom:0;min-width: calc(50% - 8px);">
+    <div class="flex media-header-1435">
+        <div class="map bg-white p-10-14 w-half m-r-15 pos-r tool-shadow media-header-item-1435 media-header-margin-1435" style="padding-bottom:0;min-width: calc(50% - 8px);">
             <div class="flex justify-between items-center title">
                 <span>{{ map ? "Геолокация последних публикаций" : "Тональность по регионам" }}</span>
                 <div class="switcher">
@@ -19,7 +19,7 @@
             <div class="flex map_container media-map-960" :style="{
                 'min-height': (map ? 190 : min_height) + 'px'
             }">
-                <div class="map-content flex flex-col media-map-places-list-width-520" v-show="map">
+                <div class="map-content flex flex-col media-map-places-list-width-520" style="min-width: 240px;" v-show="map">
 
                     <div v-for="country in sort_by_news_count" :key="country.id" class="flex items-center region-container">
                         <div class="region cursor-pointer"
@@ -53,7 +53,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="w-full media-map-min-height-960">
+                <div class="w-full media-map-min-height-960 flex justify-center overflow-hidden">
                     
                     <i
                         class="fa-solid fa-spinner"
@@ -107,7 +107,7 @@
                 </i>
             </div>
         </div>
-        <div class="map bg-white w-half tool-shadow media-header-item-1400">
+        <div class="map bg-white w-half tool-shadow media-header-item-1435">
             <div class="flex justify-between items-center title p-10-14" style="padding-bottom:0;margin-bottom:4px">
                 <span>Динамика публикаций {{ basic_line ? '' : 'по тональности' }}</span>
 
