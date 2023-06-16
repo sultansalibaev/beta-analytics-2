@@ -1,6 +1,6 @@
 <template>
-    <div class="flex select-none media-header-1435">
-        <div class="flex w-half m-r-15 media-header-item-1435 media-header-margin-1435 media-header-top-875">
+    <div class="flex select-none media-header-1439">
+        <div class="flex w-half m-r-15 media-header-item-1439 media-header-margin-1439 media-header-top-875">
             <div class="r_type m-r-2" :class="{
                 selected: r_type == 1
             }" @click="r_type = 1;selected_social_categories = {}">
@@ -24,7 +24,7 @@
             </div>
         </div>
 
-        <div class="w-half flex items-center justify-between media-header-item-1435 media-header-bottom-875">
+        <div class="w-half flex items-center justify-between media-header-item-1439 media-header-bottom-875">
             <div class="sentiments flex">
                 <div class="negative" :class="{
                     off: !selected_main_sentiments['-1']

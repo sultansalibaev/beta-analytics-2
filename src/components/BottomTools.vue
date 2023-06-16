@@ -1,6 +1,6 @@
 <template>
-    <div class="flex media-header-1435">
-        <div class="flex map w-half m-r-15 media-header-item-1435 media-header-margin-1435 media-metrics-885_769" style="height: 312px;">
+    <div class="flex media-header-1439">
+        <div class="flex map w-half m-r-15 media-header-item-1439 media-header-margin-1439 media-metrics-885_769" style="height: 312px;">
             <div
                 class="bg-white p-10-14 m-r-15 tool-shadow media-lang-margin-885_769"
                 style="min-width: 240px; width: 70%"
@@ -263,7 +263,7 @@
             </div>
         </div>
         <div
-            class="flex flex-col map bg-white w-half pos-r tool-shadow media-header-item-1435"
+            class="flex flex-col map bg-white w-half pos-r tool-shadow media-header-item-1439"
             style="overflow-y: clip;height: 312px;/* height: calc(250px + 35px + 10px + 15px);  */"
         >
             <div
@@ -296,6 +296,7 @@
                         относительный
                     </div>
                     <div
+                        style="border-radius: 0 2px 2px 0;"
                         @click="inColumnPercentage = !inColumnPercentage"
                         :class="{
                             active: inColumnPercentage,
@@ -309,7 +310,7 @@
                             marginLeft: inColumnPercentage ? '3px' : 0,
                             padding: inColumnPercentage ? '0 5px 0 6px' : 0,
                         }"
-                        style='overflow: hidden;fontWeight: 900;fontFamily: "Font Awesome 5 Free";transition: .25s;border-radius: 0 3px 3px 0;'
+                        style='overflow: hidden;fontWeight: 900;fontFamily: "Font Awesome 5 Free";transition: .25s;border-radius: 0 2px 2px 0;'
                         :class="{
                             active: inColumnPercentage && showColumnPercentage
                         }" @click="showColumnPercentage = !showColumnPercentage">%</div>

@@ -1,5 +1,5 @@
 <template>
-    <div class="wrap-body m-b-15 flex items-center result-info-1435">
+    <div class="wrap-body m-b-15 flex items-center result-info-1439">
         <span>
             <span style="font-size: 16px">Результат фильтра:&nbsp;&nbsp;</span>
             <span class="result-count result-count__items"
@@ -10,7 +10,7 @@
             >
         </span>
 
-        <div class="sort-by-metrics flex items-center result-info-m-l-0-1435" v-show="r_type == 2">
+        <div class="sort-by-metrics flex items-center result-info-m-l-0-1439" v-show="r_type == 2">
             <i
                 class="fa fa-thumbs-o-up sort-by-metric prompt-parent"
                 @click="select_metric('likes')"
@@ -120,7 +120,7 @@
             }">сгруппированные</div><!-- сгруппировано -->
         </div>
 
-        <div class="nav-pagination result-info-m-r-auto-1435">
+        <div class="nav-pagination result-info-m-r-auto-1439">
             <div class="hovered-angle">
                 <i
                     class="fa-solid fa-angles-left first-page icon-w-0"
@@ -1671,7 +1671,7 @@
 
     <!-- Pagination -->
     <div class="wrap-body m-b-15 flex items-center">
-        <div class="nav-pagination result-info-m-r-auto-1435">
+        <div class="nav-pagination result-info-m-r-auto-1439">
             <div class="hovered-angle">
                 <i
                     class="fa-solid fa-angles-left first-page icon-w-0"

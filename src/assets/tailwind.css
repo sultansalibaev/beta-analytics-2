@@ -48,7 +48,7 @@ body {
 .social_category div,
 .r_type div {
     margin-top: 3px;
-    min-width: 22px;
+    min-width: 33px;
     font-size: 12px;
 }
 
@@ -788,27 +788,27 @@ body {
 
 
 
-@media (max-width: 1435px) {
-    .media-header-1435 {
+@media (max-width: 1439px) {
+    .media-header-1439 {
         flex-wrap: wrap;
         justify-content: center;
     }
-    .media-header-item-1435 {
+    .media-header-item-1439 {
         width: 100%;
         max-width: 800px;
     }
-    .media-header-margin-1435 {
+    .media-header-margin-1439 {
         margin: 0 0 10px !important;
     }
-    .result-info-1435 {
+    .result-info-1439 {
         flex-wrap: wrap;
         gap: 10px;
         justify-content: space-between;
     }
-    .result-info-m-l-0-1435 {
+    .result-info-m-l-0-1439 {
         margin-left: 0;
     }
-    .result-info-m-r-auto-1435 {
+    .result-info-m-r-auto-1439 {
         margin-right: auto;
     }
 }

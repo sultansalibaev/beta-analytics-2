@@ -1,6 +1,6 @@
 <template>
-    <div class="flex media-header-1435">
-        <div class="map bg-white p-10-14 w-half m-r-15 pos-r tool-shadow media-header-item-1435 media-header-margin-1435" style="padding-bottom:0;min-width: calc(50% - 8px);">
+    <div class="flex media-header-1439">
+        <div class="map bg-white p-10-14 w-half m-r-15 pos-r tool-shadow media-header-item-1439 media-header-margin-1439" style="padding-bottom:0;min-width: calc(50% - 8px);">
             <div class="flex justify-between items-center title">
                 <span>{{ map ? "Геолокация последних публикаций" : "Тональность по регионам" }}</span>
                 <div class="switcher">
@@ -68,16 +68,19 @@
                         <div style="border-radius: 3px 0 0 3px;" @click="inBarPercentage = !inBarPercentage" :class="{
                             active: !inBarPercentage
                         }">относительный</div>
-                        <div @click="inBarPercentage = !inBarPercentage" :class="{
-                            active: inBarPercentage
-                        }">доля</div>
+                        <div
+                            style="border-radius: 0 2px 2px 0;"
+                            @click="inBarPercentage = !inBarPercentage"
+                            :class="{
+                                active: inBarPercentage
+                            }">доля</div>
                         <div
                             :style="{
                                 width: inBarPercentage ? 'auto' : 0,
                                 marginLeft: inBarPercentage ? '3px' : 0,
                                 padding: inBarPercentage ? '0 5px 0 6px' : 0,
                             }"
-                            style='overflow: hidden;fontWeight: 900;fontFamily: "Font Awesome 5 Free";transition: .25s;border-radius: 0 3px 3px 0;'
+                            style='overflow: hidden;fontWeight: 900;fontFamily: "Font Awesome 5 Free";transition: .25s;border-radius: 0 2px 2px 0;'
                             :class="{
                                 active: inBarPercentage && showBarPercentage
                             }" @click="showBarPercentage = !showBarPercentage">%</div>
@@ -107,7 +110,7 @@
                 </i>
             </div>
         </div>
-        <div class="map bg-white w-half tool-shadow media-header-item-1435">
+        <div class="map bg-white w-half tool-shadow media-header-item-1439">
             <div class="flex justify-between items-center title p-10-14" style="padding-bottom:0;margin-bottom:4px">
                 <span>Динамика публикаций {{ basic_line ? '' : 'по тональности' }}</span>
 
