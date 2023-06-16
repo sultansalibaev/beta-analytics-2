@@ -26,21 +26,21 @@
 
         <div class="w-half flex items-center justify-between media-header-item-1439 media-header-bottom-875">
             <div class="sentiments flex">
-                <div class="negative" :class="{
+                <div class="negative transition-all duration-200" :title="`Негативные: ${main_sentiments_count['-1'].push_space()}`" :class="{
                     off: !selected_main_sentiments['-1']
                 }" @click="select_main_sentiment($event, '-1')">
                     <i style="margin-right: 5px;font-size: 15.5px;" class="fa-solid fa-face-angry"></i>
                     <!-- Негатив:  -->
                     {{ main_sentiments_count['-1'].push_space() }}
                 </div>
-                <div class="neutral" :class="{
+                <div class="neutral transition-all duration-200" :title="`Нейтральные: ${main_sentiments_count['0'].push_space()}`" :class="{
                     off: !selected_main_sentiments['0']
                 }" @click="select_main_sentiment($event, '0')">
                     <i style="margin-right: 5px;font-size: 15.5px;" class="fa-solid fa-face-meh"></i>
                     <!-- Нейтрал:  -->
                     {{ main_sentiments_count['0'].push_space() }}
                 </div>
-                <div class="positive" :class="{
+                <div class="positive transition-all duration-200" :title="`Позитивные: ${main_sentiments_count['1'].push_space()}`" :class="{
                     off: !selected_main_sentiments['1']
                 }" @click="select_main_sentiment($event, '1')">
                     <i style="margin-right: 5px;font-size: 15.5px;" class="fa-solid fa-face-smile"></i>

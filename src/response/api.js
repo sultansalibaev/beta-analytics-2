@@ -83,6 +83,10 @@ export function getProjectCounts() {
 			console.log('response', response);
 			console.log('search_tags', response.data.search_tags);
 			search_tags.value = response.data.search_tags
+
+			search_tags.value.sort((a,b) => (a.length - b.length))
+			console.log('search_tags value is - ', search_tags.value);
+
 			socials.value = response.data.socials.reduce((prev, social) => {
 				console.log('social_id', social.id);
 				if (prev[social.id] === undefined) {

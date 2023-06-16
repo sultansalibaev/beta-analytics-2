@@ -445,7 +445,7 @@
                                     }}</span>
                                 </div>
 
-                                <div class="item-content m-b-10" v-html="each_replace_all(similar_item.text)"></div>
+                                <div class="item-content m-b-10" v-html="each_replace_all(remove_script_from_text(similar_item.text))"></div>
                                 <div class="flex item-btns">
                                     <div class="item-sentiments flex items-center">
                                         <i
@@ -1552,7 +1552,7 @@
                     }}</span>
                 </div>
 
-                <div class="item-content m-b-10" v-html="each_replace_all(item.text)"></div>
+                <div class="item-content m-b-10" v-html="each_replace_all(remove_script_from_text(item.text))"></div>
                 <div class="flex item-btns">
                     <div class="item-sentiments flex items-center">
                         <i
@@ -1826,6 +1826,22 @@ export default {
         };
     },
     methods: {
+        remove_script_from_text(text) {
+            let start = text.indexOf('<script>');
+            let end = text.indexOf("</scr" + "ipt>");
+
+            if (start != -1 && end != -1) {
+                text = text.slice(0, start) + text.slice(end + 9, text.length);
+                return this.remove_script_from_text(text);
+            }
+            else if (start != -1) {
+                text = text.slice(0, start);
+                return this.remove_script_from_text(text);
+            }
+            else {
+                return text;
+            }
+        },
         each_replace_all(text, slice_text = true) {
             text = text.trim();
             if (!text) return text;
@@ -1844,7 +1860,8 @@ export default {
                     end = 600
                 }
                 else if (end > text.length && start + 190 > text.length || end >= text.length) {
-                    start = text.length - 600;
+                    start = text.length - 450;
+                    if (start < 0) start = 0;
                 }
                 text = text.slice(start, end)
             }
