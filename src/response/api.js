@@ -499,7 +499,7 @@ export const getDynamicsData = () => {
     specifying_sentiments = specifying_sentiments.join(';')
 
     axios
-        .get(`/ru/analyticstats/get-project-dynamics-data?p_id=${project.value.id}&r_type=${r_type.value}&category_id=${category_id}&countries=${countries}&regions=${regions}&sentiments=${sentiments}&language=${language}&s_date=${dateRange.value.startDate.format("Y-m-d")} ${s_time.value}&f_date=${dateRange.value.endDate.format("Y-m-d")} ${f_time.value}&from=${from}&to=${end_clipped.value}&resource_length=${resource_count.value}&resources=${_resources}&specifying_sentiments=${specifying_sentiments}&date_mode=${selected_date_mode.value}`)
+        .get(`/ru/analyticstats/get-project-dynamics-data?p_id=${project.value.id}&r_type=${r_type.value}&category_id=${category_id}&countries=${countries}&regions=${regions}&sentiments=${sentiments}&language=${language}&s_date=${dateRange.value.startDate.format("Y-m-d")} ${s_time.value}&f_date=${dateRange.value.endDate.format("Y-m-d")} ${f_time.value}&from=${from}&to=${end_clipped.value}&resource_length=${resource_count.value}&resources=${_resources}&specifying_sentiments=${specifying_sentiments}&date_mode=${selected_date_mode.value == 'weekly' ? 'daily' : selected_date_mode.value}`)
         .then(response => {
 			console.log('thumbnail-dates', thumbnail_dates.value);
 
@@ -535,6 +535,48 @@ export const getDynamicsData = () => {
 						: new Date(`${date}${selected_date_mode.value == 'hourly' ? ':00:00' : ''}`).valueOf(),
 				};
 			})
+
+			if (selected_date_mode.value == 'weekly') {
+				
+				let temp_weekly_dates = [];
+				let temp_start_date = new Date(dateRange.value.startDate);
+				while (temp_start_date.valueOf() <= new Date(dateRange.value.endDate + ` ${f_time.value}`).valueOf()) {
+					let weekdates = [temp_start_date.format('Y-m-d')];
+					temp_start_date.plus('date', 1)
+					let old_week = +temp_start_date.format('w')
+					while (old_week != 1) {
+						weekdates.push(temp_start_date.format('Y-m-d'))
+						temp_start_date.plus('date', 1)
+						old_week = +temp_start_date.format('w')
+					}
+					temp_weekly_dates.push(weekdates);
+				}
+				console.log('temp_weekly_dates', temp_weekly_dates);
+				dynamics.value = temp_weekly_dates.map(weekdates => {
+					let start_date = weekdates[0];
+					obj_dates[from]
+					let counts = weekdates.reduce((prev,date) => ({
+						y: prev.y + parseInt((obj_dates[date] && obj_dates[date].y) ?? 0),
+						'-1': prev['-1'] + parseInt((obj_dates[date] && obj_dates[date]['-1']) ?? 0),
+						'0': prev['0'] + parseInt((obj_dates[date] && obj_dates[date]['0']) ?? 0),
+						'1': prev['1'] + parseInt((obj_dates[date] && obj_dates[date]['1']) ?? 0),
+					}), {
+						y: 0,
+						"-1": 0,
+						"0": 0,
+						"1": 0,
+					})
+					
+
+					return {
+						...counts,
+						date: start_date,
+						week_dates: weekdates,
+						x: new Date(start_date).valueOf(),
+					};
+				})
+			}
+
 			console.log('dynamics', dynamics.value);
             // dynamics.value = response.data.dates.map(date => {
 
@@ -639,7 +681,6 @@ export const getGeneralCount = () => {
 
     specifying_sentiments = specifying_sentiments.join(';')
 
-    selected_dates_query.value
     let temp_sentiment_dates_query = [
         selected_main_sentiments.value['1'] ? selected_sentiment_dates_query.value['1'] : '',
         selected_main_sentiments.value['0'] ? selected_sentiment_dates_query.value['0'] : '',
@@ -647,7 +688,7 @@ export const getGeneralCount = () => {
     ].join('_');
 
     return axios
-        .get(`/ru/analyticstats/get-project-general-count?p_id=${project.value.id}&r_type=${r_type.value}&category_id=${category_id}&countries=${countries}&regions=${regions}&sentiments=${sentiments}&language=${language}&s_date=${dateRange.value.startDate.format("Y-m-d")} ${s_time.value}&f_date=${dateRange.value.endDate.format("Y-m-d")} ${f_time.value}&from=${from}&to=${end_clipped.value}&resource_length=${resource_count.value}&resources=${_resources}&specifying_sentiments=${specifying_sentiments}&date_mode=${selected_date_mode.value}&dates_filter=${selected_dates_query.value}&sentiment_dates_filter=${temp_sentiment_dates_query}&from_page=${(selected_page.value - 1) * 20}&grouped=${isGrouped.value}`)
+        .get(`/ru/analyticstats/get-project-general-count?p_id=${project.value.id}&r_type=${r_type.value}&category_id=${category_id}&countries=${countries}&regions=${regions}&sentiments=${sentiments}&language=${language}&s_date=${dateRange.value.startDate.format("Y-m-d")} ${s_time.value}&f_date=${dateRange.value.endDate.format("Y-m-d")} ${f_time.value}&from=${from}&to=${end_clipped.value}&resource_length=${resource_count.value}&resources=${_resources}&specifying_sentiments=${specifying_sentiments}&date_mode=${selected_date_mode.value == 'weekly' ? 'daily' : selected_date_mode.value}&dates_filter=${selected_dates_query.value}&sentiment_dates_filter=${temp_sentiment_dates_query}&from_page=${(selected_page.value - 1) * 20}&grouped=${isGrouped.value}`)
         .then(response => {
 
 			console.log('getGeneralCount - ', response);
@@ -763,7 +804,6 @@ export const getSocialMetrics = () => {
 
     specifying_sentiments = specifying_sentiments.join(';')
 
-    selected_dates_query.value
     let temp_sentiment_dates_query = [
         selected_main_sentiments.value['1'] ? selected_sentiment_dates_query.value['1'] : '',
         selected_main_sentiments.value['0'] ? selected_sentiment_dates_query.value['0'] : '',
@@ -780,7 +820,7 @@ export const getSocialMetrics = () => {
 	}
 
 	axios
-		.get(`/ru/analyticstats/get-project-metrics-data?p_id=${project.value.id}&r_type=${r_type.value}&category_id=${category_id}&countries=${countries}&regions=${regions}&sentiments=${sentiments}&language=${language}&s_date=${dateRange.value.startDate.format("Y-m-d")} ${s_time.value}&f_date=${dateRange.value.endDate.format("Y-m-d")} ${f_time.value}&from=${from}&to=${end_clipped.value}&resource_length=${resource_count.value}&resources=${_resources}&specifying_sentiments=${specifying_sentiments}&date_mode=${selected_date_mode.value}&dates_filter=${selected_dates_query.value}&sentiment_dates_filter=${temp_sentiment_dates_query}&grouped=${isGrouped.value}`)
+		.get(`/ru/analyticstats/get-project-metrics-data?p_id=${project.value.id}&r_type=${r_type.value}&category_id=${category_id}&countries=${countries}&regions=${regions}&sentiments=${sentiments}&language=${language}&s_date=${dateRange.value.startDate.format("Y-m-d")} ${s_time.value}&f_date=${dateRange.value.endDate.format("Y-m-d")} ${f_time.value}&from=${from}&to=${end_clipped.value}&resource_length=${resource_count.value}&resources=${_resources}&specifying_sentiments=${specifying_sentiments}&date_mode=${selected_date_mode.value == 'weekly' ? 'daily' : selected_date_mode.value}&dates_filter=${selected_dates_query.value}&sentiment_dates_filter=${temp_sentiment_dates_query}&grouped=${isGrouped.value}`)
 		.then(response => {
 			soc_metrics.value = response.data.metrics
 			laoding_metrics.value = false
@@ -841,7 +881,6 @@ export const getItems = () => {
 
     specifying_sentiments = specifying_sentiments.join(';')
 
-    selected_dates_query.value
     let temp_sentiment_dates_query = [
         selected_main_sentiments.value['1'] ? selected_sentiment_dates_query.value['1'] : '',
         selected_main_sentiments.value['0'] ? selected_sentiment_dates_query.value['0'] : '',
@@ -851,11 +890,22 @@ export const getItems = () => {
 
 	items_loading.value = true
 
+
     axios
-        .get(`/ru/analyticstats/get-project-items?p_id=${project.value.id}&r_type=${r_type.value}&category_id=${category_id}&countries=${countries}&regions=${regions}&sentiments=${sentiments}&language=${language}&s_date=${dateRange.value.startDate.format("Y-m-d")} ${s_time.value}&f_date=${dateRange.value.endDate.format("Y-m-d")} ${f_time.value}&from=${from}&to=${end_clipped.value}&resource_length=${resource_count.value}&resources=${_resources}&specifying_sentiments=${specifying_sentiments}&date_mode=${selected_date_mode.value}&dates_filter=${selected_dates_query.value}&sentiment_dates_filter=${temp_sentiment_dates_query}&metrics=${selected_soc_metrics.value}&from_page=${(selected_page.value - 1) * 20}&grouped=${isGrouped.value}`)
+        .get(`/ru/analyticstats/get-project-items?p_id=${project.value.id}&r_type=${r_type.value}&category_id=${category_id}&countries=${countries}&regions=${regions}&sentiments=${sentiments}&language=${language}&s_date=${dateRange.value.startDate.format("Y-m-d")} ${s_time.value}&f_date=${dateRange.value.endDate.format("Y-m-d")} ${f_time.value}&from=${from}&to=${end_clipped.value}&resource_length=${resource_count.value}&resources=${_resources}&specifying_sentiments=${specifying_sentiments}&date_mode=${selected_date_mode.value == 'weekly' ? 'daily' : selected_date_mode.value}&dates_filter=${selected_dates_query.value}&sentiment_dates_filter=${temp_sentiment_dates_query}&metrics=${selected_soc_metrics.value}&from_page=${(selected_page.value - 1) * 20}&grouped=${isGrouped.value}`)
         .then(response => {
             console.log('get-project-items', response);
-            let obj_similar_items = response?.data?.similar_items?.reduce((prev, item) => ({ ...prev, [item.item_id]: item }), {})
+            let obj_similar_items = response?.data?.similar_items?.reduce((prev, item) => ({
+				...prev, [item.item_id]: {
+					similars_count: {
+						...prev[item.item_id]?.similars_count,
+						[item.similars_count]: true
+					}
+				}
+			}), {})
+			Object.keys(obj_similar_items).forEach(similar_item_id => {
+				obj_similar_items[similar_item_id].similars_count = Object.keys(obj_similar_items[similar_item_id].similars_count)
+			})
             let obj_items_items = response?.data?.items?.reduce((prev, item) => ({ ...prev, [item.news_id]: item }), {})
             let obj_items_metrics = response?.data?.metrics?.metrics?.reduce((prev, item) => ({ ...prev, [item.news_id]: item }), {})
             let obj_items_members = response?.data?.metrics?.members?.reduce((prev, item) => ({ ...prev, [item.id]: item }), {})
@@ -889,7 +939,10 @@ export const getItems = () => {
 			// else {
 			// 	temp_items?.sort((a,b) => (new Date(b.date).valueOf() - new Date(a.date).valueOf()))
 			// }
-			items.value = temp_items
+			items.value = temp_items.map(item => ({
+				...item,
+				text: remove_script_from_text(item.text)
+			}))
 
 			console.log('items', items.value);
         })
@@ -944,8 +997,10 @@ export const getSimilarItems = (item_id) => {
 
 	if (!item_id) return;
 
+	let item_ids = [...items.value.find(item => item.item_id == item_id).similars_count, item_id].join(',')
+
     axios
-        .get(`/ru/similar-items/get-items?project_id=${project.value.id}&r_type=${r_type.value}&item_id=${item_id}`)
+        .get(`/ru/similar-items/get-items?project_id=${project.value.id}&r_type=${r_type.value}&item_id=${item_ids}`)
         .then(response => {
             console.log('similar-items/get-items', response);
             let obj_items_items = response?.data?.items?.reduce((prev, item) => ({ ...prev, [item.news_id]: item }), {})
@@ -980,7 +1035,12 @@ export const getSimilarItems = (item_id) => {
 			// else {
 			// 	temp_items?.sort((a,b) => (new Date(b.date).valueOf() - new Date(a.date).valueOf()))
 			// }
-			similar_items.value = temp_similar_items
+			similar_items.value = temp_similar_items.map(item => ({
+				...item,
+				text: remove_script_from_text(item.text)
+			}));
+
+			similar_items.value.sort((a,b) => (a?.item_id == item_id || b?.item_id == item_id ? -1 : 0))
 
 			console.log('similar_items', similar_items.value);
         })
@@ -995,3 +1055,12 @@ export const getSimilarItems = (item_id) => {
 			if (item_ids) getGptLogs(item_ids, similar_items.value)
         })
 };
+
+
+
+function remove_script_from_text(text) {
+	document.getElementById('text-thumbnail').innerHTML = text;
+	text = document.getElementById('text-thumbnail').innerText || document.getElementById('text-thumbnail').textContent;
+	document.getElementById('text-thumbnail').innerHTML = '';
+	return text;
+}

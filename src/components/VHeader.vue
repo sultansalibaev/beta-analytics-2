@@ -135,11 +135,7 @@ export default {
                 this.selected_main_sentiments['0'] = false
                 this.selected_main_sentiments['1'] = false
                 this.selected_main_sentiments[id] = true
-            }
-            console.log(this.selected_main_sentiments);
-            setTimeout(() => {
-                console.log(this.selected_main_sentiments);
-            }, 1000);
+            }   
 
             // this.main_watcher = true
             this.getMainPlacesCount(false)
@@ -148,6 +144,15 @@ export default {
     watch: {
         selected_date_mode() {
             console.log('watching - selected_date_mode');
+            this.selected_dates = { dates: {} }
+            this.selected_sentiment_dates = {
+                dates: {
+                    "1": {},
+                    "0": {},
+                    "-1": {},
+                }
+            }
+
             this.getDynamicsData()
         },
         'bars_sentiments_selected.sentiment_places': {

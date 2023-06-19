@@ -194,7 +194,8 @@ export default {
     height: 15px;
 }
 .rs-range.pos-a-range.light_clip::-webkit-slider-thumb {
-    background: url(@/assets/light_clip.png)  0 0/100% 100% no-repeat;
+    /* background: url(@/assets/light_clip.png)  0 0/100% 100% no-repeat; */
+    background: url(@/assets/clip_to_top.png)  0 0/100% 100% no-repeat;
     /*background: #3b5998;*/
     margin-top: -5px;
     margin-left: 3px;
@@ -202,7 +203,8 @@ export default {
     height: 15px;
 }
 .rs-range.pos-a-range.light_clip::-moz-range-thumb {
-    background: url(@/assets/light_clip.png)  0 0/100% 100% no-repeat;
+    /* background: url(@/assets/light_clip.png)  0 0/100% 100% no-repeat; */
+    background: url(@/assets/clip_to_top.png)  0 0/100% 100% no-repeat;
     /*background: #3b5998;*/
     margin-top: -5px;
     margin-left: 3px;
@@ -246,7 +248,7 @@ export default {
 
 .rs-range::-webkit-slider-runnable-track {
     width: 100%;
-    height: 1px;
+    height: 2.5px;
     cursor: pointer;
     box-shadow: none;
     background: #ffffff;
@@ -256,7 +258,7 @@ export default {
 
 .rs-range::-moz-range-track {
     width: 100%;
-    height: 1px;
+    height: 2.5px;
     cursor: pointer;
     box-shadow: none;
     background: #ffffff;

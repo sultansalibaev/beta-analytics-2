@@ -6,6 +6,7 @@
             <BottomTools class="m-b-15"></BottomTools>
         </div>
         <VNews class="m-b-15"></VNews>
+        <div id="text-thumbnail"></div>
     </div>
 </template>
 

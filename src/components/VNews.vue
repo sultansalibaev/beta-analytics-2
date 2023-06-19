@@ -95,7 +95,7 @@
                             : ''
                     "
                 >
-                    Сортировка по аудиторие (по убыванию)
+                    Сортировка по аудитории (по убыванию)
                 </div>
             </i>
             <i
@@ -114,10 +114,10 @@
         <div class="switcher ml-auto">
             <div style="border-radius: 3px 0 0 3px;" @click="isGrouped = false" :class="{
                 active: !isGrouped
-            }">все</div>
+            }">По одной</div>
             <div style="border-radius: 0 3px 3px 0;" @click="isGrouped = true" :class="{
                 active: isGrouped
-            }">сгруппированные</div><!-- сгруппировано -->
+            }">По группам</div><!-- сгруппировано -->
         </div>
 
         <div class="nav-pagination result-info-m-r-auto-1439">
@@ -235,6 +235,34 @@
             </div>
         </div>
     </div>
+
+    <!-- Удаление источника -->
+    <div
+        class="delete-resource-modal"
+        style="z-index: 100000"
+        v-show="confirm_group_action_modal"
+        @click.stop="confirm_group_action_modal = false"
+    >
+        <div class="flex flex-col" @click.stop>
+            <div class="delete-resource-title">Внимание</div>
+            <span style="padding: 12px 12px 0;font-size: 14px;">Это действие изменит все публикации данной группы ({{ group_item_ids?.length }}).<br/> Применить для всех?</span>
+            <div class="flex item-center" style="padding: 9px">
+                <button
+                    class="default-btn cancel-btn"
+                    @click="cancel_group_action"
+                >
+                    Отмена
+                </button>
+                <button
+                    class="default-btn delete-resource-btn"
+                    @click="update_group_items"
+                    style="background: rgb(28, 179, 148)"
+                >
+                    Применить
+                </button>
+            </div>
+        </div>
+    </div>
     
     <!-- Дубликаты -->
     <div
@@ -260,11 +288,11 @@
             @click.stop="item_modal = false"
         >
             <div class="delete-resource-title" style="background: #1cb394;">
-                Дубликаты
+                Схожие новости
                 <i class="fa fa-close close-item-modal" @click="similars_modal = false"></i>
             </div>
             <div style="padding: 15.5px 8px;height: calc(100% - 43px);background: #f3f3f4;">
-                <div class="favorite-buttons flex scrollbar" style="overflow-y: scroll;height: 100%;">
+                <div class="favorite-buttons flex scrollbar" style="overflow-y: scroll;max-height: 100%;">
                     
                     
                     <div
@@ -278,6 +306,7 @@
                             <div
                                 class="item"
                                 style="height: unset"
+                                :style="similars_modal == similar_item.item_id ? 'outline: 2px solid #3b5998;margin: 7px 0;' : ''"
                                 :class="{
                                     // 'item-favorites-min-height': favorites_modal == similar_item.item_id
                                 }"
@@ -319,6 +348,7 @@
                                                 class="item-action"
                                                 style="color: #ec5d5d"
                                                 @click="delete_item(similar_item.item_id)"
+                                                v-if="similars_modal != similar_item.item_id"
                                             >
                                                 <i
                                                     class="fa fa-trash-o"
@@ -327,6 +357,7 @@
                                                 <span>Удалить новость</span>
                                             </div>
                                             <div
+                                                v-if="similars_modal != similar_item.item_id"
                                                 class="item-action"
                                                 style="color: #ec5d5d"
                                                 @click="
@@ -445,7 +476,7 @@
                                     }}</span>
                                 </div>
 
-                                <div class="item-content m-b-10" v-html="each_replace_all(remove_script_from_text(similar_item.text))"></div>
+                                <div class="item-content m-b-10" v-html="each_replace_all(similar_item.text)"></div>
                                 <div class="flex item-btns">
                                     <div class="item-sentiments flex items-center">
                                         <i
@@ -848,9 +879,9 @@
                                             sentiment_names[sentiment]?.class
                                         "
                                         @click="
-                                            update_item_sentiment(
+                                            check_is_group(
                                                 modal_item,
-                                                sentiment
+                                                () => { update_item_sentiment(modal_item, sentiment) }
                                             )
                                         "
                                         v-if="
@@ -1465,7 +1496,7 @@
                             </div>
                         </div>
                     </div>
-                    <!-- <div class="similars-count" @click="similars_modal = item.item_id" v-if="item.similars_count > 0">дубликаты: {{ item.similars_count }}</div> -->
+                    <!-- <div class="similars-count" @click="similars_modal = item.item_id" v-if="item?.similars_count?.length > 0">дубликаты: {{ item?.similars_count?.length }}</div> -->
                 </div>
 
                 <div class="flex item-info items-center m-b-10">
@@ -1552,11 +1583,11 @@
                     }}</span>
                 </div>
 
-                <div class="item-content m-b-10" v-html="each_replace_all(remove_script_from_text(item.text))"></div>
+                <div class="item-content m-b-10" v-html="each_replace_all(item.text)"></div>
                 <div class="flex item-btns">
                     <div class="item-sentiments flex items-center">
                         <i
-                            @click="update_item_sentiment(item, -1)"
+                            @click="check_is_group(item, () => { update_item_sentiment(item, -1) })"
                             class="negative negative-btn fa metrik_btn"
                             :class="{
                                 'fa-check-circle': -1 == item.sentiment,
@@ -1565,7 +1596,7 @@
                             }"
                         ></i>
                         <i
-                            @click="update_item_sentiment(item, 0)"
+                            @click="check_is_group(item, () => { update_item_sentiment(item, 0) })"
                             class="neutral neutral-btn fa metrik_btn"
                             :class="{
                                 'fa-check-circle': 0 == item.sentiment,
@@ -1574,7 +1605,7 @@
                             }"
                         ></i>
                         <i
-                            @click="update_item_sentiment(item, 1)"
+                            @click="check_is_group(item, () => { update_item_sentiment(item, 1) })"
                             class="positive positive-btn fa metrik_btn"
                             :class="{
                                 'fa-check-circle': 1 == item.sentiment,
@@ -1640,10 +1671,10 @@
                             class="favorites"
                             style="margin-right: 8px"
                             @click="similars_modal = item.item_id"
-                            v-if="item.similars_count > 0"
+                            v-if="item?.similars_count?.length > 0"
                         >
                             <i class="fa fa-clone" style="margin-right: 5px;"></i>
-                            {{ item.similars_count }}
+                            {{ item?.similars_count?.length }}
                         </button>
                         <button
                             class="favorites"
@@ -1787,6 +1818,7 @@ export default {
     },
     data() {
         return {
+            confirm_group_action_modal: false,
             similars_modal: false,
             sentiment_name: {
                 1: "Позитив",
@@ -1826,22 +1858,41 @@ export default {
         };
     },
     methods: {
-        remove_script_from_text(text) {
-            let start = text.indexOf('<script>');
-            let end = text.indexOf("</scr" + "ipt>");
+        check_is_group(item, cb) {
 
-            if (start != -1 && end != -1) {
-                text = text.slice(0, start) + text.slice(end + 9, text.length);
-                return this.remove_script_from_text(text);
+            let similars = [];
+            if (item?.similars_count) {
+                similars = [ ...item?.similars_count, item?.item_id ];
             }
-            else if (start != -1) {
-                text = text.slice(0, start);
-                return this.remove_script_from_text(text);
+            if (similars?.length > 1) {
+                this.confirm_group_action_modal = true;
+                this.group_action = cb;
+                this.group_item_ids = similars?.length;
             }
             else {
-                return text;
+                this.group_action = () => {};
+                this.group_item_ids = [];
+                cb();
             }
+
         },
+        update_group_items() {
+            this.confirm_group_action_modal = false;
+            alert('Пока на этапе разработки)')
+            return;
+            // this.group_action()
+        },
+        cancel_group_action() {
+            this.confirm_group_action_modal = false;
+            this.group_action = () => {};
+            this.group_item_ids = [];
+        },
+        // remove_script_from_text(text) {
+        //     document.getElementById('text-thumbnail').innerHTML = text;
+        //     text = document.getElementById('text-thumbnail').innerText || document.getElementById('text-thumbnail').textContent;
+        //     document.getElementById('text-thumbnail').innerHTML = '';
+        //     return text;
+        // },
         each_replace_all(text, slice_text = true) {
             text = text.trim();
             if (!text) return text;
@@ -1920,7 +1971,7 @@ export default {
                 favorite.selected = !favorite.selected;
                 let route = favorite.selected ? "addlabel" : "deletelabel";
 
-                let selected_item = this.items.find(
+                let selected_item = [...this.items, ...this.similar_items].find(
                     (item) => item.item_id == this.favorites_modal
                 );
                 if (route == "addlabel") {
@@ -2585,7 +2636,8 @@ export default {
 .item-sentiments i.checked-btn,
 .item-sentiments i:hover {
     opacity: 1;
-    font-size: 27px;
+    /* font-size: 27px; */
+    transform: scale(1.3);
     margin-bottom: -1px;
 }
 i.negative {
@@ -2602,7 +2654,7 @@ i.positive {
 }
 
 .item-sentiments i:not(.item-sentiments i:last-child) {
-    margin-right: 4px;
+    margin-right: 7px;
 }
 .item-modal {
     position: absolute;

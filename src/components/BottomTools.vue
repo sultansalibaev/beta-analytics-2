@@ -141,8 +141,8 @@
                 >
                     <span>{{
                         r_type == 1
-                            ? "Категория новостей СМИ"
-                            : "Последние метрики соцсетей"
+                            ? "Категория источника" // Категория новостей СМИ
+                            : "Метрики соцсетей"
                     }}</span>
 
                     <i
@@ -293,7 +293,7 @@
                             active: !inColumnPercentage,
                         }"
                     >
-                        относительный
+                        Абсолютный
                     </div>
                     <div
                         style="border-radius: 0 2px 2px 0;"
@@ -302,7 +302,7 @@
                             active: inColumnPercentage,
                         }"
                     >
-                        доля
+                        Доля
                     </div>
                     <div
                         :style="{
@@ -363,7 +363,7 @@
                         {{ resource_clipped_news_count.push_space() }}
                     </div>
                 </div>
-                <div class="res_count_prompt">{{ show_percent ? 'Число публикации' : 'Публикации в процентах' }}</div>
+                <div class="res_count_prompt">{{ show_percent ? 'Количество публикаций' : 'Доля публикаций \n на выделенных источниках' }}</div>
                 <VRange v-if="r_type == 1" :percent="res_news_info"></VRange>
                 <VRange
                     v-else-if="r_type == 2"

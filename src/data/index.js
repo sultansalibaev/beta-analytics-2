@@ -67,6 +67,7 @@ function update_thumbnail_dates() {
 	let temp_start_date = new Date(s_date__string);
 	let plus_type = {
 		daily: 'date',
+		weekly: 'date',
 		hourly: 'hour',
 		monthly: 'month'
 	}[selected_date_mode.value];

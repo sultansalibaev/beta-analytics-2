@@ -10,7 +10,7 @@ import {
 } from "@/response/data/index";
 import { computed, reactive, ref } from "vue";
 
-import { getGeneralCount, getSocialMetrics, getItems } from '@/response/api'
+import { getDynamicsData, getGeneralCount, getSocialMetrics, getItems } from '@/response/api'
 import { r_type, selected_main_sentiments } from "../header";
 
 export const basic_line = reactive(ref(true));
@@ -18,6 +18,7 @@ export const basic_line = reactive(ref(true));
 
 export const reset_dynamics = function () {
     selected_dates.value.dates = {};
+    getDynamicsData();
 };
 export const has_selected_date = computed(() => {
     return (
@@ -42,6 +43,7 @@ export const reset_sentiment_dynamics = function () {
         0: {},
         "-1": {},
     };
+    getDynamicsData();
 };
 export const has_selected_sentiment_date = computed(() => {
     return (
@@ -194,20 +196,40 @@ export const lineOptions = computed(() => {
                 events: {
                     click: function (e) {
                         if (e.shiftKey) {
-                            selected_sentiment_dates.value.dates[
-                                color_to_sentiment[e.point.color]
-                            ][e.point.options.date] = !e.point.selected;
+                            if (selected_date_mode.value == 'weekly') {
+                                e.point.options.week_dates.forEach(date => {
+                                    selected_sentiment_dates.value.dates[
+                                        color_to_sentiment[e.point.color]
+                                    ][date] = !e.point.selected;
+                                })
+                            }
+                            else {
+                                selected_sentiment_dates.value.dates[
+                                    color_to_sentiment[e.point.color]
+                                ][e.point.options.date] = !e.point.selected;
+                            }
                         } else {
                             selected_sentiment_dates.value.dates = {
                                 1: {},
                                 0: {},
                                 "-1": {},
                             };
-                            selected_sentiment_dates.value.dates[
-                                color_to_sentiment[e.point.color]
-                            ] = {
-                                [e.point.options.date]: !e.point.selected,
-                            };
+                            
+                            if (selected_date_mode.value == 'weekly') {
+                                selected_sentiment_dates.value.dates[
+                                    color_to_sentiment[e.point.color]
+                                ] = e.point.options.week_dates.reduce((prev,date) => ({
+                                    ...prev,
+                                    [date]: !e.point.selected
+                                }), {})
+                            }
+                            else {
+                                selected_sentiment_dates.value.dates[
+                                    color_to_sentiment[e.point.color]
+                                ] = {
+                                    [e.point.options.date]: !e.point.selected,
+                                };
+                            }
                         }
                         getGeneralCount()
                         if (r_type.value == 2) {
@@ -261,15 +283,31 @@ export const lineOptions = computed(() => {
                 }),
             })),
             {
+            
                 events: {
                     click: function (e) {
                         if (e.shiftKey) {
-                            selected_dates.value.dates[e.point.options.date] =
-                                !e.point.selected;
+                            if (selected_date_mode.value == 'weekly') {
+                                e.point.options.week_dates.forEach(date => {
+                                    selected_dates.value.dates[date] = !e.point.selected;
+                                })
+                            }
+                            else {
+                                selected_dates.value.dates[e.point.options.date] =
+                                    !e.point.selected;
+                            }
                         } else {
-                            selected_dates.value.dates = {
-                                [e.point.options.date]: !e.point.selected,
-                            };
+                            if (selected_date_mode.value == 'weekly') {
+                                selected_dates.value.dates = e.point.options.week_dates.reduce((prev,date) => ({
+                                    ...prev,
+                                    [date]: !e.point.selected
+                                }), {})
+                            }
+                            else {
+                                selected_dates.value.dates = {
+                                    [e.point.options.date]: !e.point.selected,
+                                };
+                            }
                         }
                         getGeneralCount()
                         if (r_type.value == 2) {
@@ -318,12 +356,12 @@ export const lineOptions = computed(() => {
 });
 
 function getCallback() {
-    if (selected_date_mode.value == 'weekly') {
-        return date => (date);
-    }
-    else {
+    // if (selected_date_mode.value == 'weekly') {
+    //     return date => (date);
+    // }
+    // else {
         return date => (`'${date}'`);
-    }
+    // }
 }
 
 export const selected_dates_query = computed(() => (

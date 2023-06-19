@@ -2,14 +2,14 @@
     <div class="flex media-header-1439">
         <div class="map bg-white p-10-14 w-half m-r-15 pos-r tool-shadow media-header-item-1439 media-header-margin-1439" style="padding-bottom:0;min-width: calc(50% - 8px);">
             <div class="flex justify-between items-center title">
-                <span>{{ map ? "Геолокация последних публикаций" : "Тональность по регионам" }}</span>
+                <span>{{ map ? `${map_switch ? 'Регионы' : 'Страны'} источников публикаций` : `Тональность по ${map_switch ? 'регионам' : 'cтранам'}` }}</span>
                 <div class="switcher">
                     <div style="border-radius: 3px 0 0 3px;" @click="map = !map" :class="{
                         active: map
-                    }">карта</div>
+                    }">Карта</div>
                     <div style="border-radius: 0 3px 3px 0;" @click="map = !map" :class="{
                         active: !map
-                    }">тональность</div>
+                    }">Тональность</div>
                 </div>
                 <i class="fa fa-refresh cursor-pointer" id="reset-map" @click="reset_regions" v-if="map && has_selected_place"></i>
                 <i class="fa fa-refresh cursor-pointer" id="reset-map" @click="reset_sentiment" v-else-if="!map && has_selected_sentiment"></i>
@@ -67,13 +67,13 @@
                     <div class="switcher" v-show="!map" style="position:absolute;bottom: 5px;right: 5px;z-index: 2;">
                         <div style="border-radius: 3px 0 0 3px;" @click="inBarPercentage = !inBarPercentage" :class="{
                             active: !inBarPercentage
-                        }">относительный</div>
+                        }">Абсолютный</div>
                         <div
                             style="border-radius: 0 2px 2px 0;"
                             @click="inBarPercentage = !inBarPercentage"
                             :class="{
                                 active: inBarPercentage
-                            }">доля</div>
+                            }">Доля</div>
                         <div
                             :style="{
                                 width: inBarPercentage ? 'auto' : 0,
