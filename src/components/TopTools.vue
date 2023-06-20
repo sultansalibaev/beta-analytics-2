@@ -2,14 +2,14 @@
     <div class="flex media-header-1439">
         <div class="map bg-white p-10-14 w-half m-r-15 pos-r tool-shadow media-header-item-1439 media-header-margin-1439" style="padding-bottom:0;min-width: calc(50% - 8px);">
             <div class="flex justify-between items-center title">
-                <span>{{ map ? `${map_switch ? 'Регионы' : 'Страны'} источников публикаций` : `Тональность по ${map_switch ? 'регионам' : 'cтранам'}` }}</span>
+                <span>{{ i18n(map ? `${map_switch ? 'Регионы' : 'Страны'} источников публикаций` : `Тональность по ${map_switch ? 'регионам' : 'странам'}`) }}</span>
                 <div class="switcher">
                     <div style="border-radius: 3px 0 0 3px;" @click="map = !map" :class="{
                         active: map
-                    }">Карта</div>
+                    }">{{ i18n('Карта') }}</div>
                     <div style="border-radius: 0 3px 3px 0;" @click="map = !map" :class="{
                         active: !map
-                    }">Тональность</div>
+                    }">{{ i18n('Тональность') }}</div>
                 </div>
                 <i class="fa fa-refresh cursor-pointer" id="reset-map" @click="reset_regions" v-if="map && has_selected_place"></i>
                 <i class="fa fa-refresh cursor-pointer" id="reset-map" @click="reset_sentiment" v-else-if="!map && has_selected_sentiment"></i>
@@ -34,9 +34,9 @@
                             }"
                             v-if="!country.isRegion || (country.isRegion && country.id.split('_')[0] == current_country_id)"
                              :title="[
-                                `Регион: ${country.country}`,
-                                `Публикаций: ${country.value.push_space()}`,
-                                `Источников: ${country.resources.push_space()}`
+                                `${i18n('Регион')}: ${country.country}`,
+                                `${i18n('Публикаций')}: ${country.value.push_space()}`,
+                                `${i18n('Источников')}: ${country.resources.push_space()}`
                             ].join('\n')">
 
                             <div class="flex items-center" style="white-space: nowrap;text-overflow: ellipsis;overflow: hidden;padding-right: 5px;">
@@ -48,7 +48,12 @@
                                 <span style="font-family: sans-serif;font-weight:600;color:#1CB394;">{{ country.value.push_space() }}</span>&nbsp;&nbsp;  <span style="font-family: sans-serif;font-weight:600;color:#7CB5EC;"> ({{ country.resources.push_space() }})</span>
                             </div>
                         </div>
-                        <div class="to-only-kz transition-all cursor-pointer" v-if="countries_with_regions[country.id] && countries[country.id]?.regions_file_name" :title="`Регионы ${country.country}`" @click="toggle_map_switcher(country.id, countries[country.id]?.regions_file_name)">
+                        <div
+                            class="to-only-kz transition-all cursor-pointer"
+                            v-if="countries_with_regions[country.id] && countries[country.id]?.regions_file_name"
+                            :title="langIs('kz') ? `${country.country} аймақтары` : `${i18n('Регионы')} ${country.country}`"
+                            @click="toggle_map_switcher(country.id, countries[country.id]?.regions_file_name)"
+                        >
                             <i class="fa-solid fa-arrow-right "></i>
                         </div>
                     </div>
@@ -67,13 +72,13 @@
                     <div class="switcher" v-show="!map" style="position:absolute;bottom: 5px;right: 5px;z-index: 2;">
                         <div style="border-radius: 3px 0 0 3px;" @click="inBarPercentage = !inBarPercentage" :class="{
                             active: !inBarPercentage
-                        }">Абсолютный</div>
+                        }">{{ i18n('Абсолютный') }}</div>
                         <div
                             style="border-radius: 0 2px 2px 0;"
                             @click="inBarPercentage = !inBarPercentage"
                             :class="{
                                 active: inBarPercentage
-                            }">Доля</div>
+                            }">{{ i18n('Доля') }}</div>
                         <div
                             :style="{
                                 width: inBarPercentage ? 'auto' : 0,
@@ -96,7 +101,7 @@
                     }"
                     @click="isKazakstan ? '' : toggle_map_switcher()"
                 >
-                    <div class="prompt">Регионы {{ countries[current_country_id]?.name }}</div>
+                    <div class="prompt">{{ i18n('Регионы') }} {{ countries[current_country_id]?.name }}</div>
                 </i>
                 <i
                     class="fa-solid fa-earth-europe prompt-parent"
@@ -106,13 +111,13 @@
                     }"
                     @click="isKazakstan ? '' : toggle_map_switcher()"
                 >
-                    <div class="prompt">Все страны</div>
+                    <div class="prompt">{{ i18n('Все страны') }}</div>
                 </i>
             </div>
         </div>
         <div class="map bg-white w-half tool-shadow media-header-item-1439">
             <div class="flex justify-between items-center title p-10-14" style="padding-bottom:0;margin-bottom:4px">
-                <span>Динамика публикаций {{ basic_line ? '' : 'по тональности' }}</span>
+                <span>{{ i18n(`Динамика публикаций ${basic_line ? '' : 'по тональности'}`) }}</span>
 
                 <div class="drp flex items-center">
                     <span class="date-mode_container">
@@ -130,7 +135,7 @@
                                     :style="`border-radius: ${key == 'hourly' ? '0 3px 3px 0' : key == 'monthly' ? '3px 0 0 3px' : '0'};`"
                                     class=" flex items-center justify-center cursor-pointer prompt-parent"
                                 >
-                                    <div class="prompt" :style="!value[2] ? '--prompt-color: #bbb !important' : ''" v-html="value[0]"></div>
+                                    <div class="prompt" :style="!value[2] ? '--prompt-color: #bbb !important' : ''" v-html="i18n(value[0])"></div>
                                 </i>
                             </template>
                         </div>
@@ -161,6 +166,8 @@
 
 <script>
 
+import { langIs } from "@/response/utils/langIs"
+import i18n from "@/response/utils/i18n"
 import LineChart from '@/components/UI/LineChart.vue';
 import MapChart from "@/components/UI/MapChart";
 import BarChart from "@/components/UI/BarChart";
@@ -210,7 +217,7 @@ export default {
         },
     },
     setup() {
-        return { country_regions_loading, current_country_id, countries_with_regions, countries, isKazakstan, places, map, date_modes, selected_date_mode, select_region, select_one_region, reset_regions, region_active, selected_regions, region__MouseOver, region__MouseOut, min_height, has_selected_sentiment, reset_sentiment, has_selected_date, reset_dynamics, has_selected_sentiment_date, reset_sentiment_dynamics, basic_line, toggle_map_switcher, inBarPercentage, showBarPercentage, map_type_switcher, map_switch }
+        return { langIs, i18n, country_regions_loading, current_country_id, countries_with_regions, countries, isKazakstan, places, map, date_modes, selected_date_mode, select_region, select_one_region, reset_regions, region_active, selected_regions, region__MouseOver, region__MouseOut, min_height, has_selected_sentiment, reset_sentiment, has_selected_date, reset_dynamics, has_selected_sentiment_date, reset_sentiment_dynamics, basic_line, toggle_map_switcher, inBarPercentage, showBarPercentage, map_type_switcher, map_switch }
     }
 }
 </script>

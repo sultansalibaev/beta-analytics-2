@@ -2,6 +2,8 @@ import '@/response/utils'
 
 import { smi_category, languages_general_data, categories_general_data, languages_count } from '@/response/header'
 
+import i18n from '@/response/utils/i18n'
+
 import { computed, reactive, ref, watch } from 'vue';
 import { get_selected_categories, selected_categories, selected_languages } from '@/response/data/index';
 import { create_global_filter, global_filter } from '../filter';
@@ -130,8 +132,8 @@ export const pieOptions = computed(() => {
             itemStyle: { "color": "#333333", "cursor": "pointer", "fontSize": "11px", "fontWeight": "600", "textOverflow": "ellipsis" }
         },
         tooltip: {
-            headerFormat: '<span style="font-size:11px"><b>Категория:</b> {point.key}</span></br>',
-            pointFormat: '<span><b>Публикаций:</b> {point.y} ({point.percentage:.1f}%)</span></br>',
+            headerFormat: `<span style="font-size:11px"><b>${i18n('Категория')}:</b> {point.key}</span></br>`,
+            pointFormat: `<span><b>${i18n('Публикаций')}:</b> {point.y} ({point.percentage:.1f}%)</span></br>`,
             shared: true,
             useHTML: true
         },

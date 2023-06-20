@@ -1,7 +1,7 @@
 <template>
     <div class="wrap-body m-b-15 flex items-center result-info-1439">
         <span>
-            <span style="font-size: 16px">Результат фильтра:&nbsp;&nbsp;</span>
+            <span style="font-size: 16px">{{ i18n('Результат фильтра') }}:&nbsp;&nbsp;</span>
             <span class="result-count result-count__items"
                 >{{ news_count.push_space() }}{{ similars_count ? ` + ${similars_count}` : '' }}&nbsp;&nbsp;</span
             >
@@ -29,7 +29,7 @@
                             : ''
                     "
                 >
-                    Сортировка по лайкам (по убыванию)
+                    {{ i18n('Сортировка по лайкам (по убыванию)') }}
                 </div>
             </i>
             <i
@@ -51,7 +51,7 @@
                             : ''
                     "
                 >
-                    Сортировка по комментариям (по убыванию)
+                    {{ i18n('Сортировка по комментариям (по убыванию)') }}
                 </div>
             </i>
             <i
@@ -73,7 +73,7 @@
                             : ''
                     "
                 >
-                    Сортировка по репостам (по убыванию)
+                    {{ i18n('Сортировка по репостам (по убыванию)') }}
                 </div>
             </i>
             <i
@@ -95,7 +95,7 @@
                             : ''
                     "
                 >
-                    Сортировка по аудитории (по убыванию)
+                    {{ i18n('Сортировка по аудитории (по убыванию)') }}
                 </div>
             </i>
             <i
@@ -106,7 +106,7 @@
                     active: selected_soc_metrics == '',
                 }"
             >
-                <div class="prompt">Сортировка по дате (по убыванию)</div>
+                <div class="prompt">{{ i18n('Сортировка по дате (по убыванию)') }}</div>
             </i>
         </div>
 
@@ -114,10 +114,10 @@
         <div class="switcher ml-auto">
             <div style="border-radius: 3px 0 0 3px;" @click="isGrouped = false" :class="{
                 active: !isGrouped
-            }">По одной</div>
+            }">{{ i18n('По одной') }}</div>
             <div style="border-radius: 0 3px 3px 0;" @click="isGrouped = true" :class="{
                 active: isGrouped
-            }">По группам</div><!-- сгруппировано -->
+            }">{{ i18n('По группам') }}</div><!-- сгруппировано -->
         </div>
 
         <div class="nav-pagination result-info-m-r-auto-1439">
@@ -170,7 +170,7 @@
         @click.stop="delete_resource_modal = false"
     >
         <div class="flex flex-col" @click.stop>
-            <div class="delete-resource-title">Удаление источника</div>
+            <div class="delete-resource-title">{{ i18n('Удаление источника') }}</div>
             <div class="delete-resource">
                 <div
                     class="item-title__icon"
@@ -218,7 +218,7 @@
                     class="default-btn cancel-btn"
                     @click="delete_resource_modal = false"
                 >
-                    Отмена
+                    {{ i18n('Отмена') }}
                 </button>
                 <button
                     class="default-btn delete-resource-btn"
@@ -244,21 +244,21 @@
         @click.stop="confirm_group_action_modal = false"
     >
         <div class="flex flex-col" @click.stop>
-            <div class="delete-resource-title">Внимание</div>
-            <span style="padding: 12px 12px 0;font-size: 14px;">Это действие изменит все публикации данной группы ({{ group_item_ids?.length }}).<br/> Применить для всех?</span>
+            <div class="delete-resource-title">{{ i18n('Внимание') }}</div>
+            <span style="padding: 12px 12px 0;font-size: 14px;">{{ i18n('Это действие изменит все публикации данной группы') }} ({{ group_item_ids?.length }}).<br/> {{ i18n('Применить для всех?') }}</span>
             <div class="flex item-center" style="padding: 9px">
                 <button
                     class="default-btn cancel-btn"
                     @click="cancel_group_action"
                 >
-                    Отмена
+                    {{ i18n('Отмена') }}
                 </button>
                 <button
                     class="default-btn delete-resource-btn"
                     @click="update_group_items"
                     style="background: rgb(28, 179, 148)"
                 >
-                    Применить
+                    {{ i18n('Применить') }}
                 </button>
             </div>
         </div>
@@ -354,7 +354,7 @@
                                                     class="fa fa-trash-o"
                                                     style="font-size: 17px"
                                                 ></i>
-                                                <span>Удалить новость</span>
+                                                <span>{{ i18n('Удалить новость') }}</span>
                                             </div>
                                             <div
                                                 v-if="similars_modal != similar_item.item_id"
@@ -376,7 +376,7 @@
                                                     style="font-size: 17px"
                                                 ></i>
                                                 <!-- <i class="fa fa-trash-o" style="font-size: 17px;"></i> -->
-                                                <span>Удалить источник</span>
+                                                <span>{{ i18n('Удалить источник') }}</span>
                                             </div>
                                             <div
                                                 class="item-action"
@@ -386,7 +386,7 @@
                                                     class="fa fa-copy"
                                                     style="font-size: 15px"
                                                 ></i>
-                                                <span>Скопировать id-новости</span>
+                                                <span>{{ i18n('Скопировать id-новости') }}</span>
                                             </div>
                                         </div>
                                     </div>
@@ -557,7 +557,7 @@
                                                 type="submit"
                                                 style="margin-right: 8px"
                                             >
-                                                Анализ
+                                                {{ i18n('Анализ') }}
                                             </button>
                                         </form> -->
                                         <button
@@ -568,7 +568,7 @@
                                             :disabled="similar_item?.logs === undefined"
                                             :style="similar_item?.logs === undefined ? 'cursor: wait;' : ''"
                                         >
-                                            Анализ
+                                            {{ i18n('Анализ') }}
                                             <i v-if="Object.values(similar_item?.logs || {}).includes('loading')" class="fa-solid fa-spinner" style="margin-right: -2px;padding-top: 1px;"></i>
                                             <i v-else-if="Object.keys(similar_item?.logs || {}).length" class="fa fa-check" style="color: #18a689;margin-right: -2px;"></i>
                                         </button>
@@ -576,7 +576,7 @@
                                             class="favorites"
                                             @click="get_item_favorites(similar_item.item_id)"
                                         >
-                                            Избранное
+                                            {{ i18n('Избранное') }}
                                         </button>
                                     </div>
                                 </div>
@@ -599,16 +599,16 @@
             <div class="tab-head">
                 <div class="tab-item" @click="chatgpt_tab = 'TextAnalyze'" :class="{
                     selected: chatgpt_tab == 'TextAnalyze'
-                }">Анализ</div>
+                }">{{ i18n('Анализ') }}</div>
                 <div class="tab-item" @click="chatgpt_tab = 'TextReaction'" :class="{
                     selected: chatgpt_tab == 'TextReaction'
-                }">Реакция</div>
+                }">{{ i18n('Реакция') }}</div>
                 <div class="tab-item" @click="chatgpt_tab = 'VGeneralization'" :class="{
                     selected: chatgpt_tab == 'VGeneralization'
-                }">Обобщение</div>
+                }">{{ i18n('Обобщение') }}</div>
                 <div class="tab-item" style="margin: 0 auto -1px;" @click="chatgpt_tab = 'MadeRequests'" :class="{
                     selected: chatgpt_tab == 'MadeRequests'
-                }">Проделанные запросы</div>
+                }">{{ i18n('Проделанные запросы') }}</div>
                 <div class="tab-item selected" @click="chatgpt_item = null" style="
                     margin: 0px 0px -1px auto;
                     border-bottom: none;
@@ -897,26 +897,26 @@
                             class="modal-item_btn favorites"
                             @click="get_item_favorites(modal_item?.item_id)"
                         >
-                            <i class="fa fa-bookmark-o"></i>Избранное
+                            <i class="fa fa-bookmark-o"></i>{{ i18n('Избранное') }}
                         </button>
                         <a
                             class="modal-item_btn favorites"
                             target="_blank"
                             :href="modal_item?.link"
-                            ><i class="fa fa-share"></i>Публикация</a
+                            ><i class="fa fa-share"></i>{{ i18n('Публикация') }}</a
                         >
                         <a
                             class="modal-item_btn favorites"
                             target="_blank"
                             :href="modal_item?.res_link"
                             style="color: #7cb5ec; border-color: #7cb5ec"
-                            ><i class="fa fa-share-alt"></i>Источник</a
+                            ><i class="fa fa-share-alt"></i>{{ i18n('Источник') }}</a
                         >
                         <button
                             class="modal-item_btn favorites red-border-color red-color"
                             @click="delete_item(modal_item?.item_id)"
                         >
-                            <i class="fa fa-trash-o"></i>Уд. новость
+                            <i class="fa fa-trash-o"></i>{{ i18n('Уд. новость') }}
                         </button>
                         <button
                             class="modal-item_btn favorites red-border-color red-color"
@@ -931,7 +931,7 @@
                                 )
                             "
                         >
-                            <i class="fa fa-minus-circle"></i>Уд. источник
+                            <i class="fa fa-minus-circle"></i>{{ i18n('Уд. источник') }}
                         </button>
                     </div>
                     <div
@@ -1000,8 +1000,8 @@
                     >
                         <span>{{
                             modal_item?.newspaper_modal
-                                ? "Скрыть"
-                                : "Показать газету"
+                                ? i18n("Скрыть")
+                                : i18n("Показать газету")
                         }}</span>
                         <i
                             class="fa-solid fa-angle-down"
@@ -1040,7 +1040,7 @@
                         !hasIn(modal_item?.category_id, [3, 8, 5, 10])
                     "
                 >
-                    Комментарии:
+                    {{ i18n('Комментарии') }}:
                     <i
                         style="
                             margin-right: 5px;
@@ -1061,18 +1061,18 @@
                 >
                     <div class="flex">
                         <h2 class="comment-title" style="padding-top: 2px">
-                            Комментарии:
+                            {{ i18n('Комментарии') }}:
                         </h2>
 
                         <span
                             class="comment-status comment-parsing"
                             v-if="comments?.status == 'ready'"
-                            >Комментарии на парсинге</span
+                            >{{ i18n('Комментарии на парсинге') }}</span
                         >
                         <span
                             class="comment-status comment-error"
                             v-else-if="comments?.status == 'failed'"
-                            >Не получилось спарсить</span
+                            >{{ i18n('Не получилось спарсить') }}</span
                         >
                         <span
                             class="comment-status comment-error"
@@ -1080,7 +1080,7 @@
                                 comments?.status == 'done' &&
                                 comments?.list?.length == 0
                             "
-                            >Нет найденных комментариев</span
+                            >{{ i18n('Нет найденных комментариев') }}</span
                         >
                         <div
                             v-else-if="comments?.list?.length != 0"
@@ -1095,7 +1095,7 @@
                                 type="text"
                                 class="search-comments-input"
                                 v-model="search_comment"
-                                placeholder="Поиск по комментариям"
+                                :placeholder="i18n('Поиск по комментариям')"
                             />
                             <div
                                 class="sort-by-metrics flex items-center"
@@ -1136,7 +1136,7 @@
                             "
                             @click="get_one_comments"
                         >
-                            Получить комментарии новости
+                            {{ i18n('Получить комментарии новости') }}
                             <i
                                 v-if="comments?.status == 'ready'"
                                 style="margin-left: 6px"
@@ -1151,7 +1151,7 @@
                             v-else
                             @click="get_one_comments"
                         >
-                            Обновить
+                            {{ i18n('Обновить') }}
                             <i
                                 v-if="comments?.status == 'ready'"
                                 style="margin-left: 6px"
@@ -1228,7 +1228,7 @@
             @click.stop
         >
             <div class="delete-resource-title" style="background: #1cb394;">
-                Выберите избранное
+                {{ i18n('Выберите избранное') }}
                 <i class="fa fa-close close-item-modal" @click="favorites_modal = false"></i>
             </div>
             <div style="padding: 8px;height: 100%;">
@@ -1241,7 +1241,7 @@
                         <input
                             type="text"
                             v-model="favorite_search"
-                            placeholder="Поиск по меткам"
+                            :placeholder="i18n('Поиск по избранным')"
                         />
                     </div>
                     <i
@@ -1382,7 +1382,7 @@
                 <div class="favorite-buttons flex">
                     <input
                         type="text"
-                        placeholder="Введите название избранного..."
+                        :placeholder="i18n('Введите название избранного...')"
                         v-model="label_name"
                     />
                     <button
@@ -1395,7 +1395,7 @@
                         "
                         @click="add_new_label()"
                     >
-                        Создать
+                        {{ i18n('Создать') }}
                     </button>
                 </div>
             </div>
@@ -1461,7 +1461,7 @@
                                     class="fa fa-trash-o"
                                     style="font-size: 17px"
                                 ></i>
-                                <span>Удалить новость</span>
+                                <span>{{ i18n('Удалить новость') }}</span>
                             </div>
                             <div
                                 class="item-action"
@@ -1482,7 +1482,7 @@
                                     style="font-size: 17px"
                                 ></i>
                                 <!-- <i class="fa fa-trash-o" style="font-size: 17px;"></i> -->
-                                <span>Удалить источник</span>
+                                <span>{{ i18n('Удалить источник') }}</span>
                             </div>
                             <div
                                 class="item-action"
@@ -1492,7 +1492,7 @@
                                     class="fa fa-copy"
                                     style="font-size: 15px"
                                 ></i>
-                                <span>Скопировать id-новости</span>
+                                <span>{{ i18n('Скопировать id-новости') }}</span>
                             </div>
                         </div>
                     </div>
@@ -1664,7 +1664,7 @@
                                 type="submit"
                                 style="margin-right: 8px"
                             >
-                                Анализ
+                                {{ i18n('Анализ') }}
                             </button>
                         </form> -->
                         <button
@@ -1684,7 +1684,7 @@
                             :disabled="item?.logs === undefined"
                             :style="item?.logs === undefined ? 'cursor: wait;' : ''"
                         >
-                            Анализ
+                            {{ i18n('Анализ') }}
                             <i v-if="Object.values(item?.logs || {}).includes('loading')" class="fa-solid fa-spinner" style="margin-right: -2px;padding-top: 1px;"></i>
                             <i v-else-if="Object.keys(item?.logs || {}).length" class="fa fa-check" style="color: #18a689;margin-right: -2px;"></i>
                         </button>
@@ -1692,7 +1692,7 @@
                             class="favorites"
                             @click="get_item_favorites(item.item_id)"
                         >
-                            Избранное
+                            {{ i18n('Избранное') }}
                         </button>
                     </div>
                 </div>
@@ -1747,6 +1747,7 @@
 </template>
 
 <script>
+import i18n from "@/response/utils/i18n"
 // inline_labels
 //import axios from 'axios'
 import {
@@ -1791,6 +1792,7 @@ export default {
     },
     setup() {
         return {
+            i18n,
             news_count,
             similars_count,
             resources_count,
@@ -2131,8 +2133,8 @@ export default {
             return (
                 `${date.format("h:i")}, ${parseInt(
                     date.format("d")
-                )} ${date.format("m", true)}${year}` +
-                (week_day ? `, ${date.format("w", true)}` : "")
+                )} ${i18n(date.format("m", true))}${year}` +
+                (week_day ? `, ${i18n(date.format("w", true))}` : "")
             ).trim();
         },
     },

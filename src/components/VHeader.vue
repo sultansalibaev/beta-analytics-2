@@ -26,21 +26,21 @@
 
         <div class="w-half flex items-center justify-between media-header-item-1439 media-header-bottom-875">
             <div class="sentiments flex">
-                <div class="negative transition-all duration-200" :title="`Негативные: ${main_sentiments_count['-1'].push_space()}`" :class="{
+                <div class="negative transition-all duration-200" :title="`${i18n('Негативные')}: ${main_sentiments_count['-1'].push_space()}`" :class="{
                     off: !selected_main_sentiments['-1']
                 }" @click="select_main_sentiment($event, '-1')">
                     <i style="margin-right: 5px;font-size: 15.5px;" class="fa-solid fa-face-angry"></i>
                     <!-- Негатив:  -->
                     {{ main_sentiments_count['-1'].push_space() }}
                 </div>
-                <div class="neutral transition-all duration-200" :title="`Нейтральные: ${main_sentiments_count['0'].push_space()}`" :class="{
+                <div class="neutral transition-all duration-200" :title="`${i18n('Нейтральные')}: ${main_sentiments_count['0'].push_space()}`" :class="{
                     off: !selected_main_sentiments['0']
                 }" @click="select_main_sentiment($event, '0')">
                     <i style="margin-right: 5px;font-size: 15.5px;" class="fa-solid fa-face-meh"></i>
                     <!-- Нейтрал:  -->
                     {{ main_sentiments_count['0'].push_space() }}
                 </div>
-                <div class="positive transition-all duration-200" :title="`Позитивные: ${main_sentiments_count['1'].push_space()}`" :class="{
+                <div class="positive transition-all duration-200" :title="`${i18n('Позитивные')}: ${main_sentiments_count['1'].push_space()}`" :class="{
                     off: !selected_main_sentiments['1']
                 }" @click="select_main_sentiment($event, '1')">
                     <i style="margin-right: 5px;font-size: 15.5px;" class="fa-solid fa-face-smile"></i>
@@ -71,7 +71,7 @@
             <div class="flex items-center export">
                 <div class="export-text">
                     <div class="p-b-1" @click="filter_modal = !filter_modal">
-                        Экспорт
+                        {{ i18n('Экспорт') }}
                     </div>
                 </div>
             </div>
@@ -81,6 +81,7 @@
 
 <script>
 // import axios from 'axios'
+import i18n from "@/response/utils/i18n"
 import DateRangePicker from '@/components/UI/DateRangePicker';
 import { modal } from '@/data'
 import { places, selected_regions, selected_categories, selected_languages, resources, resource_names, resource_count, resource_clipped_news_count, resource_full_news_count, column_news_count, selected_social_categories, dynamics, offsetLeft, offsetRight, selected_resources, selected_resource_sentiment, bars_sentiments_selected, selected_date_mode, dateRange, reset_all, get_selected_smi_categories } from "@/response/data/index"
@@ -95,7 +96,7 @@ export default {
         DateRangePicker,
     },
     setup() {
-        return { get_selected_smi_categories, getProjectCounts, getMainPlacesCount, getDynamicsData, setSentimentsCount, getMainSmiCategoriesAndLanguagesCount, getResourceCount, selected_top_resources, each_number, places, map_type_switcher, start_top_resources, end_top_resources, max, selected_regions, selected_categories, selected_languages, resources, getResourceData, resource_names, resource_count, resource_clipped_news_count, resource_full_news_count, column_news_count, selected_social_categories, social_categories, generals_count, main_sentiments_count, dynamics, offsetLeft, offsetRight, selected_resources, selected_resource_sentiment, bars_sentiments_selected, selected_date_mode, dateRange, modal, reset_all, r_type, project, languages_count, get_map_params, languages_general_data, categories_general_data, smi_category, smi_categories, selected_main_sentiments, socials, countries, regions }
+        return { i18n, get_selected_smi_categories, getProjectCounts, getMainPlacesCount, getDynamicsData, setSentimentsCount, getMainSmiCategoriesAndLanguagesCount, getResourceCount, selected_top_resources, each_number, places, map_type_switcher, start_top_resources, end_top_resources, max, selected_regions, selected_categories, selected_languages, resources, getResourceData, resource_names, resource_count, resource_clipped_news_count, resource_full_news_count, column_news_count, selected_social_categories, social_categories, generals_count, main_sentiments_count, dynamics, offsetLeft, offsetRight, selected_resources, selected_resource_sentiment, bars_sentiments_selected, selected_date_mode, dateRange, modal, reset_all, r_type, project, languages_count, get_map_params, languages_general_data, categories_general_data, smi_category, smi_categories, selected_main_sentiments, socials, countries, regions }
     },
     data() {
         return {

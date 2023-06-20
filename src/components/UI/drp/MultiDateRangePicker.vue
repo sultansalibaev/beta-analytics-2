@@ -21,6 +21,7 @@
 								'line-through': !(
 									new Date(min).valueOf() <= date.DATE.valueOf() && date.DATE.valueOf() <= new Date(max).valueOf()
 								),
+                                'pointer-events-none': !selected_one_date && Object.keys(between_dates).length == 1 && new Date(date.date).valueOf() < new Date(Object.keys(between_dates)[0]).valueOf(),
 								'gray-date': new Date(month).format('m') != date.DATE.format('m') || !(
 									new Date(min).valueOf() <= date.DATE.valueOf() && date.DATE.valueOf() <= new Date(max).valueOf()
 								),

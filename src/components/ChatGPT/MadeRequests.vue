@@ -2,10 +2,10 @@
     <div class="made-requests-content">
         <div class="flex justify-around gap-x-10">
             <div class="flex flex-col w-full">
-                <h2>Анализ новости</h2>
-                <input v-model="condition_name" class="form-control my-3" type="text" placeholder="Введите условие" >
+                <h2>{{ i18n('Анализ новости') }}</h2>
+                <input v-model="condition_name" class="form-control my-3" type="text" :placeholder="i18n('Введите условие')" >
                 <div class="used-prompt-list static scrollbar" style="max-height: 400px;">
-                    <div class="used-prompt empty-list_item" v-if="sorted_analyze_prompt_list.length == 0">Список пустой</div>
+                    <div class="used-prompt empty-list_item" v-if="sorted_analyze_prompt_list.length == 0">{{ i18n('Список пустой') }}</div>
                     <div
                         class="used-prompt"
                         v-else v-for="used_prompt in sorted_analyze_prompt_list"
@@ -16,10 +16,10 @@
                 </div>
             </div>
             <div class="flex flex-col w-full">
-                <h2>Реакция</h2>
-                <input v-model="person_name" class="form-control my-3" type="text" placeholder="Введите от чьего лица вы ожидали ответ" >
+                <h2>{{ i18n('Реакция') }}</h2>
+                <input v-model="person_name" class="form-control my-3" type="text" :placeholder="i18n('Введите от чьего лица вы ожидали ответ')" >
                 <div class="used-prompt-list static scrollbar" style="max-height: 400px;">
-                    <div class="used-prompt empty-list_item" v-if="sorted_reaction_prompt_list.length == 0">Список пустой</div>
+                    <div class="used-prompt empty-list_item" v-if="sorted_reaction_prompt_list.length == 0">{{ i18n('Список пустой') }}</div>
                     <div
                         class="used-prompt"
                         v-else v-for="used_prompt in sorted_reaction_prompt_list"
@@ -34,11 +34,12 @@
 </template>
 
 <script>
+import i18n from "@/response/utils/i18n"
 import { chatgpt_item, chatgpt_more } from '@/response/data/index'
 
 export default {
     setup() {
-        return { chatgpt_item, chatgpt_more }
+        return { i18n, chatgpt_item, chatgpt_more }
     },
     data() {
         return {

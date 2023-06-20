@@ -4,6 +4,7 @@
 import { computed, reactive, ref, watch } from 'vue';
 import Highcharts from "highcharts";
 
+import i18n from "@/response/utils/i18n"
 import { reset_sentiment } from "@/response/options/barOptions"
 
 import { selected_regions, places, current_country_id, getCountryRegions, country_regions_loading } from "@/response/data/index"
@@ -173,8 +174,8 @@ export let mapOptions = computed(() => ({
     },
 
     tooltip: {
-        headerFormat: '<span style="font-size:11px"><b>Регион:</b></span>',
-        pointFormat: '<span> {point.country}<br> <b>Публикаций:</b> {point.value}</span></br>',
+        headerFormat: `<span style="font-size:11px"><b>${i18n('Регион')}:</b></span>`,
+        pointFormat: `<span> {point.country}<br> <b>${i18n('Публикаций')}:</b> {point.value}</span></br>`,
         shared: true,
         useHTML: true,
     },

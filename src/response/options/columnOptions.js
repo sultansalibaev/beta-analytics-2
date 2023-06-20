@@ -11,6 +11,8 @@ import {
     resource_count,
 } from "@/response/data/index";
 
+import i18n from '@/response/utils/i18n'
+
 import Highcharts from "highcharts";
 
 export const inColumnPercentage = reactive(ref(false));
@@ -178,7 +180,9 @@ export const resources_sliced = computed(() => resources.value.slice(
         name: resource_names.value[resource.res_id].name,
         link: resource_names.value[resource.res_id].link,
         category_name: r_type.value == 1 ? smi_categories.value[resource_names.value[resource.res_id]?.category_id].name_cat : getSocialCategoryName(resource_names.value[resource.res_id].link),
-        place_key: resource_names.value[resource.res_id].country_id == 57 && resource_names.value[resource.res_id].region_id != 0 ? 'Регион' : 'Страна',
+        place_key: (
+            resource_names.value[resource.res_id].country_id == 57 && resource_names.value[resource.res_id].region_id != 0 ? i18n('Регион') : i18n('Страна')
+        ),
         place_value: getPlaceName(resource_names.value[resource.res_id]),
         place_hc: countries.value[resource_names.value[resource.res_id].country_id]?.hc,
     }
@@ -193,9 +197,9 @@ export const resources_sliced_categories_obj = computed(() => resources_sliced.v
 
 
 let sentiment_names = {
-    "Позитивные": "1",
-    "Нейтральные": "0",
-    "Негативные": "-1",
+    [i18n("Позитивные")]: "1",
+    [i18n("Нейтральные")]: "0",
+    [i18n("Негативные")]: "-1",
 }
 export const columnOptions = computed(() => {
     return {
@@ -208,7 +212,7 @@ export const columnOptions = computed(() => {
                 load: function () {
                     staced_column.value = true;
                     this.series.forEach((series) => {
-                        if (series.name !== "Публикаций") {
+                        if (series.name !== i18n("Публикаций")) {
                             series.hide();
                         }
                     });
@@ -277,9 +281,9 @@ export const columnOptions = computed(() => {
         tooltip: {
             //enabled: false,
             headerFormat:
-                '<span style="font-size:11px"><b>Источник:</b> {point.key} </span></br>'+
-                '<span style="font-size:11px"><b>Категория:</b> {point.point.category_name} </span></br>'+
-                '<span style="font-size:11px;display:inline-flex;align-items:center;overflow:hidden;text-overflow:ellipsis"><b>{point.point.place_key}:</b>&nbsp;&nbsp;<img src="/media/img/country/{point.point.place_hc}.png" width="22" height="22" alt=""> &nbsp;&nbsp;{point.point.place_value} </span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</br>',
+                `<span style="font-size:11px"><b>${i18n('Источник')}:</b> {point.key} </span></br>`+
+                `<span style="font-size:11px"><b>${i18n('Категория')}:</b> {point.point.category_name} </span></br>`+
+                `<span style="font-size:11px;display:inline-flex;align-items:center;overflow:hidden;text-overflow:ellipsis"><b>{point.point.place_key}:</b>&nbsp;&nbsp;<img src="/media/img/country/{point.point.place_hc}.png" width="22" height="22" alt=""> &nbsp;&nbsp;{point.point.place_value} </span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</br>`,
             pointFormat:
                 "</br><span><b>{series.name}:</b> {point.y}</span></br>",
             shared: true,
@@ -358,10 +362,10 @@ export const columnOptions = computed(() => {
                     },
                     legendItemClick: function () {
                         let default_series = this.chart.series.find(
-                            (series) => series.name === "Публикаций"
+                            (series) => series.name === i18n("Публикаций")
                         );
                         let sentiment_series = this.chart.series.filter(
-                            (series) => series.name !== "Кривая" && series.visible
+                            (series) => series.name !== i18n("Публикаций") && series.visible
                         );
                         if (!selected_main_sentiments.value[sentiment_names[this.name]]) {
                             this.show();
@@ -380,7 +384,7 @@ export const columnOptions = computed(() => {
                         }
                     },
                 },
-                name: "Позитивные",
+                name: i18n("Позитивные"),
                 color: "#1CB394",
                 states: {
                     hover: {
@@ -439,10 +443,10 @@ export const columnOptions = computed(() => {
                     },
                     legendItemClick: function () {
                         let default_series = this.chart.series.find(
-                            (series) => series.name === "Публикаций"
+                            (series) => series.name === i18n("Публикаций")
                         );
                         let sentiment_series = this.chart.series.filter(
-                            (series) => series.name !== "Кривая" && series.visible
+                            (series) => series.name !== i18n("Публикаций") && series.visible
                         );
                         if (!selected_main_sentiments.value[sentiment_names[this.name]]) {
                             this.show();
@@ -461,7 +465,7 @@ export const columnOptions = computed(() => {
                         }
                     },
                 },
-                name: "Нейтральные",
+                name: i18n("Нейтральные"),
                 color: "#F2B90A",
                 states: {
                     hover: {
@@ -515,10 +519,10 @@ export const columnOptions = computed(() => {
                     },
                     legendItemClick: function () {
                         let default_series = this.chart.series.find(
-                            (series) => series.name === "Публикаций"
+                            (series) => series.name === i18n("Публикаций")
                         );
                         let sentiment_series = this.chart.series.filter(
-                            (series) => series.name !== "Кривая" && series.visible
+                            (series) => series.name !== i18n("Публикаций") && series.visible
                         );
                         if (!selected_main_sentiments.value[sentiment_names[this.name]]) {
                             this.show();
@@ -537,7 +541,7 @@ export const columnOptions = computed(() => {
                         }
                     },
                 },
-                name: "Негативные",
+                name: i18n("Негативные"),
                 color: "#EC5E5E",
                 states: {
                     hover: {
@@ -571,12 +575,16 @@ export const columnOptions = computed(() => {
             {
                 events: {
                     click: function (e) {
-                        reset_sentiment_resource()
+                        //reset_sentiment_resource()
                         if (e.shiftKey) {
                             e.point.selected = !e.point.selected;
-                            selected_resources.value.resources[
-                                e.point.options.res_id
-                            ] = e.point.selected;
+                            selected_resources.value.resources = {
+                                ...selected_resources.value.resources,
+                                [e.point.options.res_id]: e.point.selected
+                            }
+                            //selected_resources.value.resources[
+                            //    e.point.options.res_id
+                            //] = e.point.selected;
                         } else {
                             e.point.selected = !e.point.selected;
                             selected_resources.value.resources = {
@@ -601,7 +609,7 @@ export const columnOptions = computed(() => {
                     },
                 },
 
-                name: "Публикаций",
+                name: i18n("Публикаций"),
                 color: "#7cb5ec",
                 states: {
                     hover: {
@@ -634,6 +642,6 @@ export const columnOptions = computed(() => {
                     })),
             },
         ]
-        // .filter(series => series.name == 'Публикаций' || selected_main_sentiments.value[sentiment_names[series.name]]),
+        // .filter(series => series.name == i18n('Публикаций') || selected_main_sentiments.value[sentiment_names[series.name]]),
     };
 });

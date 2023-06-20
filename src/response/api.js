@@ -7,6 +7,7 @@ import { selected_dates_query, selected_sentiment_dates_query } from '@/response
 import { s_time, f_time } from '@/data'
 import { computed, watch } from 'vue'
 
+import i18n from "@/response/utils/i18n"
 
 
 
@@ -383,7 +384,7 @@ export function getMainSmiCategoriesAndLanguagesCount() {
 			smi_category.value = Object.keys(categories_general_data.value).map(cat_id => {
 				return {
 					id_cat: cat_id,
-					name: smi_categories.value[cat_id]?.name_cat,
+                    name: i18n(smi_categories.value[cat_id]?.name_cat),
 					y: Object.values(categories_general_data.value[cat_id]).reduce((a,b) => (a+b))
 				}
 			})

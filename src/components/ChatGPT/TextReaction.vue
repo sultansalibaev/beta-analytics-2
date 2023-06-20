@@ -11,7 +11,7 @@
                                 id="reaction-input"
                                 type="text"
                                 style="height: 35px !important;border-radius: 3px;max-width: 400px;font-size: 15px !important;"
-                                :style="input ? '' : 'border-color: red !important;'" placeholder="Напиши ответ от лица правительства"
+                                :style="input ? '' : 'border-color: red !important;'" :placeholder="i18n('Напиши ответ от лица правительства')"
                                 v-model="input"
                                 @click.stop="used_prompt_list_modal = true"/>
                             <i
@@ -44,9 +44,9 @@
                             color: red;
                             font-size: 15px;
                             white-space: nowrap;
-                        ">От чьего лица вы ожидаете ответ?</span>
+                        ">{{ i18n('От чьего лица вы ожидаете ответ?') }}</span>
                     </div>
-                    <div class="cond" style="margin-top: 10px;">Что передается в ChatGPT: <i>Проанализируй данную новость и сформируй ответ на ее основе. {{ input }}</i></div>
+                    <div class="cond" style="margin-top: 10px;">{{ i18n('Что передается в ChatGPT') }}: <i>{{ i18n('Проанализируй данную новость и сформируй ответ на ее основе.') }} {{ input }}</i></div>
 
                     <div for="textarea_analyze" class="form-label" style="margin: 12px 0;display: none;">Ввод:</div>
                     <textarea class="form-control" style="display: none;" id="textarea_analyze" rows="10" :value="chatgpt_item?.text.maxLength(4_000)" disabled></textarea>
@@ -65,11 +65,11 @@
                             :style="input ? '' : 'background: #ccc !important;border:1px solid #ccc !important;pointer-events:none'"
                             @click="push_news"
                             :disabled="load_circle_analyze || chatgpt_item?.logs[input]?.result">
-                            Запуск
+                            {{ i18n('Запуск') }}
                             <i id="load-circle-analyze" v-show="load_circle_analyze" class="fa-solid fa-spinner"></i>
                         </button>
                         <button type="button" style="margin: 20px 0 0 auto !important;" class="f-z-16 btn btn-info btn-help" data-bs-toggle="modal" data-bs-target="#exampleModal" @click="text_analyze_modal = true">
-                            Информация и пояснение
+                            {{ i18n('Информация и пояснение') }}
                         </button>
                     </div>
                 </div>
@@ -102,6 +102,7 @@
 </template>
 
 <script>
+    import i18n from "@/response/utils/i18n"
     import { Configuration, OpenAIApi } from "openai"
     import { chatgpt_item, chatgpt_tab, chatgpt_log } from '@/response/data/index'
     import { getGptLogs } from '@/response/api'
@@ -125,6 +126,7 @@
         },
         setup() {
             return {
+                i18n,
                 getGptLogs,
                 chatgpt_item,
                 chatgpt_tab,

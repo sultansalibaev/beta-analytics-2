@@ -2,7 +2,7 @@
 	<div class="modal">
 		<div class="flex flex-col justify-between bg-white">
 			<div class="date-title p-x-14 m-b-14 flex items-center justify-between text-white">
-				<span>Выберите период</span>
+				<span>{{ i18n('Выберите период') }}</span>
 				<i class="fa-solid fa-xmark cursor-pointer" style="font-size: 22px;
         display: flex;
         align-items: center;
@@ -13,7 +13,7 @@
 				<div class="flex flex-col justify-center date-ranges">
 					<span class="date-range" :class="{
 						selected: isSelectedRange(range)
-					}" v-for="range in Object.keys(ranges)" :key="range" @click="select_range_period(ranges[range])">{{ range }}</span>
+					}" v-for="range in Object.keys(ranges)" :key="range" @click="select_range_period(ranges[range])">{{ i18n(range) }}</span>
 				</div>
 				<switching-by-dates :min="min" :max="max"/>
 			</div>
@@ -22,19 +22,20 @@
 					<input type="time" class="m-r-10" v-model="s_time">
 					<input type="time" v-model="f_time">
 				</div>
-				<button class="primary" @click="setDateRange">Применить</button>
+				<button class="primary" @click="setDateRange">{{ i18n('Применить') }}</button>
 			</div>
 		</div>
 	</div>
 </template>
 
 <script>
+import i18n from "@/response/utils/i18n"
 import { between_dates, select_range_period, min, max, ranges, s_time, f_time, modal, setDateRange } from '@/data'
 import SwitchingByDates from "@/components/UI/drp/SwitchingByDates.vue";
 
 export default {
 	setup() {
-		return { between_dates, select_range_period, min, max, ranges, s_time, f_time, modal, setDateRange }
+		return { i18n, between_dates, select_range_period, min, max, ranges, s_time, f_time, modal, setDateRange }
 	},
 	components: {
 		SwitchingByDates,

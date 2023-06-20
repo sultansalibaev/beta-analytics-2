@@ -6,22 +6,22 @@
                     <!-- <span class="badge text-bg-success">Анализ новости</span> -->
                     <div class="dropdown dropdown_inline" style="display: flex;">
                         <button class="f-z-16 btn btn-success dropdown-toggle" type="button" :style="input != '' ? 'background: #ccc !important;border: 1px solid #ccc !important;pointer-events: none;' : ''" data-bs-toggle="dropdown" aria-expanded="false" @click.stop="dropdown_menu = !dropdown_menu">
-                            Условие
+                            {{ i18n('Условие') }}
                         </button>
                         <ul class="dropdown-menu" :class="{
                             show: dropdown_menu
                         }">
                             <li @click="dropdown_menu=false;change_condition('бизнес')">
-                                <button class="dropdown-item">Бизнес</button>
+                                <button class="dropdown-item">{{ i18n('Бизнес') }}</button>
                             </li>
                             <li @click="dropdown_menu=false;change_condition('государство')">
-                                <button class="dropdown-item">Государство</button>
+                                <button class="dropdown-item">{{ i18n('Государство') }}</button>
                             </li>
                             <li @click="dropdown_menu=false;change_condition('сил.структуры')">
-                                <button class="dropdown-item">Сил.Структуры</button>
+                                <button class="dropdown-item">{{ i18n('Сил.Структуры') }}</button>
                             </li>
                             <li @click="dropdown_menu=false;change_condition('разные т.з.')">
-                                <button class="dropdown-item">Разные т.з.</button>
+                                <button class="dropdown-item">{{ i18n('Разные т.з.') }}</button>
                             </li>
                         </ul>
 
@@ -31,7 +31,7 @@
                                 id="analyze-input"
                                 type="text"
                                 style="height: 35px !important;border-radius: 3px;max-width: 400px;font-size: 15px !important;"
-                                placeholder="Введите своё условие (...?)"
+                                :placeholder="i18n('Введите своё условие (...?)')"
                                 v-model="input"
                                 @click.stop="used_prompt_list_modal = true"/>
                             <i
@@ -45,7 +45,7 @@
                                 <span
                                     class="used-prompt empty-list_item"
                                     v-if="sorted_used_prompt_list.length == 0"
-                                >Список пустой</span>
+                                >{{ i18n('Список пустой') }}</span>
                                 <span
                                     class="used-prompt"
                                     v-else
@@ -57,7 +57,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="cond" style="margin-top: 10px;">Что передается в ChatGPT: <i>Предоставь мне подробный анализ данной новости {{ input == '' ? condition : input }}</i></div>
+                    <div class="cond" style="margin-top: 10px;">{{ i18n('Что передается в ChatGPT') }}: <i>{{ i18n('Предоставь мне подробный анализ данной новости') }} {{ input == '' ? condition : input }}</i></div>
                     <!-- <div class="spinner-border text-success" role="status" id="load-circle-analyze">
                         <span class="visually-hidden">Loading...</span>
                     </div> -->
@@ -84,11 +84,11 @@
                             class="f-z-16 btn btn-success btn-control"
                             @click="push_news"
                             :disabled="load_circle_analyze || chatgpt_item?.logs[input != '' ? input : condition]?.result">
-                            Запуск
+                            {{ i18n('Запуск') }}
                             <i id="load-circle-analyze" v-show="load_circle_analyze" class="fa-solid fa-spinner"></i>
                         </button>
                         <button type="button" style="margin: 20px 0 0 auto !important;" class="f-z-16 btn btn-info btn-help" data-bs-toggle="modal" data-bs-target="#exampleModal" @click="text_analyze_modal = true">
-                            Информация и пояснение
+                            {{ i18n('Информация и пояснение') }}
                         </button>
                     </div>
                 </div>
@@ -126,6 +126,7 @@
 </template>
 
 <script>
+    import i18n from "@/response/utils/i18n"
     import { Configuration, OpenAIApi } from "openai"
     import { chatgpt_item, chatgpt_tab, chatgpt_log } from '@/response/data/index'
     import { getGptLogs } from '@/response/api'
@@ -150,12 +151,13 @@
                     "С точки зрения бизнеса",
                     "С точки зрения государства",
                     "С точки зрения силовых структур",
-                    "C разных точек зрения"
+                    "C разных точек зрения",
                 ],
             }
         },
         setup() {
             return {
+                i18n,
                 getGptLogs,
                 chatgpt_item,
                 chatgpt_tab,

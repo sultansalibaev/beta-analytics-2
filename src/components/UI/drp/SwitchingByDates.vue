@@ -12,7 +12,7 @@
 			<div class="flex">
 				<div class="select-container" style="margin-right:10px;">
 					<select v-model.lazy="month">
-						<option v-for="one_month in all_months" :key="one_month[0]" :value="one_month[0]">{{ one_month[1] }}</option>
+						<option v-for="one_month in all_months" :key="one_month[0]" :value="one_month[0]">{{ i18n(one_month[1]) }}</option>
 					</select>
 				</div>
 				<div class="select-container">
@@ -36,6 +36,7 @@
 </template>
 
 <script>
+import i18n from "@/response/utils/i18n"
 import MultiDateRangePicker from "@/components/UI/drp/MultiDateRangePicker.vue";
 import { picker_range, month, year } from '@/data'
 
@@ -44,7 +45,7 @@ export default {
 		MultiDateRangePicker,
     },
     setup() {
-        return { picker_range, month, year }
+        return { i18n, picker_range, month, year }
     },
 	data() {
 		return {

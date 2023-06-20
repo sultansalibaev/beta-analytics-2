@@ -6,7 +6,7 @@
                 style="min-width: 240px; width: 70%"
             >
                 <div class="flex justify-between items-center title">
-                    <span>Язык публикаций</span>
+                    <span>{{ i18n('Язык публикаций') }}</span>
                     <i
                         class="fa fa-refresh cursor-pointer"
                         @click="reset_languages"
@@ -92,7 +92,7 @@
                                                 : 0,
                                     }"
                                 />
-                                {{ language.name }}
+                                {{ i18n(language.name) }}
                             </div>
                             <div class="language-news_count">
                                 <span class="lang-news">
@@ -141,8 +141,8 @@
                 >
                     <span>{{
                         r_type == 1
-                            ? "Категория источника" // Категория новостей СМИ
-                            : "Метрики соцсетей"
+                            ? i18n("Категория источника") // Категория новостей СМИ
+                            : i18n("Метрики соцсетей")
                     }}</span>
 
                     <i
@@ -190,7 +190,7 @@
                                         <i class="fa-solid fa-spinner" v-if="soc_metrics.likes == 'loading'"></i>
                                         <template v-else>{{ soc_metrics.likes.short() }}</template>
                                     </span>
-                                    <span class="metric-name">Лайки</span>
+                                    <span class="metric-name">{{ i18n('Лайки') }}</span>
                                 </div>
                             </div>
                             <div
@@ -207,7 +207,7 @@
                                         <i class="fa-solid fa-spinner" v-if="soc_metrics.comments == 'loading'"></i>
                                         <template v-else>{{ soc_metrics.comments.short() }}</template>
                                     </span>
-                                    <span class="metric-name">Комментарии</span>
+                                    <span class="metric-name">{{ i18n('Комментарии') }}</span>
                                 </div>
                             </div>
                         </div>
@@ -226,7 +226,7 @@
                                         <i class="fa-solid fa-spinner" v-if="soc_metrics.reposts == 'loading'"></i>
                                         <template v-else>{{ soc_metrics.reposts.short() }}</template>
                                     </span>
-                                    <span class="metric-name">Репосты</span>
+                                    <span class="metric-name">{{ i18n('Репосты') }}</span>
                                 </div>
                             </div>
                             <div
@@ -243,7 +243,7 @@
                                         <i class="fa-solid fa-spinner" v-if="soc_metrics.members == 'loading'"></i>
                                         <template v-else>{{ soc_metrics.members.short() }}</template>
                                     </span>
-                                    <span class="metric-name">Подписчики</span>
+                                    <span class="metric-name">{{ i18n('Подписчики') }}</span>
                                 </div>
                             </div>
                         </div>
@@ -253,11 +253,11 @@
                     'opacity-0': r_type == 1 || (!Boolean(enable_metrics) || !is_high_news_count || is_high_news_count && !laoding_metrics) && !(is_high_news_count && !enable_metrics)
                 }">
                     <template v-if="is_high_news_count && !enable_metrics">
-                        При сборе метрик для большого числа публикаций метрики по умолчанию выкл.
+                        {{ i18n('При сборе метрик для большого числа публикаций метрики по умолчанию выкл.') }}
                     </template>
                     <template v-else>
-                        Идёт сбор метрик для большого числа публикаций.<br/>
-                        Будет готово через несколько секунд🤓
+                        {{ i18n('Идёт сбор метрик для большого числа публикаций.') }}<br/>
+                        {{ i18n('Будет готово через несколько секунд🤓') }}
                     </template>
                 </div>
             </div>
@@ -272,10 +272,10 @@
             >
                 <span>
                     <span v-if="staced_column"
-                        >Источники по числу публикаций</span
+                        >{{ i18n('Источники по числу публикаций') }}</span
                     >
                     <span v-if="!staced_column"
-                        >Источники по тональности публикаций</span
+                        >{{ i18n('Источники по тональности публикаций') }}</span
                     >
                     <!--Публикаций по источникам:-->
                     <!--<span style="font-family: sans-serif;font-size: 15px;font-weight:600;color:#1CB394;">{{
@@ -293,7 +293,7 @@
                             active: !inColumnPercentage,
                         }"
                     >
-                        Абсолютный
+                        {{ i18n('Абсолютный') }}
                     </div>
                     <div
                         style="border-radius: 0 2px 2px 0;"
@@ -302,7 +302,7 @@
                             active: inColumnPercentage,
                         }"
                     >
-                        Доля
+                        {{ i18n('Доля') }}
                     </div>
                     <div
                         :style="{
@@ -363,7 +363,7 @@
                         {{ resource_clipped_news_count.push_space() }}
                     </div>
                 </div>
-                <div class="res_count_prompt">{{ show_percent ? 'Количество публикаций' : 'Доля публикаций \n на выделенных источниках' }}</div>
+                <div class="res_count_prompt">{{ show_percent ? i18n('Количество публикаций') : i18n('Доля публикаций на выделенных источниках') }}</div>
                 <VRange v-if="r_type == 1" :percent="res_news_info"></VRange>
                 <VRange
                     v-else-if="r_type == 2"
@@ -375,6 +375,7 @@
 </template>
 
 <script>
+import i18n from "@/response/utils/i18n"
 // import VSelect from '@/components/UI/VSelect.vue';
 import VRange from "@/components/UI/VRange.vue";
 import PieChart from "@/components/UI/PieChart.vue";
@@ -540,6 +541,7 @@ export default {
     },
     setup() {
         return {
+            i18n,
             laoding_metrics,
             is_high_news_count,
             resource_count_loading,

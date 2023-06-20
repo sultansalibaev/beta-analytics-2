@@ -10,6 +10,7 @@ import {
 } from "@/response/data/index";
 import { computed, reactive, ref } from "vue";
 
+import i18n from "@/response/utils/i18n"
 import { getDynamicsData, getGeneralCount, getSocialMetrics, getItems } from '@/response/api'
 import { r_type, selected_main_sentiments } from "../header";
 
@@ -79,9 +80,93 @@ let color_to_sentiment = {
 // weekly = 7 * 24 * 3600 * 1000;
 // monthly = 12 * 30 * 24 * 3600 * 1000;
 
+import Highcharts from "highcharts";
+
+Highcharts.setOptions({
+    lang: {
+        months: Object.keys({
+            [i18n('Январь')]: true,
+            [i18n('Февраль')]: true,
+            [i18n('Март')]: true,
+            [i18n('Апрель')]: true,
+            [i18n('Май')]: true,
+            [i18n('Июнь')]: true,
+            [i18n('Июль')]: true,
+            [i18n('Август')]: true,
+            [i18n('Сентябрь')]: true,
+            [i18n('Октябрь')]: true,
+            [i18n('Ноябрь')]: true,
+            [i18n('Декабрь')]: true,
+        }),
+        shortMonths: Object.keys({
+            [i18n('Янв')]: true,
+            [i18n('Фев')]: true,
+            [i18n('Март')]: true,
+            [i18n('Апр')]: true,
+            [i18n('Май')]: true,
+            [i18n('Июнь')]: true,
+            [i18n('Июль')]: true,
+            [i18n('Авг')]: true,
+            [i18n('Сент')]: true,
+            [i18n('Окт')]: true,
+            [i18n('Ноя')]: true,
+            [i18n('Дек')]: true,
+        }),
+        weekdays: Object.keys({
+            [i18n('Воскресенье')]: true,
+            [i18n('Понедельник')]: true,
+            [i18n('Вторник')]: true,
+            [i18n('Среда')]: true,
+            [i18n('Четверг')]: true,
+            [i18n('Пятница')]: true,
+            [i18n('Суббота')]: true,
+        })
+    },
+});
+
 export const lineOptions = computed(() => {
     return {
         credits: false,
+
+        //lang: {
+        //    months: Object.keys({
+        //        [i18n('Январь')]: true,
+        //        [i18n('Февраль')]: true,
+        //        [i18n('Март')]: true,
+        //        [i18n('Апрель')]: true,
+        //        [i18n('Май')]: true,
+        //        [i18n('Июнь')]: true,
+        //        [i18n('Июль')]: true,
+        //        [i18n('Август')]: true,
+        //        [i18n('Сентябрь')]: true,
+        //        [i18n('Октябрь')]: true,
+        //        [i18n('Ноябрь')]: true,
+        //        [i18n('Декабрь')]: true,
+        //    }),
+        //    shortMonths: Object.keys({
+        //        [i18n('Янв')]: true,
+        //        [i18n('Фев')]: true,
+        //        [i18n('Март')]: true,
+        //        [i18n('Апр')]: true,
+        //        [i18n('Май')]: true,
+        //        [i18n('Июнь')]: true,
+        //        [i18n('Июль')]: true,
+        //        [i18n('Авг')]: true,
+        //        [i18n('Сент')]: true,
+        //        [i18n('Окт')]: true,
+        //        [i18n('Ноя')]: true,
+        //        [i18n('Дек')]: true,
+        //    }),
+        //    weekdays: Object.keys({
+        //        [i18n('Воскресенье')]: true,
+        //        [i18n('Понедельник')]: true,
+        //        [i18n('Вторник')]: true,
+        //        [i18n('Среда')]: true,
+        //        [i18n('Четверг')]: true,
+        //        [i18n('Пятница')]: true,
+        //        [i18n('Суббота')]: true,
+        //    })
+        //},
 
         chart: {
             zoomType: "x",
@@ -167,7 +252,7 @@ export const lineOptions = computed(() => {
         },
 
         tooltip: {
-            pointFormat: "Публикаций: <b>{point.y}</b><br/>",
+            pointFormat: `${i18n('Публикаций')}: <b>{point.y}</b><br/>`,
         },
 
         plotOptions: {
