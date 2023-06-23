@@ -69,5 +69,5 @@ console.log('finish first axios request');
 const app = createApp(App)
 
 app.use(HighchartsVue);
-    
+
 app.mount('#app')

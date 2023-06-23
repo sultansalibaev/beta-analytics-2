@@ -188,7 +188,7 @@ export const lineOptions = computed(() => {
                     });
                 },
             },
-            margin: [8 + 4, 15, 25], // [8 + 4, 5, 25, 35] // [0,5,25,35]
+            margin: [8 + 4, 10, 25], // [8 + 4, 5, 25, 35] // [0,5,25,35]
             height: 200
         },
         title: { text: "" },

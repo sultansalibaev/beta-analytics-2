@@ -144,15 +144,8 @@ export default {
     },
     watch: {
         selected_date_mode() {
+
             console.log('watching - selected_date_mode');
-            this.selected_dates = { dates: {} }
-            this.selected_sentiment_dates = {
-                dates: {
-                    "1": {},
-                    "0": {},
-                    "-1": {},
-                }
-            }
 
             this.getDynamicsData()
         },

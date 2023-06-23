@@ -173,7 +173,14 @@
     export const resource_count_loading = reactive(ref(true));
     export const similars_count = reactive(ref(false));
     export const news_count = reactive(ref(0));
+    export const selected_similars_page = reactive(ref(1));
+    export const set_selected_similars_page = page => {
+        selected_similars_page.value = parseInt(page);
+    };
     export const selected_page = reactive(ref(1));
+    export const set_selected_page = page => {
+        selected_page.value = parseInt(page);
+    };
     export const selected_label_page = reactive(ref(1));
     export const item_modal = reactive(ref(false));
     export const resources_count = reactive(ref(0));

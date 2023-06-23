@@ -1,6 +1,7 @@
 import axios from 'axios'
 import { project, socials, countries, regions, social_categories, generals_count, smi_categories, r_type, main_sentiments_count, selected_main_sentiments, languages_count, languages_general_data, categories_general_data, smi_category, search_tags, isKazakstan } from '@/response/header'
-import { dateRange, selected_social_categories, places, selected_categories, selected_languages, resource_count, resource_full_news_count, column_news_count, resources, offsetLeft, offsetRight, resource_clipped_news_count, selected_resources, selected_resource_sentiment, bars_sentiments_selected, selected_date_mode, dynamics, soc_metrics, enable_metrics, is_high_news_count, news_count, similars_count, resources_count, items, items_loading, selected_page, selected_soc_metrics, resource_count_loading, laoding_metrics, selected_regions, reset_all, get_selected_smi_categories, isGrouped, similar_items, similar_items_loading, thumbnail_dates, countries_with_regions, getCountryRegions } from '@/response/data/index'
+import {
+    dateRange, selected_social_categories, places, selected_categories, selected_languages, resource_count, resource_full_news_count, column_news_count, resources, offsetLeft, offsetRight, resource_clipped_news_count, selected_resources, selected_resource_sentiment, bars_sentiments_selected, selected_dates, selected_sentiment_dates, selected_date_mode, dynamics, soc_metrics, enable_metrics, is_high_news_count, news_count, similars_count, resources_count, items, items_loading, selected_page, selected_soc_metrics, resource_count_loading, laoding_metrics, selected_regions, reset_all, get_selected_smi_categories, isGrouped, similar_items, similar_items_loading, thumbnail_dates, countries_with_regions, getCountryRegions } from '@/response/data/index'
 import { getResourceData, selected_top_resources, start_top_resources, end_top_resources, each_number, max } from '@/response/options/columnOptions'
 import { get_map_params } from '@/response/options/mapOptions'
 import { selected_dates_query, selected_sentiment_dates_query } from '@/response/options/lineOptions'
@@ -61,6 +62,16 @@ const reset_all_selected_data = () => {
 			"-1": {},
 		}
 	}
+    selected_dates.value = { dates: {} };
+    selected_sentiment_dates.value = {
+        dates: {
+            "1": {},
+            "0": {},
+            "-1": {},
+        }
+    }
+    isGrouped.value = false
+    selected_date_mode.value = 'daily'
 }
 
 const obj_copy = function (obj) {
@@ -692,14 +703,12 @@ export const getGeneralCount = () => {
         .get(`/ru/analyticstats/get-project-general-count?p_id=${project.value.id}&r_type=${r_type.value}&category_id=${category_id}&countries=${countries}&regions=${regions}&sentiments=${sentiments}&language=${language}&s_date=${dateRange.value.startDate.format("Y-m-d")} ${s_time.value}&f_date=${dateRange.value.endDate.format("Y-m-d")} ${f_time.value}&from=${from}&to=${end_clipped.value}&resource_length=${resource_count.value}&resources=${_resources}&specifying_sentiments=${specifying_sentiments}&date_mode=${selected_date_mode.value == 'weekly' ? 'daily' : selected_date_mode.value}&dates_filter=${selected_dates_query.value}&sentiment_dates_filter=${temp_sentiment_dates_query}&from_page=${(selected_page.value - 1) * 20}&grouped=${isGrouped.value}`)
         .then(response => {
 
-			console.log('getGeneralCount - ', response);
-			if (isGrouped.value) {
-				similars_count.value = parseInt(response.data.similars_count)
-			}
-			else {
-				similars_count.value = false;
-			}
+            console.log('getGeneralCount - ', response);
             news_count.value = parseInt(response.data.news_count)
+			if (isGrouped.value) {
+                news_count.value = parseInt(response.data.similars_count)
+			}
+            similars_count.value = false;
 			check_full_news_count(news_count.value)
             resources_count.value = parseInt(response.data.resources_count)
         })
@@ -942,7 +951,7 @@ export const getItems = () => {
 			// }
 			items.value = temp_items.map(item => ({
 				...item,
-				text: remove_script_from_text(item.text)
+                text: remove_script_from_text(item.full_text)
 			}))
 
 			console.log('items', items.value);
@@ -992,13 +1001,13 @@ export const getGptLogs = (item_ids = items.value?.map(item => item?.item_id)?.j
 
 
 
-export const getSimilarItems = (item_id) => {
+export const getSimilarItems = (item_id, per_page = 1) => {
 	
 	similar_items_loading.value = true;
 
 	if (!item_id) return;
 
-	let item_ids = [...items.value.find(item => item.item_id == item_id).similars_count, item_id].join(',')
+    let item_ids = items.value.find(item => item.item_id == item_id).similars_count.slice((per_page - 1) * 20, ((per_page - 1) * 20) + 20).join(',')
 
     axios
         .get(`/ru/similar-items/get-items?project_id=${project.value.id}&r_type=${r_type.value}&item_id=${item_ids}`)
@@ -1038,7 +1047,7 @@ export const getSimilarItems = (item_id) => {
 			// }
 			similar_items.value = temp_similar_items.map(item => ({
 				...item,
-				text: remove_script_from_text(item.text)
+                text: remove_script_from_text(item.full_text)
 			}));
 
 			similar_items.value.sort((a,b) => (a?.item_id == item_id || b?.item_id == item_id ? -1 : 0))

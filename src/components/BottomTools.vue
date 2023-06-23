@@ -2,7 +2,7 @@
     <div class="flex media-header-1439">
         <div class="flex map w-half m-r-15 media-header-item-1439 media-header-margin-1439 media-metrics-885_769" style="height: 312px;">
             <div
-                class="bg-white p-10-14 m-r-15 tool-shadow media-lang-margin-885_769"
+                class="bg-white p-9-10 m-r-15 tool-shadow media-lang-margin-885_769"
                 style="min-width: 240px; width: 70%"
             >
                 <div class="flex justify-between items-center title">
@@ -136,7 +136,7 @@
             </div>
             <div class="bg-white w-full overflow-hidden tool-shadow">
                 <div
-                    class="flex justify-between items-center title p-10-14"
+                    class="flex justify-between items-center title p-9-10"
                     style="padding-bottom: 0"
                 >
                     <span>{{
@@ -165,7 +165,7 @@
                     class="flex map_container"
                     style="padding-right: 0; padding-left: 0;"
                     :class="{
-                        'p-10-14': true,
+                        'p-9-10': true,
                         'flex-wrap': true,
                     }"
                     :style="r_type == 1 ? 'padding-bottom: 0px;height: calc(100% - 24px - 18px - 50px);align-items: center;' : ''"
@@ -267,15 +267,15 @@
             style="overflow-y: clip;height: 312px;/* height: calc(250px + 35px + 10px + 15px);  */"
         >
             <div
-                class="flex justify-between items-center title p-10-14"
+                class="flex justify-between items-center title p-9-10"
                 style="padding-bottom: 0;height: 24px;"
             >
                 <span>
                     <span v-if="staced_column"
-                        >{{ i18n('Источники по числу публикаций') }}</span
+                        >{{ i18n('Источники публикаций') }}</span
                     >
                     <span v-if="!staced_column"
-                        >{{ i18n('Источники по тональности публикаций') }}</span
+                        >{{ i18n('Тональность источников') }}</span
                     >
                     <!--Публикаций по источникам:-->
                     <!--<span style="font-family: sans-serif;font-size: 15px;font-weight:600;color:#1CB394;">{{

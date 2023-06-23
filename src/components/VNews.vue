@@ -120,46 +120,7 @@
             }">{{ i18n('По группам') }}</div><!-- сгруппировано -->
         </div>
 
-        <div class="nav-pagination result-info-m-r-auto-1439">
-            <div class="hovered-angle">
-                <i
-                    class="fa-solid fa-angles-left first-page icon-w-0"
-                    @click="selected_page = 1"
-                ></i>
-                <i
-                    class="fa fa-angle-left first-page border-radius-0"
-                    @click="
-                        selected_page =
-                            selected_page == 1 ? 1 : selected_page - 1
-                    "
-                ></i>
-            </div>
-            <span
-                v-for="page in pagination"
-                :key="page"
-                :class="{
-                    active: page == selected_page,
-                }"
-                @click="selected_page = page"
-                >{{ page }}</span
-            >
-            <div class="hovered-angle">
-                <i
-                    class="fa fa-angle-right second-page border-radius-0"
-                    :title="`Последняя страница: ${getPaginationCount}`"
-                    @click="
-                        selected_page =
-                            selected_page == getPaginationCount
-                                ? getPaginationCount
-                                : selected_page + 1
-                    "
-                ></i>
-                <i
-                    class="fa-solid fa-angles-right second-page icon-w-0"
-                    @click="selected_page = getPaginationCount"
-                ></i>
-            </div>
-        </div>
+        <v-pagination :selected_page="selected_page" :general_count="news_count" :set_selected_page="set_selected_page"/>
     </div>
 
     <!-- Удаление источника -->
@@ -291,9 +252,11 @@
                 Схожие новости
                 <i class="fa fa-close close-item-modal" @click="similars_modal = false"></i>
             </div>
-            <div style="padding: 15.5px 8px;height: calc(100% - 43px);background: #f3f3f4;">
-                <div class="favorite-buttons flex scrollbar" style="overflow-y: scroll;max-height: 100%;">
-                    
+            <div style="padding: 10px 8px 15.5px 8px;height: calc(100% - 43px);background: #f3f3f4;">
+                <div class="wrap-body flex items-center" style="margin-bottom: 10px;">
+                    <v-pagination :selected_page="selected_similars_page" :general_count="items.find(item => item.item_id == similars_modal)?.similars_count?.length || 0" :set_selected_page="set_selected_similars_page"/>
+                </div>
+                <div class="favorite-buttons flex scrollbar" style="overflow-y: scroll;max-height: calc(100% - 38px);">
                     
                     <div
                         class="flex justify-center items-center h-full w-full"
@@ -1406,7 +1369,7 @@
     <div
         class="flex justify-center"
         v-if="items_loading"
-        style="min-height: 0px"
+        style="height: 700px"
     >
         <i class="fa-solid fa-spinner" style="font-size: 25px"></i>
     </div>
@@ -1671,10 +1634,10 @@
                             class="favorites"
                             style="margin-right: 8px"
                             @click="similars_modal = item.item_id"
-                            v-if="item?.similars_count?.length > 0"
+                            v-if="item?.similars_count?.length > 1"
                         >
                             <i class="fa fa-clone" style="margin-right: 5px;"></i>
-                            {{ item?.similars_count?.length }}
+                            {{ item?.similars_count?.length - 1 }}
                         </button>
                         <button
                             class="favorites"
@@ -1702,46 +1665,7 @@
 
     <!-- Pagination -->
     <div class="wrap-body m-b-15 flex items-center">
-        <div class="nav-pagination result-info-m-r-auto-1439">
-            <div class="hovered-angle">
-                <i
-                    class="fa-solid fa-angles-left first-page icon-w-0"
-                    @click="selected_page = 1"
-                ></i>
-                <i
-                    class="fa fa-angle-left first-page border-radius-0"
-                    @click="
-                        selected_page =
-                            selected_page == 1 ? 1 : selected_page - 1
-                    "
-                ></i>
-            </div>
-            <span
-                v-for="page in pagination"
-                :key="page"
-                :class="{
-                    active: page == selected_page,
-                }"
-                @click="selected_page = page"
-                >{{ page }}</span
-            >
-            <div class="hovered-angle">
-                <i
-                    class="fa fa-angle-right second-page border-radius-0"
-                    :title="`Последняя страница: ${getPaginationCount}`"
-                    @click="
-                        selected_page =
-                            selected_page == getPaginationCount
-                                ? getPaginationCount
-                                : selected_page + 1
-                    "
-                ></i>
-                <i
-                    class="fa-solid fa-angles-right second-page icon-w-0"
-                    @click="selected_page = getPaginationCount"
-                ></i>
-            </div>
-        </div>
+        <v-pagination :selected_page="selected_page" :general_count="news_count" :set_selected_page="set_selected_page"/>
     </div>
     <!-- <i class="fa-solid fa-arrow-up-wide-short"></i> -->
 </template>
@@ -1758,6 +1682,9 @@ import {
     items_loading,
     similar_items_loading,
     selected_page,
+    set_selected_page,
+    selected_similars_page,
+    set_selected_similars_page,
     selected_label_page,
     item_modal,
     selected_soc_metrics,
@@ -1782,6 +1709,7 @@ import TextAnalyze from '@/components/ChatGPT/TextAnalyze.vue'
 import TextReaction from '@/components/ChatGPT/TextReaction.vue'
 import VGeneralization from '@/components/ChatGPT/VGeneralization.vue'
 import MadeRequests from '@/components/ChatGPT/MadeRequests.vue'
+import VPagination from '@/components/UI/VPagination.vue'
 
 export default {
     components: {
@@ -1789,6 +1717,7 @@ export default {
         TextReaction,
         VGeneralization,
         MadeRequests,
+        VPagination,
     },
     setup() {
         return {
@@ -1804,6 +1733,9 @@ export default {
             countries,
             social_categories,
             selected_page,
+            set_selected_page,
+            selected_similars_page,
+            set_selected_similars_page,
             selected_label_page,
             item_modal,
             selected_soc_metrics,
@@ -1864,7 +1796,7 @@ export default {
 
             let similars = [];
             if (item?.similars_count) {
-                similars = [ ...item?.similars_count, item?.item_id ];
+                similars = item?.similars_count;
             }
             if (similars?.length > 1) {
                 this.confirm_group_action_modal = true;
@@ -2201,43 +2133,43 @@ export default {
                 {}
             );
         },
-        getPaginationCount() {
-            return Math.ceil(this.news_count / 20);
-        },
+        //getPaginationCount() {
+        //    return Math.ceil(this.news_count / 20);
+        //},
         getLabelsPaginationCount() {
             return Math.ceil(parseInt(this.sortedLabels.length) / 100);
         },
-        pagination() {
-            let pagination_array = [];
-            if (this.selected_page >= 4) {
-                let start_index = this.selected_page - 3;
-                let end_index = start_index + 9;
+        //pagination() {
+        //    let pagination_array = [];
+        //    if (this.selected_page >= 4) {
+        //        let start_index = this.selected_page - 3;
+        //        let end_index = start_index + 9;
 
-                if (end_index >= this.getPaginationCount) {
-                    start_index = this.getPaginationCount - 9;
-                    if (start_index <= 0) start_index = 1;
-                    end_index = this.getPaginationCount;
-                }
+        //        if (end_index >= this.getPaginationCount) {
+        //            start_index = this.getPaginationCount - 9;
+        //            if (start_index <= 0) start_index = 1;
+        //            end_index = this.getPaginationCount;
+        //        }
 
-                for (let i = start_index; i < end_index + 1; i++) {
-                    pagination_array.push(i);
-                }
-            } else {
-                let start_index = 1;
-                let end_index = start_index + 9;
+        //        for (let i = start_index; i < end_index + 1; i++) {
+        //            pagination_array.push(i);
+        //        }
+        //    } else {
+        //        let start_index = 1;
+        //        let end_index = start_index + 9;
 
-                if (end_index >= this.getPaginationCount) {
-                    start_index = this.getPaginationCount - 9;
-                    if (start_index <= 0) start_index = 1;
-                    end_index = this.getPaginationCount;
-                }
+        //        if (end_index >= this.getPaginationCount) {
+        //            start_index = this.getPaginationCount - 9;
+        //            if (start_index <= 0) start_index = 1;
+        //            end_index = this.getPaginationCount;
+        //        }
 
-                for (let i = start_index; i < end_index + 1; i++) {
-                    pagination_array.push(i);
-                }
-            }
-            return pagination_array;
-        },
+        //        for (let i = start_index; i < end_index + 1; i++) {
+        //            pagination_array.push(i);
+        //        }
+        //    }
+        //    return pagination_array;
+        //},
         paginationSortedLabels() {
             let pagination_array = [];
             if (this.selected_label_page >= 4) {
@@ -2332,10 +2264,14 @@ export default {
     },
     watch: {
         similars_modal(newValue) {
+            this.set_selected_similars_page(1)
             this.getSimilarItems(newValue)
         },
-        selected_page() {
-            this.getItems();
+        selected_page(page) {
+            this.getItems(page);
+        },
+        selected_similars_page(per_page) {
+            getSimilarItems(this.similars_modal, per_page)
         },
         modal_item(newValue) {
             if (!(this.r_type == 2 && newValue)) return;

@@ -1,6 +1,6 @@
 <template>
     <div class="flex media-header-1439">
-        <div class="map bg-white p-10-14 w-half m-r-15 pos-r tool-shadow media-header-item-1439 media-header-margin-1439" style="padding-bottom:0;min-width: calc(50% - 8px);">
+        <div class="map bg-white p-9-10 w-half m-r-15 pos-r tool-shadow media-header-item-1439 media-header-margin-1439" style="padding-bottom:0;min-width: calc(50% - 8px);">
             <div class="flex justify-between items-center title">
                 <span>{{ i18n(map ? `${map_switch ? 'Регионы' : 'Страны'} источников публикаций` : `Тональность по ${map_switch ? 'регионам' : 'странам'}`) }}</span>
                 <div class="switcher">
@@ -116,7 +116,7 @@
             </div>
         </div>
         <div class="map bg-white w-half tool-shadow media-header-item-1439">
-            <div class="flex justify-between items-center title p-10-14" style="padding-bottom:0;margin-bottom:4px">
+            <div class="flex justify-between items-center title p-9-10" style="padding-bottom:0;margin-bottom:4px">
                 <span>{{ i18n(`Динамика публикаций ${basic_line ? '' : 'по тональности'}`) }}</span>
 
                 <div class="drp flex items-center">
@@ -171,7 +171,7 @@ import i18n from "@/response/utils/i18n"
 import LineChart from '@/components/UI/LineChart.vue';
 import MapChart from "@/components/UI/MapChart";
 import BarChart from "@/components/UI/BarChart";
-import { selected_regions, places, map, date_modes, selected_date_mode, country_regions_loading, current_country_id, countries_with_regions } from "@/response/data/index"
+import { selected_regions, places, map, date_modes, selected_date_mode, country_regions_loading, current_country_id, countries_with_regions, selected_dates, selected_sentiment_dates } from "@/response/data/index"
 import { min_height, has_selected_sentiment, reset_sentiment, inBarPercentage, showBarPercentage } from "@/response/options/barOptions"
 import { select_region, select_one_region, reset_regions, region_active, region__MouseOver, region__MouseOut, toggle_map_switcher, map_type_switcher, map_switch } from "@/response/options/mapOptions"
 import { has_selected_date, reset_dynamics, basic_line, has_selected_sentiment_date, reset_sentiment_dynamics } from "@/response/options/lineOptions"
@@ -194,7 +194,21 @@ export default {
     },
     methods: {
         set_date_mode(value, key) {
-            this.selected_date_mode = value ? key : this.selected_date_mode;
+            let new_mode = value ? key : this.selected_date_mode,
+                old_mode = this.selected_date_mode,
+                date_mode_array = ['hourly', 'monthly'];
+            //new_mode, old_mode
+            if (date_mode_array.includes(old_mode) || date_mode_array.includes(new_mode)) {
+                this.selected_dates = { dates: {} }
+                this.selected_sentiment_dates = {
+                    dates: {
+                        "1": {},
+                        "0": {},
+                        "-1": {},
+                    }
+                }
+            }
+            this.selected_date_mode = new_mode;
         },
         select__region(event, id, selected) {
             this.reset_sentiment()
@@ -217,7 +231,7 @@ export default {
         },
     },
     setup() {
-        return { langIs, i18n, country_regions_loading, current_country_id, countries_with_regions, countries, isKazakstan, places, map, date_modes, selected_date_mode, select_region, select_one_region, reset_regions, region_active, selected_regions, region__MouseOver, region__MouseOut, min_height, has_selected_sentiment, reset_sentiment, has_selected_date, reset_dynamics, has_selected_sentiment_date, reset_sentiment_dynamics, basic_line, toggle_map_switcher, inBarPercentage, showBarPercentage, map_type_switcher, map_switch }
+        return { langIs, i18n, country_regions_loading, current_country_id, countries_with_regions, selected_dates, selected_sentiment_dates, countries, isKazakstan, places, map, date_modes, selected_date_mode, select_region, select_one_region, reset_regions, region_active, selected_regions, region__MouseOver, region__MouseOut, min_height, has_selected_sentiment, reset_sentiment, has_selected_date, reset_dynamics, has_selected_sentiment_date, reset_sentiment_dynamics, basic_line, toggle_map_switcher, inBarPercentage, showBarPercentage, map_type_switcher, map_switch }
     }
 }
 </script>
