@@ -24,7 +24,6 @@
         <div class="hovered-angle">
             <i
                 class="fa fa-angle-right second-page border-radius-0"
-                :title="`Последняя страница: ${getPaginationCount}`"
                 @click="
                     set_selected_page(selected_page == getPaginationCount
                         ? getPaginationCount
@@ -33,6 +32,7 @@
             ></i>
             <i
                 class="fa-solid fa-angles-right second-page icon-w-0"
+                :title="`${i18n('Последняя страница')}: ${getPaginationCount.push_space()}`"
                 @click="set_selected_page(getPaginationCount)"
             ></i>
         </div>
@@ -40,8 +40,12 @@
 </template>
 
 <script>
+import i18n from "@/response/utils/i18n"
 
 export default {
+    setup() {
+        return { i18n }
+    },
     props: {
         selected_page: {
             type: Number,

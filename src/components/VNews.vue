@@ -803,7 +803,7 @@
                                 @click.stop="set_sentiment_modal(modal_item)"
                             >
                                 {{
-                                    sentiment_names[modal_item?.sentiment]?.name
+                                    i18n(sentiment_names[modal_item?.sentiment]?.name)
                                 }}
                                 <i
                                     class="fa-solid fa-angle-down transition"
@@ -851,7 +851,7 @@
                                             sentiment != modal_item?.sentiment
                                         "
                                     >
-                                        {{ sentiment_names[sentiment]?.name }}
+                                        {{ i18n(sentiment_names[sentiment]?.name) }}
                                     </button>
                                 </template>
                             </div>
@@ -1327,7 +1327,6 @@
                     <div class="hovered-angle">
                         <i
                             class="fa fa-angle-right second-page border-radius-0"
-                            :title="`Последняя страница: ${getLabelsPaginationCount}`"
                             @click="
                                 selected_label_page =
                                     selected_label_page == getLabelsPaginationCount
@@ -1338,6 +1337,7 @@
                         <i
                             class="fa-solid fa-angles-right second-page icon-w-0"
                             style="width: 22px; margin-right: 0"
+                            :title="`${i18n('Последняя страница')}: ${getLabelsPaginationCount.push_space()}`"
                             @click="selected_label_page = getLabelsPaginationCount"
                         ></i>
                     </div>
