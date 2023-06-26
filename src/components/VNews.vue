@@ -844,7 +844,8 @@
                                         @click="
                                             check_is_group(
                                                 modal_item,
-                                                () => { update_item_sentiment(modal_item, sentiment) }
+                                                () => { update_item_sentiment(modal_item, sentiment) },
+                                                sentiment
                                             )
                                         "
                                         v-if="
@@ -1550,7 +1551,7 @@
                 <div class="flex item-btns">
                     <div class="item-sentiments flex items-center">
                         <i
-                            @click="check_is_group(item, () => { update_item_sentiment(item, -1) })"
+                            @click="check_is_group(item, () => { update_item_sentiment(item, -1) }, -1)"
                             class="negative negative-btn fa metrik_btn"
                             :class="{
                                 'fa-check-circle': -1 == item.sentiment,
@@ -1559,7 +1560,7 @@
                             }"
                         ></i>
                         <i
-                            @click="check_is_group(item, () => { update_item_sentiment(item, 0) })"
+                            @click="check_is_group(item, () => { update_item_sentiment(item, 0) }, 0)"
                             class="neutral neutral-btn fa metrik_btn"
                             :class="{
                                 'fa-check-circle': 0 == item.sentiment,
@@ -1568,7 +1569,7 @@
                             }"
                         ></i>
                         <i
-                            @click="check_is_group(item, () => { update_item_sentiment(item, 1) })"
+                            @click="check_is_group(item, () => { update_item_sentiment(item, 1) }, 1)"
                             class="positive positive-btn fa metrik_btn"
                             :class="{
                                 'fa-check-circle': 1 == item.sentiment,
@@ -1694,7 +1695,7 @@ import {
     isGrouped,
     similar_items,
 } from "@/response/data/index";
-import { getItems, getSimilarItems } from "@/response/api";
+import { getItems, getSimilarItems, updateGroupSentiment } from "@/response/api";
 // import items from '@/response/json/items';
 import {
     r_type,
@@ -1743,6 +1744,7 @@ export default {
             getItems,
             project,
             search_tags,
+            updateGroupSentiment,
             getSimilarItems,
             chatgpt_tab,
             chatgpt_item,
@@ -1753,6 +1755,8 @@ export default {
     data() {
         return {
             confirm_group_action_modal: false,
+            group_action: () => {},
+            group_params: [],
             similars_modal: false,
             sentiment_name: {
                 1: "Позитив",
@@ -1792,7 +1796,7 @@ export default {
         };
     },
     methods: {
-        check_is_group(item, cb) {
+        check_is_group(item, cb, ...args) {
 
             let similars = [];
             if (item?.similars_count) {
@@ -1801,10 +1805,12 @@ export default {
             if (similars?.length > 1) {
                 this.confirm_group_action_modal = true;
                 this.group_action = cb;
+                this.group_params = [item.item_id, ...args];
                 this.group_item_ids = similars?.length;
             }
             else {
                 this.group_action = () => {};
+                this.group_params = [];
                 this.group_item_ids = [];
                 cb();
             }
@@ -1812,13 +1818,17 @@ export default {
         },
         update_group_items() {
             this.confirm_group_action_modal = false;
-            alert('Пока на этапе разработки)')
-            return;
-            // this.group_action()
+            if (this.group_params?.length) {
+                this.updateGroupSentiment(...this.group_params);
+                this.group_action()
+                this.group_action = () => {};
+                this.group_params = [];
+            }
         },
         cancel_group_action() {
             this.confirm_group_action_modal = false;
-            this.group_action = () => {};
+            this.group_params = () => {};
+            this.group_action = [];
             this.group_item_ids = [];
         },
         // remove_script_from_text(text) {
