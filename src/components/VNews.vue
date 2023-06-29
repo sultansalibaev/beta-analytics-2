@@ -206,7 +206,7 @@
     >
         <div class="flex flex-col" @click.stop>
             <div class="delete-resource-title">{{ i18n('Внимание') }}</div>
-            <span style="padding: 12px 12px 0;font-size: 14px;">{{ i18n('Это действие изменит все публикации данной группы') }} ({{ group_item_ids?.length }}).<br/> {{ i18n('Применить для всех?') }}</span>
+            <span style="padding: 12px 12px 0;font-size: 14px;">{{ i18n('Это действие изменит все публикации данной группы') }} ({{ group_items_count }}).<br/> {{ i18n('Применить для всех?') }}</span>
             <div class="flex item-center" style="padding: 9px">
                 <button
                     class="default-btn cancel-btn"
@@ -841,13 +841,7 @@
                                         :class="
                                             sentiment_names[sentiment]?.class
                                         "
-                                        @click="
-                                            check_is_group(
-                                                modal_item,
-                                                () => { update_item_sentiment(modal_item, sentiment) },
-                                                sentiment
-                                            )
-                                        "
+                                        @click="update_item_sentiment(modal_item, sentiment)"
                                         v-if="
                                             sentiment != modal_item?.sentiment
                                         "
@@ -879,6 +873,7 @@
                         <button
                             class="modal-item_btn favorites red-border-color red-color"
                             @click="delete_item(modal_item?.item_id)"
+                            v-if="similars_modal != modal_item?.item_id && (modal_item?.similars_count?.length ?? 0) <= 1"
                         >
                             <i class="fa fa-trash-o"></i>{{ i18n('Уд. новость') }}
                         </button>
@@ -894,6 +889,7 @@
                                     )
                                 )
                             "
+                            v-if="similars_modal != modal_item?.item_id && (modal_item?.similars_count?.length ?? 0) <= 1"
                         >
                             <i class="fa fa-minus-circle"></i>{{ i18n('Уд. источник') }}
                         </button>
@@ -1419,7 +1415,7 @@
                             <div
                                 class="item-action"
                                 style="color: #ec5d5d"
-                                @click="delete_item(item.item_id)"
+                                @click="group_action_type = 'deleteGroupItems';check_is_group(item, () => { delete_item(item.item_id) })"
                             >
                                 <i
                                     class="fa fa-trash-o"
@@ -1440,6 +1436,7 @@
                                         )
                                     )
                                 "
+                                v-if="!(item?.similars_count?.length > 1)"
                             >
                                 <i
                                     class="fa fa-minus-circle"
@@ -1551,7 +1548,7 @@
                 <div class="flex item-btns">
                     <div class="item-sentiments flex items-center">
                         <i
-                            @click="check_is_group(item, () => { update_item_sentiment(item, -1) }, -1)"
+                            @click="group_action_type = 'updateGroupSentiment';check_is_group(item, () => { update_item_sentiment(item, -1) }, -1)"
                             class="negative negative-btn fa metrik_btn"
                             :class="{
                                 'fa-check-circle': -1 == item.sentiment,
@@ -1560,7 +1557,7 @@
                             }"
                         ></i>
                         <i
-                            @click="check_is_group(item, () => { update_item_sentiment(item, 0) }, 0)"
+                            @click="group_action_type = 'updateGroupSentiment';check_is_group(item, () => { update_item_sentiment(item, 0) }, 0)"
                             class="neutral neutral-btn fa metrik_btn"
                             :class="{
                                 'fa-check-circle': 0 == item.sentiment,
@@ -1569,7 +1566,7 @@
                             }"
                         ></i>
                         <i
-                            @click="check_is_group(item, () => { update_item_sentiment(item, 1) }, 1)"
+                            @click="group_action_type = 'updateGroupSentiment';check_is_group(item, () => { update_item_sentiment(item, 1) }, 1)"
                             class="positive positive-btn fa metrik_btn"
                             :class="{
                                 'fa-check-circle': 1 == item.sentiment,
@@ -1694,8 +1691,9 @@ import {
     chatgpt_item,
     isGrouped,
     similar_items,
+    p_user_id,
 } from "@/response/data/index";
-import { getItems, getSimilarItems, updateGroupSentiment } from "@/response/api";
+import { getItems, getSimilarItems, updateGroupSentiment, deleteGroupItems } from "@/response/api";
 // import items from '@/response/json/items';
 import {
     r_type,
@@ -1729,6 +1727,7 @@ export default {
             items,
             items_loading,
             similar_items_loading,
+            p_user_id,
             r_type,
             regions,
             countries,
@@ -1745,6 +1744,7 @@ export default {
             project,
             search_tags,
             updateGroupSentiment,
+            deleteGroupItems,
             getSimilarItems,
             chatgpt_tab,
             chatgpt_item,
@@ -1755,8 +1755,10 @@ export default {
     data() {
         return {
             confirm_group_action_modal: false,
+            group_action_type: '',
             group_action: () => {},
             group_params: [],
+            group_items_count: 0,
             similars_modal: false,
             sentiment_name: {
                 1: "Позитив",
@@ -1805,31 +1807,36 @@ export default {
             if (similars?.length > 1) {
                 this.confirm_group_action_modal = true;
                 this.group_action = cb;
+                this.p_user_id = item?.user_id;
                 this.group_params = [item.item_id, ...args];
-                this.group_item_ids = similars?.length;
+                this.group_items_count = similars?.length;
             }
             else {
                 this.group_action = () => {};
+                this.p_user_id = null;
+                this.group_action_type = '';
                 this.group_params = [];
-                this.group_item_ids = [];
+                this.group_items_count = 0;
                 cb();
             }
 
         },
         update_group_items() {
             this.confirm_group_action_modal = false;
-            if (this.group_params?.length) {
-                this.updateGroupSentiment(...this.group_params);
-                this.group_action()
+            if (this.group_params?.length && this.group_action_type) {
+                this[this.group_action_type](...this.group_params);
+                this.group_action();
                 this.group_action = () => {};
+                this.p_user_id = null;
+                this.group_action_type = '';
                 this.group_params = [];
             }
         },
         cancel_group_action() {
             this.confirm_group_action_modal = false;
-            this.group_params = () => {};
-            this.group_action = [];
-            this.group_item_ids = [];
+            this.group_params = [];
+            this.group_action = () => {};
+            this.group_items_count = 0;
         },
         // remove_script_from_text(text) {
         //     document.getElementById('text-thumbnail').innerHTML = text;
@@ -1992,6 +1999,9 @@ export default {
         },
         update_item_sentiment(item, sentiment) {
             item.sentiment = sentiment;
+
+            let temp_item = this.items.find(_item => _item.item_id == item.item_id);
+            if (temp_item.sentiment != item.sentiment) temp_item.sentiment = sentiment
 
             axios
                 .get(

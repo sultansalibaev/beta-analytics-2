@@ -86,6 +86,8 @@
     export const resource_full_news_count = reactive(ref(0));
     export const column_news_count = reactive(ref(0));
 
+    export const other_ids = reactive(ref('3'))
+
     export const selected_languages = reactive(ref({
         "10": false,
         "4": false,
@@ -186,6 +188,7 @@
     export const resources_count = reactive(ref(0));
     export const similar_items = reactive(ref([]));
     export const similar_items_loading = reactive(ref(true));
+    export const p_user_id = reactive(ref(null));
     export const items = reactive(ref([]));
     export const items_loading = reactive(ref(true));
     export const isGrouped = reactive(ref(false));
