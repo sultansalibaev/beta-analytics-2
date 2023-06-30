@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { project, socials, countries, regions, social_categories, generals_count, smi_categories, r_type, main_sentiments_count, selected_main_sentiments, languages_count, languages_general_data, categories_general_data, smi_category, search_tags, isKazakstan } from '@/response/header'
 import {
-    dateRange, selected_social_categories, places, selected_categories, selected_languages, resource_count, resource_full_news_count, column_news_count, resources, offsetLeft, offsetRight, resource_clipped_news_count, selected_resources, selected_resource_sentiment, bars_sentiments_selected, selected_dates, selected_sentiment_dates, selected_date_mode, dynamics, soc_metrics, enable_metrics, is_high_news_count, news_count, similars_count, resources_count, items, items_loading, selected_page, selected_soc_metrics, resource_count_loading, laoding_metrics, selected_regions, reset_all, get_selected_smi_categories, isGrouped, similar_items, similar_items_loading, thumbnail_dates, countries_with_regions, getCountryRegions, other_ids, p_user_id } from '@/response/data/index'
+    dateRange, selected_social_categories, places, selected_categories, selected_languages, resource_count, resource_full_news_count, column_news_count, resources, offsetLeft, offsetRight, resource_clipped_news_count, selected_resources, selected_resource_sentiment, bars_sentiments_selected, selected_dates, selected_sentiment_dates, selected_date_mode, dynamics, soc_metrics, enable_metrics, is_high_news_count, news_count, similars_count, resources_count, items, items_loading, selected_page, selected_soc_metrics, resource_count_loading, laoding_metrics, selected_regions, reset_all, get_selected_smi_categories, isGrouped, similar_items, similar_items_loading, thumbnail_dates, countries_with_regions, getCountryRegions, other_ids, p_user_id, group_folders } from '@/response/data/index'
 import { getResourceData, selected_top_resources, start_top_resources, end_top_resources, each_number, max } from '@/response/options/columnOptions'
 import { get_map_params } from '@/response/options/mapOptions'
 import { selected_dates_query, selected_sentiment_dates_query } from '@/response/options/lineOptions'
@@ -1326,6 +1326,99 @@ export const deleteGroupItems = (item_id) => {
         .get(`/ru/analyticstats/delete-group-items?p_id=${project.value.id}&r_type=${r_type.value}&category_id=${category_id}&countries=${countries}&regions=${regions}&sentiments=${sentiments}&language=${language}&s_date=${dateRange.value.startDate.format("Y-m-d")} ${s_time.value}&f_date=${dateRange.value.endDate.format("Y-m-d")} ${f_time.value}&from=${from}&to=${end_clipped.value}&resource_length=${resource_count.value}&resources=${_resources}&specifying_sentiments=${specifying_sentiments}&date_mode=${selected_date_mode.value == 'weekly' ? 'daily' : selected_date_mode.value}&dates_filter=${selected_dates_query.value}&sentiment_dates_filter=${temp_sentiment_dates_query}&metrics=${selected_soc_metrics.value}&item_id=${item_id}&p_user_id=${p_user_id.value}`)
         .then(response => {
             console.log('analyticstats/delete-group-items', response);
+        })
+        .catch(error => {
+            console.error(error);
+        })
+        .finally(() => {
+			similar_items_loading.value = false;
+        })
+};
+
+export const getGroupFolders = (item_id) => {
+
+	console.log('deleteGroupItems = ', item_id);
+	
+	similar_items_loading.value = true;
+
+	if (!item_id) return;
+
+    let countries = get_map_params.value.countries.join(',')
+    let regions = get_map_params.value.regions.join(',')
+    let category_id;
+    if (r_type.value == 2) {
+        category_id = Object.keys(selected_social_categories.value).length ? (
+            Object.keys(selected_social_categories.value).filter(soc_key => selected_social_categories.value[soc_key]).join(',')
+        ) : 0;
+    }
+    else {
+        category_id = get_selected_smi_categories(selected_categories.value).join(',');
+    }
+	let language = Object.keys(selected_languages.value).length ? (
+		Object.keys(selected_languages.value).filter(lang_id => selected_languages.value[lang_id]).map(lang_id => parseInt(lang_id))
+	) : [];
+
+	let others_index = language.indexOf(3);
+	if ("-1" != others_index && other_ids.value) {
+		language[others_index] = other_ids.value
+	}
+
+	language = language.join(',')
+    let sentiments = Object.keys(selected_main_sentiments.value).filter(sentiment => selected_main_sentiments.value[sentiment]).join(',')
+
+    let from = start_top_resources.value == 0 ? 0 : start_top_resources.value * each_number.value;
+
+    let _resources = Object.keys(selected_resources.value.resources).length ? (
+        Object.keys(selected_resources.value.resources).filter(lang_id => selected_resources.value.resources[lang_id]).join(',')
+    ) : '';
+
+    let specifying_sentiments = [1, 0, -1].map(sentiment => {
+        let res_obj = selected_resource_sentiment.value.sentiment_resources[sentiment]
+        let res_ids = Object.keys(res_obj).length ? (
+            Object.keys(res_obj).filter(lang_id => res_obj[lang_id]).join(',')
+        ) : '';
+
+        let place_obj = bars_sentiments_selected.value.sentiment_places[sentiment]
+
+        let countries = [];
+        let regions_countries = [];
+        let regions = [];
+
+        Object.keys(place_obj).filter(place_id => place_obj[place_id]).forEach(place_id => {
+            if (place_id.includes('_')) {
+                regions.push(place_id.split('_')[1])
+                regions_countries.push(place_id.split('_')[0])
+            }
+            else {
+                countries.push(place_id)
+            }
+        })
+
+        return `${sentiment}_${res_ids}_${regions.join(',')}_${[...countries, ...regions_countries].join(',')}`
+    })
+
+    specifying_sentiments = specifying_sentiments.join(';')
+
+    let temp_sentiment_dates_query = [
+        selected_main_sentiments.value['1'] ? selected_sentiment_dates_query.value['1'] : '',
+        selected_main_sentiments.value['0'] ? selected_sentiment_dates_query.value['0'] : '',
+        selected_main_sentiments.value['-1'] ? selected_sentiment_dates_query.value['-1'] : '',
+    ].join('_');
+
+	let item = items.value.find(item => item.item_id === item_id)
+
+    axios
+        .get(`/ru/analyticstats/get-group-folders?p_id=${project.value.id}&r_type=${r_type.value}&category_id=${category_id}&countries=${countries}&regions=${regions}&sentiments=${sentiments}&language=${language}&s_date=${dateRange.value.startDate.format("Y-m-d")} ${s_time.value}&f_date=${dateRange.value.endDate.format("Y-m-d")} ${f_time.value}&from=${from}&to=${end_clipped.value}&resource_length=${resource_count.value}&resources=${_resources}&specifying_sentiments=${specifying_sentiments}&date_mode=${selected_date_mode.value == 'weekly' ? 'daily' : selected_date_mode.value}&dates_filter=${selected_dates_query.value}&sentiment_dates_filter=${temp_sentiment_dates_query}&metrics=${selected_soc_metrics.value}&item_id=${item_id}&p_user_id=${p_user_id.value}`)
+        .then(response => {
+            console.log('analyticstats/get-group-folders', response, item);
+			group_folders.value = response?.data?.map(folder => ({
+				...folder,
+				selected: item.similars_count.find(
+					similar_id => !(folder.item_ids.includes(+similar_id))
+				) == undefined
+			}))
+
+			console.log('group_folders', group_folders.value);
         })
         .catch(error => {
             console.error(error);

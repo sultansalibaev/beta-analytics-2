@@ -1692,8 +1692,9 @@ import {
     isGrouped,
     similar_items,
     p_user_id,
+    group_folders,
 } from "@/response/data/index";
-import { getItems, getSimilarItems, updateGroupSentiment, deleteGroupItems } from "@/response/api";
+import { getItems, getSimilarItems, updateGroupSentiment, deleteGroupItems, getGroupFolders } from "@/response/api";
 // import items from '@/response/json/items';
 import {
     r_type,
@@ -1728,6 +1729,7 @@ export default {
             items_loading,
             similar_items_loading,
             p_user_id,
+            group_folders,
             r_type,
             regions,
             countries,
@@ -1745,6 +1747,7 @@ export default {
             search_tags,
             updateGroupSentiment,
             deleteGroupItems,
+            getGroupFolders,
             getSimilarItems,
             chatgpt_tab,
             chatgpt_item,
@@ -1922,18 +1925,21 @@ export default {
                 favorite.selected = !favorite.selected;
                 let route = favorite.selected ? "addlabel" : "deletelabel";
 
-                let selected_item = [...this.items, ...this.similar_items].find(
-                    (item) => item.item_id == this.favorites_modal
-                );
+                // let selected_item = [...this.items, ...this.similar_items].find(
+                //     (item) => item.item_id == this.favorites_modal
+                // );
+                let temp_all_items = [...this.items, ...this.similar_items].filter(item => item.item_id == this.favorites_modal)
                 if (route == "addlabel") {
-                    selected_item.folders.push({
-                        id: favorite.id,
-                        name: favorite.name,
-                    });
+                    temp_all_items.forEach(item => {
+                        item.folders.push({
+                            id: favorite.id,
+                            name: favorite.name,
+                        });
+                    })
                 } else {
-                    selected_item.folders = selected_item.folders.filter(
-                        (item_folder) => item_folder.id != favorite.id
-                    );
+                    temp_all_items.forEach(item => {
+                        item.folders = item.folders.filter(item_folder => item_folder.id != favorite.id);
+                    })
                 }
 
                 axios
@@ -1978,6 +1984,7 @@ export default {
                 });
         },
         get_item_favorites(item_id) {
+            this.getGroupFolders(item_id);
             axios
                 .get(
                     `/ru/news/labelslist?news_id=${item_id}&r_type=${this.r_type}&get_data=true`
