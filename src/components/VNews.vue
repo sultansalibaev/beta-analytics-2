@@ -1257,7 +1257,7 @@
                             (selected_label_page - 1) * 100 + 100
                         )"
                         :key="i"
-                        @click="toggle_folder(favorite)"
+                        @click="multi_toggle_folder(favorite)"
                         :title="favorite.name"
                     >
                         <i
@@ -1651,7 +1651,7 @@
                         </button>
                         <button
                             class="favorites"
-                            @click="get_item_favorites(item.item_id)"
+                            @click="item?.similars_count?.length > 1 ? getGroupFolders(item.item_id) : get_item_favorites(item.item_id)"
                         >
                             {{ i18n('Избранное') }}
                         </button>
@@ -1692,9 +1692,10 @@ import {
     isGrouped,
     similar_items,
     p_user_id,
-    group_folders,
+    favorites,
+    favorites_modal,
 } from "@/response/data/index";
-import { getItems, getSimilarItems, updateGroupSentiment, deleteGroupItems, getGroupFolders } from "@/response/api";
+import { getItems, getSimilarItems, updateGroupSentiment, deleteGroupItems, getGroupFolders, updateGroupFolders } from "@/response/api";
 // import items from '@/response/json/items';
 import {
     r_type,
@@ -1729,7 +1730,6 @@ export default {
             items_loading,
             similar_items_loading,
             p_user_id,
-            group_folders,
             r_type,
             regions,
             countries,
@@ -1753,6 +1753,9 @@ export default {
             chatgpt_item,
             isGrouped,
             similar_items,
+            favorites,
+            favorites_modal,
+            updateGroupFolders,
         };
     },
     data() {
@@ -1768,11 +1771,9 @@ export default {
                 0: "Нейтрал",
                 "-1": "Негатив",
             },
-            favorites_modal: false,
             favorite_search: "",
             checked_favorites: null,
             inline_labels: false,
-            favorites: [],
             delete_resource: {},
             delete_resource_modal: false,
             label_name: "",
@@ -1920,6 +1921,13 @@ export default {
         select_metric(metric_name) {
             this.selected_soc_metrics = metric_name;
         },
+        multi_toggle_folder(favorite) {
+            let temp_item = this.items.find(item => item.item_id == this.favorites_modal)
+            this.toggle_folder(favorite)
+            if (temp_item?.similars_count?.length > 1) {
+                this.updateGroupFolders(this.favorites_modal, favorite)
+            }
+        },
         toggle_folder(favorite) {
             if (this.favorites_modal) {
                 favorite.selected = !favorite.selected;
@@ -1931,10 +1939,12 @@ export default {
                 let temp_all_items = [...this.items, ...this.similar_items].filter(item => item.item_id == this.favorites_modal)
                 if (route == "addlabel") {
                     temp_all_items.forEach(item => {
-                        item.folders.push({
-                            id: favorite.id,
-                            name: favorite.name,
-                        });
+                        if (item.folders?.find(folder => folder.id == favorite.id) == undefined) {
+                            item.folders.push({
+                                id: favorite.id,
+                                name: favorite.name,
+                            });
+                        }
                     })
                 } else {
                     temp_all_items.forEach(item => {
@@ -1976,7 +1986,13 @@ export default {
             axios
                 .post(`/ru/newlabels`, formData)
                 .then(() => {
-                    this.get_item_favorites(this.favorites_modal);
+                    let temp_item = this.favorites_modal.find(item => item.item_id == this.favorites_modal) ?? { similars_count: [] };
+                    if (temp_item?.similars_count?.length > 1) {
+                        this.getGroupFolders(this.favorites_modal);
+                    }
+                    else {
+                        this.get_item_favorites(this.favorites_modal);
+                    }
                     this.label_name = "";
                 })
                 .catch((error) => {
@@ -1984,7 +2000,6 @@ export default {
                 });
         },
         get_item_favorites(item_id) {
-            this.getGroupFolders(item_id);
             axios
                 .get(
                     `/ru/news/labelslist?news_id=${item_id}&r_type=${this.r_type}&get_data=true`

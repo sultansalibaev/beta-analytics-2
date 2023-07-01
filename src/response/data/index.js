@@ -189,7 +189,8 @@
     export const similar_items = reactive(ref([]));
     export const similar_items_loading = reactive(ref(true));
     export const p_user_id = reactive(ref(null));
-    export const group_folders = reactive(ref({}));
+    export const favorites = reactive(ref([]));
+    export const favorites_modal = reactive(ref(false));
     export const items = reactive(ref([]));
     export const items_loading = reactive(ref(true));
     export const isGrouped = reactive(ref(false));
