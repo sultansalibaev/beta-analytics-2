@@ -759,11 +759,6 @@ watch(isGrouped, () => {
 		.catch(error => {
 			console.error(error);
 		})
-		.finally(() => {
-			if (r_type.value == 2) {
-				getSocialMetrics()
-			}
-		})
 
 	if (selected_page.value == 1) {
 		getItems()
@@ -863,7 +858,7 @@ export const getSocialMetrics = () => {
 	}
 
 	axios
-		.get(`/ru/analyticstats/get-project-metrics-data?p_id=${project.value.id}&r_type=${r_type.value}&category_id=${category_id}&countries=${countries}&regions=${regions}&sentiments=${sentiments}&language=${language}&s_date=${dateRange.value.startDate.format("Y-m-d")} ${s_time.value}&f_date=${dateRange.value.endDate.format("Y-m-d")} ${f_time.value}&from=${from}&to=${end_clipped.value}&resource_length=${resource_count.value}&resources=${_resources}&specifying_sentiments=${specifying_sentiments}&date_mode=${selected_date_mode.value == 'weekly' ? 'daily' : selected_date_mode.value}&dates_filter=${selected_dates_query.value}&sentiment_dates_filter=${temp_sentiment_dates_query}&grouped=${isGrouped.value}`)
+		.get(`/ru/analyticstats/get-project-metrics-data?p_id=${project.value.id}&r_type=${r_type.value}&category_id=${category_id}&countries=${countries}&regions=${regions}&sentiments=${sentiments}&language=${language}&s_date=${dateRange.value.startDate.format("Y-m-d")} ${s_time.value}&f_date=${dateRange.value.endDate.format("Y-m-d")} ${f_time.value}&from=${from}&to=${end_clipped.value}&resource_length=${resource_count.value}&resources=${_resources}&specifying_sentiments=${specifying_sentiments}&date_mode=${selected_date_mode.value == 'weekly' ? 'daily' : selected_date_mode.value}&dates_filter=${selected_dates_query.value}&sentiment_dates_filter=${temp_sentiment_dates_query}`)
 		.then(response => {
 			soc_metrics.value = response.data.metrics
 			laoding_metrics.value = false

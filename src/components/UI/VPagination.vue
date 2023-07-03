@@ -1,5 +1,5 @@
 <template>
-    <div class="nav-pagination result-info-m-r-auto-1439">
+    <div class="nav-pagination">
         <div class="hovered-angle">
             <i
                 class="fa-solid fa-angles-left first-page icon-w-0"

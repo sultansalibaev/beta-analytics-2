@@ -10,7 +10,7 @@
             >
         </span>
 
-        <div class="sort-by-metrics flex items-center result-info-m-l-0-1439" v-show="r_type == 2">
+        <div class="sort-by-metrics flex items-center result-info-m-l-0-1439" v-show="r_type == 2 && !isGrouped">
             <i
                 class="fa fa-thumbs-o-up sort-by-metric prompt-parent"
                 @click="select_metric('likes')"
@@ -205,7 +205,7 @@
         @click.stop="confirm_group_action_modal = false"
     >
         <div class="flex flex-col" @click.stop>
-            <div class="delete-resource-title">{{ i18n('Внимание') }}</div>
+            <div class="delete-resource-title" style="background: #f2b90a;">{{ i18n('Внимание') }}</div>
             <span style="padding: 12px 12px 0;font-size: 14px;">{{ i18n('Это действие изменит все публикации данной группы') }} ({{ group_items_count }}).<br/> {{ i18n('Применить для всех?') }}</span>
             <div class="flex item-center" style="padding: 9px">
                 <button
@@ -254,7 +254,7 @@
             </div>
             <div style="padding: 10px 8px 15.5px 8px;height: calc(100% - 43px);background: #f3f3f4;">
                 <div class="wrap-body flex items-center" style="margin-bottom: 10px;">
-                    <v-pagination :selected_page="selected_similars_page" :general_count="items.find(item => item.item_id == similars_modal)?.similars_count?.length || 0" :set_selected_page="set_selected_similars_page"/>
+                    <v-pagination class="result-info-m-r-auto-1439" :selected_page="selected_similars_page" :general_count="items.find(item => item.item_id == similars_modal)?.similars_count?.length || 0" :set_selected_page="set_selected_similars_page"/>
                 </div>
                 <div class="favorite-buttons flex scrollbar" style="overflow-y: scroll;max-height: calc(100% - 38px);">
                     
@@ -1651,7 +1651,7 @@
                         </button>
                         <button
                             class="favorites"
-                            @click="item?.similars_count?.length > 1 ? getGroupFolders(item.item_id) : get_item_favorites(item.item_id)"
+                            @click="check_is_group(item, () => { item?.similars_count?.length > 1 ? getGroupFolders(item.item_id) : get_item_favorites(item.item_id) })"
                         >
                             {{ i18n('Избранное') }}
                         </button>
@@ -1663,7 +1663,7 @@
 
     <!-- Pagination -->
     <div class="wrap-body m-b-15 flex items-center">
-        <v-pagination :selected_page="selected_page" :general_count="news_count" :set_selected_page="set_selected_page"/>
+        <v-pagination class="result-info-m-r-auto-1439" :selected_page="selected_page" :general_count="news_count" :set_selected_page="set_selected_page"/>
     </div>
     <!-- <i class="fa-solid fa-arrow-up-wide-short"></i> -->
 </template>
@@ -1829,12 +1829,12 @@ export default {
             this.confirm_group_action_modal = false;
             if (this.group_params?.length && this.group_action_type) {
                 this[this.group_action_type](...this.group_params);
-                this.group_action();
-                this.group_action = () => {};
-                this.p_user_id = null;
-                this.group_action_type = '';
-                this.group_params = [];
             }
+            this.group_action();
+            this.group_action = () => {};
+            this.p_user_id = null;
+            this.group_action_type = '';
+            this.group_params = [];
         },
         cancel_group_action() {
             this.confirm_group_action_modal = false;
