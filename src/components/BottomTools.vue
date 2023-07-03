@@ -378,8 +378,8 @@
 import i18n from "@/response/utils/i18n"
 // import VSelect from '@/components/UI/VSelect.vue';
 import VRange from "@/components/UI/VRange.vue";
-import PieChart from "@/components/UI/PieChart.vue";
-import ColumnChart from "@/components/UI/ColumnChart.vue";
+import PieChart from "@/components/widgets/PieChart.vue";
+import ColumnChart from "@/components/widgets/ColumnChart.vue";
 import {
     getClippedResources,
     selected_languages,
@@ -517,6 +517,8 @@ export default {
                         100 *
                         10
                 ) / 10;
+
+            console.log('res_news_percentage', percent)
 
             if (Number(percent ?? 0) > 100) return "loading...";
 

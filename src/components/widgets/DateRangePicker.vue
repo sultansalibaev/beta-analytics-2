@@ -31,7 +31,7 @@
 <script>
 import i18n from "@/response/utils/i18n"
 import { between_dates, select_range_period, min, max, ranges, s_time, f_time, modal, setDateRange } from '@/data'
-import SwitchingByDates from "@/components/UI/drp/SwitchingByDates.vue";
+import SwitchingByDates from "@/components/widgets/date-range-picker/SwitchingByDates.vue";
 
 export default {
 	setup() {

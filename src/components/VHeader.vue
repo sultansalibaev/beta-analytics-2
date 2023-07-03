@@ -82,7 +82,7 @@
 <script>
 // import axios from 'axios'
 import i18n from "@/response/utils/i18n"
-import DateRangePicker from '@/components/UI/DateRangePicker';
+import DateRangePicker from '@/components/widgets/DateRangePicker';
 import { modal } from '@/data'
 import { places, selected_regions, selected_categories, selected_languages, resources, resource_names, resource_count, resource_clipped_news_count, resource_full_news_count, column_news_count, selected_social_categories, dynamics, offsetLeft, offsetRight, selected_resources, selected_resource_sentiment, bars_sentiments_selected, selected_date_mode, dateRange, reset_all, get_selected_smi_categories } from "@/response/data/index"
 import { r_type, project, languages_count, languages_general_data, categories_general_data, smi_category, smi_categories, selected_main_sentiments, socials, countries, regions, social_categories, generals_count, main_sentiments_count } from "@/response/header"

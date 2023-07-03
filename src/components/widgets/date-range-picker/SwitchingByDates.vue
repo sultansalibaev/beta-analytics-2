@@ -37,7 +37,7 @@
 
 <script>
 import i18n from "@/response/utils/i18n"
-import MultiDateRangePicker from "@/components/UI/drp/MultiDateRangePicker.vue";
+import MultiDateRangePicker from "@/components/widgets/date-range-picker/MultiDateRangePicker.vue";
 import { picker_range, month, year } from '@/data'
 
 export default {

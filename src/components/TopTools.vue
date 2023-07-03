@@ -168,9 +168,9 @@
 
 import { langIs } from "@/response/utils/langIs"
 import i18n from "@/response/utils/i18n"
-import LineChart from '@/components/UI/LineChart.vue';
-import MapChart from "@/components/UI/MapChart";
-import BarChart from "@/components/UI/BarChart";
+import LineChart from '@/components/widgets/LineChart.vue';
+import MapChart from "@/components/widgets/MapChart";
+import BarChart from "@/components/widgets/BarChart";
 import { selected_regions, places, map, date_modes, selected_date_mode, country_regions_loading, current_country_id, countries_with_regions, selected_dates, selected_sentiment_dates } from "@/response/data/index"
 import { min_height, has_selected_sentiment, reset_sentiment, inBarPercentage, showBarPercentage } from "@/response/options/barOptions"
 import { select_region, select_one_region, reset_regions, region_active, region__MouseOver, region__MouseOut, toggle_map_switcher, map_type_switcher, map_switch } from "@/response/options/mapOptions"
