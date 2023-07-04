@@ -89,7 +89,6 @@ import { r_type, project, languages_count, languages_general_data, categories_ge
 import { getProjectCounts, getMainPlacesCount, getDynamicsData, setSentimentsCount, getMainSmiCategoriesAndLanguagesCount, getResourceCount } from "@/response/api"
 import { get_map_params, map_type_switcher } from "@/response/options/mapOptions"
 import { selected_top_resources, each_number, start_top_resources, end_top_resources, max, getResourceData } from "@/response/options/columnOptions"
-// import { main_watcher, main_watcher_updates } from "@/response/data/watchers"
 
 export default {
     components: {
@@ -138,24 +137,17 @@ export default {
                 this.selected_main_sentiments[id] = true
             }   
 
-            // this.main_watcher = true
             this.getMainPlacesCount(false)
         },
     },
     watch: {
         selected_date_mode() {
-
-            console.log('watching - selected_date_mode');
-
             this.getDynamicsData()
         },
         'bars_sentiments_selected.sentiment_places': {
             handler(newValue, oldValue) {
-                console.log('bars_sentiments_selected', newValue);
                 if (JSON.stringify(newValue) === JSON.stringify(oldValue)) return
                 if (this.reset_all == false) {
-
-                    console.log('watching - bars_sentiments_selected');
                     this.getDynamicsData()
                 }
             },
@@ -165,7 +157,6 @@ export default {
             handler(newValue, oldValue) {
                 if (JSON.stringify(newValue) === JSON.stringify(oldValue)) return
                 if (this.reset_all == false)  {
-                    console.log('watching - selected_resource_sentiment');
                     this.getDynamicsData()
                 }
             },
@@ -175,7 +166,6 @@ export default {
             handler(newValue, oldValue) {
                 if (JSON.stringify(newValue) === JSON.stringify(oldValue)) return
                 if (this.reset_all == false) {
-                    console.log('watching - selected_resources');
                     this.getDynamicsData()
                 }
             },
@@ -183,30 +173,16 @@ export default {
         },
         selected_social_categories: {
             handler() {
-                console.log('watching - selected_social_categories');
                 this.setSentimentsCount()
             },
             deep: true
         },
-        // selected_top_resources(newValue, oldValue) {
-        //     if (newValue == 0) return;
-        //     if (
-        //         (this.resources.length - 20) <= (newValue * this.each_number) &&
-        //         !((this.resources.length - 20) <= (oldValue * this.each_number)) &&
-        //         this.resources.length < this.resource_count
-        //     ) {
-        //         console.log(this.resources.length, this.resource_count);
-        //         this.getResourceData()
-        //     }
-        // },
         r_type() {
-            console.log('watching - r_type');
             this.setSentimentsCount()
         },
         selected_regions: {
             handler() { // updated_other_data
                 if (this.reset_all) return
-                console.log('watching - selected_regions');
                 if (this.r_type == 1) {
                     this.getMainSmiCategoriesAndLanguagesCount()
                 }
@@ -255,7 +231,6 @@ export default {
 
                 if (category_id === get_selected_smi_categories(oldValue).join(',')) return;
 
-                console.log('watching - selected_SMI_categories');
 
                 this.getResourceCount()
             },
@@ -264,8 +239,6 @@ export default {
         selected_languages: {
             handler() {
                 if (this.reset_all) return
-
-                console.log('watching - selected_Languages');
 
                 this.getResourceCount()
             },
@@ -279,7 +252,6 @@ export default {
         //},
     },
     created() {
-        console.log('created - and do = getProjectCounts');
         this.getProjectCounts()
     }
 }

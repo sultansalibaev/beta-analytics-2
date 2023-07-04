@@ -20,7 +20,6 @@ let firstLoad = true;
 export const end_clipped = computed(() => {
 	
 	let start_count = ((end_top_resources.value + 1) * each_number.value);
-	// if (selected_res_news > resource_count.value) selected_res_news = resource_count.value;
 
 	if (start_count > resource_count.value) start_count = resource_count.value;
 
@@ -75,7 +74,6 @@ const reset_all_selected_data = () => {
 }
 
 const obj_copy = function (obj) {
-	console.log(JSON.parse(JSON.stringify(obj)));
 	return JSON.parse(JSON.stringify(obj))
 }
 
@@ -92,15 +90,11 @@ export function getProjectCounts() {
 				'0': 0,
 				'-1': 0,
 			};
-			console.log('response', response);
-			console.log('search_tags', response.data.search_tags);
 			search_tags.value = response.data.search_tags
 
 			search_tags.value.sort((a,b) => (a.length - b.length))
-			console.log('search_tags value is - ', search_tags.value);
 
 			socials.value = response.data.socials.reduce((prev, social) => {
-				console.log('social_id', social.id);
 				if (prev[social.id] === undefined) {
 					prev[social.id] = obj_copy(temp_soc_obj);
 				}
@@ -126,7 +120,6 @@ export function getProjectCounts() {
 					socials.value[social_category.id] = obj_copy(temp_soc_obj);
 				}
 				let social = socials.value[social_category.id] ?? obj_copy(temp_soc_obj)
-				console.log('social_categories', social, social_category.id);
 				social_category.count = parseInt(social.count) || 0
 				social_category['-1'] = parseInt(social['-1']) || 0
 				social_category['0'] = parseInt(social['0']) || 0
@@ -150,14 +143,11 @@ export function getProjectCounts() {
 				return prev
 			}, {})
 
-			console.log('countries', countries.value);
-			console.log('regions', regions.value);
 
 			smi_categories.value = response.data.smi_categories.reduce((prev,smi_cat) => {
 				prev[smi_cat.id_cat] = smi_cat
 				return prev
 			}, {})
-			console.log('smi_categories', smi_categories.value);
 
             r_type.value = (generals_count.value[1].count > 0) ? 1 : 2;
             
@@ -240,7 +230,6 @@ export function getMainPlacesCount(reset_all_anyway = true) {
 
 			other_ids.value = '3';
 			if (response?.data[0] && response?.data[0]?.other_ids) other_ids.value = response?.data[0]?.other_ids.filter(lang_id => !([5,4,10].includes(lang_id))).join(',')
-			console.log('other_ids', response?.data[0]?.other_ids, other_ids.value);
 			let map_world = {};
 			let map_kz = {};
 
@@ -333,7 +322,6 @@ export function getMainPlacesCount(reset_all_anyway = true) {
 			places.value['countries'] = map_world;
 			places.value['regions'] = map_kz;
 
-			console.log('regions count is - ', map_kz);
 
 			if (r_type.value == 1) {
 				getMainSmiCategoriesAndLanguagesCount()
@@ -351,11 +339,6 @@ export function getMainSmiCategoriesAndLanguagesCount() {
 	items_loading.value = true
 	let countries = get_map_params.value.countries.join(',')
 	let regions = get_map_params.value.regions.join(',')
-	// let kz_country_index = get_map_params.value.countries.indexOf('57');
-	// if (kz_country_index != -1 && get_map_params.value.regions.length) {
-	//     delete get_map_params.value.countries[kz_country_index];
-	//     countries = get_map_params.value.countries.join(',')
-	// }
 	let category_id = Object.keys(selected_social_categories.value).length ? (
 		Object.keys(selected_social_categories.value).filter(soc_key => selected_social_categories.value[soc_key]).join(',')
 	) : 0;
@@ -405,12 +388,6 @@ export function getMainSmiCategoriesAndLanguagesCount() {
 			})
 
 			smi_category.value.sort((a,b) => (b.y - a.y))
-
-			console.log('smi_category', smi_category.value);
-
-			// Object.keys(languages_general_data.value).forEach(lang_id => {
-			//     languages_count.value[lang_id].filled_count = Object.values(languages_general_data.value[lang_id]).reduce((prev, count) => (prev + count), 0)
-			// })
 
 			getResourceCount()
 		})
@@ -532,11 +509,8 @@ export const getDynamicsData = () => {
     axios
         .get(`/ru/analyticstats/get-project-dynamics-data?p_id=${project.value.id}&r_type=${r_type.value}&category_id=${category_id}&countries=${countries}&regions=${regions}&sentiments=${sentiments}&language=${language}&s_date=${dateRange.value.startDate.format("Y-m-d")} ${s_time.value}&f_date=${dateRange.value.endDate.format("Y-m-d")} ${f_time.value}&from=${from}&to=${end_clipped.value}&resource_length=${resource_count.value}&resources=${_resources}&specifying_sentiments=${specifying_sentiments}&date_mode=${selected_date_mode.value == 'weekly' ? 'daily' : selected_date_mode.value}`)
         .then(response => {
-			console.log('thumbnail-dates', thumbnail_dates.value);
 
 			let obj_dates = response.data.dates.reduce((prev, date) => ({ ...prev, [date.date]: date }), {})
-
-			console.log('get-project-dynamics-data', response, obj_dates);
 
 			dynamics.value = thumbnail_dates.value.map(date => {
 
@@ -582,7 +556,7 @@ export const getDynamicsData = () => {
 					}
 					temp_weekly_dates.push(weekdates);
 				}
-				console.log('temp_weekly_dates', temp_weekly_dates);
+
 				dynamics.value = temp_weekly_dates.map(weekdates => {
 					let start_date = weekdates[0];
 					obj_dates[from]
@@ -607,36 +581,6 @@ export const getDynamicsData = () => {
 					};
 				})
 			}
-
-			console.log('dynamics', dynamics.value);
-            // dynamics.value = response.data.dates.map(date => {
-
-			// 	let temp_start_date = new Date(dateRange.value.startDate)
-
-			// 	if (date.date >= 1) {
-
-			// 		temp_start_date = new Date(temp_start_date.valueOf() + ((7*24*3600*1000) * date.date))
-
-			// 		let minus_days = temp_start_date.getDay()
-			
-			// 		if (minus_days == 0) minus_days = 7
-
-			// 		if (minus_days != 1) {
-			// 			temp_start_date = temp_start_date.minus('date', minus_days - 1)
-			// 		}
-			// 	}
-
-			// 	return {
-			// 		y: parseInt(date.y),
-			// 		'-1': parseInt(date['-1']),
-			// 		'0': parseInt(date['0']),
-			// 		'1': parseInt(date['1']),
-			// 		date: date.date,
-			// 		x: selected_date_mode.value == 'weekly'
-			// 			? temp_start_date.valueOf()
-			// 			: new Date(`${date.date}${selected_date_mode.value == 'hourly' ? ':00:00' : ''}`).valueOf(),
-			// 	};
-			// })
 
             resource_clipped_news_count.value = parseInt(response.data.resource_clipped_news_count);
 			resource_count_loading.value = false
@@ -729,7 +673,6 @@ export const getGeneralCount = () => {
         .get(`/ru/analyticstats/get-project-general-count?p_id=${project.value.id}&r_type=${r_type.value}&category_id=${category_id}&countries=${countries}&regions=${regions}&sentiments=${sentiments}&language=${language}&s_date=${dateRange.value.startDate.format("Y-m-d")} ${s_time.value}&f_date=${dateRange.value.endDate.format("Y-m-d")} ${f_time.value}&from=${from}&to=${end_clipped.value}&resource_length=${resource_count.value}&resources=${_resources}&specifying_sentiments=${specifying_sentiments}&date_mode=${selected_date_mode.value == 'weekly' ? 'daily' : selected_date_mode.value}&dates_filter=${selected_dates_query.value}&sentiment_dates_filter=${temp_sentiment_dates_query}&from_page=${(selected_page.value - 1) * 20}&grouped=${isGrouped.value}`)
         .then(response => {
 
-            console.log('getGeneralCount - ', response);
             news_count.value = parseInt(response.data.news_count)
 			if (isGrouped.value) {
                 news_count.value = parseInt(response.data.similars_count)
@@ -890,7 +833,6 @@ export const getItems = () => {
 		language[others_index] = other_ids.value
 	}
 
-	console.log('language', language, others_index, other_ids.value);
 	language = language.join(',')
     let sentiments = Object.keys(selected_main_sentiments.value).filter(sentiment => selected_main_sentiments.value[sentiment]).join(',')
 
@@ -940,7 +882,6 @@ export const getItems = () => {
     axios
         .get(`/ru/analyticstats/get-project-items?p_id=${project.value.id}&r_type=${r_type.value}&category_id=${category_id}&countries=${countries}&regions=${regions}&sentiments=${sentiments}&language=${language}&s_date=${dateRange.value.startDate.format("Y-m-d")} ${s_time.value}&f_date=${dateRange.value.endDate.format("Y-m-d")} ${f_time.value}&from=${from}&to=${end_clipped.value}&resource_length=${resource_count.value}&resources=${_resources}&specifying_sentiments=${specifying_sentiments}&date_mode=${selected_date_mode.value == 'weekly' ? 'daily' : selected_date_mode.value}&dates_filter=${selected_dates_query.value}&sentiment_dates_filter=${temp_sentiment_dates_query}&metrics=${selected_soc_metrics.value}&from_page=${(selected_page.value - 1) * 20}&grouped=${isGrouped.value}`)
         .then(response => {
-            console.log('get-project-items', response);
             let obj_similar_items = response?.data?.similar_items?.reduce((prev, item) => ({
 				...prev, [item.item_id]: {
 					similars_count: {
@@ -979,21 +920,16 @@ export const getItems = () => {
 				...obj_items_members[item.res_id],
 				folders: obj_item_folders[item.item_id] ?? [],
 			}))
-			// if (selected_soc_metrics.value.length) {
-			// 	temp_items?.sort((a,b) => (b[selected_soc_metrics.value] - a[selected_soc_metrics.value]))
-			// }
-			// else {
-			// 	temp_items?.sort((a,b) => (new Date(b.date).valueOf() - new Date(a.date).valueOf()))
-			// }
+
 			items.value = temp_items.map(item => ({
 				...item,
                 text: remove_script_from_text(item.full_text)
 			}))
 
-			console.log('items', items.value);
         })
         .catch(error => {
             console.error(error);
+			items.value = [];
         })
         .finally(() => {
 			reset_all.value = items_loading.value = false
@@ -1009,7 +945,6 @@ export const getGptLogs = (item_ids = items.value?.map(item => item?.item_id)?.j
 	axios
 		.get(`/ru/gpt-service/get-logs?news_type=${r_type.value}&news_id=${item_ids}`)
 		.then(response => {
-			console.log('gpt-service-logs', response);
 			items_array.forEach(item => {
 				item.logs = {}
 			})
@@ -1108,7 +1043,6 @@ export const getSimilarItems = (item_id, per_page = 1) => {
     axios
         .get(`/ru/similar-items/get-items?p_id=${project.value.id}&r_type=${r_type.value}&category_id=${category_id}&countries=${countries}&regions=${regions}&sentiments=${sentiments}&language=${language}&s_date=${dateRange.value.startDate.format("Y-m-d")} ${s_time.value}&f_date=${dateRange.value.endDate.format("Y-m-d")} ${f_time.value}&from=${from}&to=${end_clipped.value}&resource_length=${resource_count.value}&resources=${_resources}&specifying_sentiments=${specifying_sentiments}&date_mode=${selected_date_mode.value == 'weekly' ? 'daily' : selected_date_mode.value}&dates_filter=${selected_dates_query.value}&sentiment_dates_filter=${temp_sentiment_dates_query}&metrics=${selected_soc_metrics.value}&from_page=${(per_page - 1) * 20}&item_id=${item_id}`)
         .then(response => {
-            console.log('similar-items/get-items', response);
             let obj_items_items = response?.data?.items?.reduce((prev, item) => ({ ...prev, [item.news_id]: item }), {})
             let obj_items_metrics = response?.data?.metrics?.metrics?.reduce((prev, item) => ({ ...prev, [item.news_id]: item }), {})
             let obj_items_members = response?.data?.metrics?.members?.reduce((prev, item) => ({ ...prev, [item.id]: item }), {})
@@ -1135,20 +1069,12 @@ export const getSimilarItems = (item_id, per_page = 1) => {
 				...obj_items_members[item.res_id],
 				folders: obj_item_folders[item.item_id] ?? [],
 			}))
-			// if (selected_soc_metrics.value.length) {
-			// 	temp_items?.sort((a,b) => (b[selected_soc_metrics.value] - a[selected_soc_metrics.value]))
-			// }
-			// else {
-			// 	temp_items?.sort((a,b) => (new Date(b.date).valueOf() - new Date(a.date).valueOf()))
-			// }
+
 			similar_items.value = temp_similar_items.map(item => ({
 				...item,
                 text: remove_script_from_text(item.full_text)
 			}));
 
-			// similar_items.value.sort((a,b) => (a?.item_id == item_id || b?.item_id == item_id ? -1 : 0))
-
-			console.log('similar_items', similar_items.value);
         })
         .catch(error => {
             console.error(error);
@@ -1164,7 +1090,6 @@ export const getSimilarItems = (item_id, per_page = 1) => {
 
 export const updateGroupSentiment = (item_id, selected_sentiment) => {
 
-	console.log('updateGroupSentiment = ', item_id, selected_sentiment);
 	
 	similar_items_loading.value = true;
 
@@ -1236,9 +1161,6 @@ export const updateGroupSentiment = (item_id, selected_sentiment) => {
 
     axios
         .get(`/ru/analyticstats/update-group-sentiment?p_id=${project.value.id}&r_type=${r_type.value}&category_id=${category_id}&countries=${countries}&regions=${regions}&sentiments=${sentiments}&language=${language}&s_date=${dateRange.value.startDate.format("Y-m-d")} ${s_time.value}&f_date=${dateRange.value.endDate.format("Y-m-d")} ${f_time.value}&from=${from}&to=${end_clipped.value}&resource_length=${resource_count.value}&resources=${_resources}&specifying_sentiments=${specifying_sentiments}&date_mode=${selected_date_mode.value == 'weekly' ? 'daily' : selected_date_mode.value}&dates_filter=${selected_dates_query.value}&sentiment_dates_filter=${temp_sentiment_dates_query}&metrics=${selected_soc_metrics.value}&item_id=${item_id}&selected_sentiment=${selected_sentiment}`)
-        .then(response => {
-            console.log('analyticstats/update-group-sentiment', response);
-        })
         .catch(error => {
             console.error(error);
         })
@@ -1249,7 +1171,6 @@ export const updateGroupSentiment = (item_id, selected_sentiment) => {
 
 export const deleteGroupItems = (item_id) => {
 
-	console.log('deleteGroupItems = ', item_id);
 	
 	similar_items_loading.value = true;
 
@@ -1319,9 +1240,6 @@ export const deleteGroupItems = (item_id) => {
 
     axios
         .get(`/ru/analyticstats/delete-group-items?p_id=${project.value.id}&r_type=${r_type.value}&category_id=${category_id}&countries=${countries}&regions=${regions}&sentiments=${sentiments}&language=${language}&s_date=${dateRange.value.startDate.format("Y-m-d")} ${s_time.value}&f_date=${dateRange.value.endDate.format("Y-m-d")} ${f_time.value}&from=${from}&to=${end_clipped.value}&resource_length=${resource_count.value}&resources=${_resources}&specifying_sentiments=${specifying_sentiments}&date_mode=${selected_date_mode.value == 'weekly' ? 'daily' : selected_date_mode.value}&dates_filter=${selected_dates_query.value}&sentiment_dates_filter=${temp_sentiment_dates_query}&metrics=${selected_soc_metrics.value}&item_id=${item_id}&p_user_id=${p_user_id.value}`)
-        .then(response => {
-            console.log('analyticstats/delete-group-items', response);
-        })
         .catch(error => {
             console.error(error);
         })
@@ -1332,7 +1250,6 @@ export const deleteGroupItems = (item_id) => {
 
 export const getGroupFolders = (item_id) => {
 
-	console.log('deleteGroupItems = ', item_id);
 
 	if (!item_id) return;
 
@@ -1404,7 +1321,6 @@ export const getGroupFolders = (item_id) => {
     axios
         .get(`/ru/analyticstats/get-group-folders?p_id=${project.value.id}&r_type=${r_type.value}&category_id=${category_id}&countries=${countries}&regions=${regions}&sentiments=${sentiments}&language=${language}&s_date=${dateRange.value.startDate.format("Y-m-d")} ${s_time.value}&f_date=${dateRange.value.endDate.format("Y-m-d")} ${f_time.value}&from=${from}&to=${end_clipped.value}&resource_length=${resource_count.value}&resources=${_resources}&specifying_sentiments=${specifying_sentiments}&date_mode=${selected_date_mode.value == 'weekly' ? 'daily' : selected_date_mode.value}&dates_filter=${selected_dates_query.value}&sentiment_dates_filter=${temp_sentiment_dates_query}&metrics=${selected_soc_metrics.value}&item_id=${item_id}&p_user_id=${p_user_id.value}`)
         .then(response => {
-            console.log('analyticstats/get-group-folders', response, item);
             response?.data?.forEach(folder => {
                 group_folders[folder.id] = {
                     ...folder,
@@ -1413,8 +1329,6 @@ export const getGroupFolders = (item_id) => {
                     ) == undefined
                 }
             })
-
-			console.log('group_folders', group_folders);
         })
         .catch(error => {
             console.error(error);
@@ -1441,7 +1355,6 @@ export const getGroupFolders = (item_id) => {
 export const updateGroupFolders = (item_id, favorite) => {
 
     if (!favorites_modal.value) return;
-    console.log('updateGroupFolders = ', item_id);
 
 	if (!item_id) return;
 
@@ -1507,14 +1420,9 @@ export const updateGroupFolders = (item_id, favorite) => {
         selected_main_sentiments.value['-1'] ? selected_sentiment_dates_query.value['-1'] : '',
     ].join('_');
 
-    let item = items.value.find(item => item.item_id === item_id);
-
     let label_type = favorite.selected ? "add_label" : "remove_from_label";
     axios
         .get(`/ru/analyticstats/update-group-folders?p_id=${project.value.id}&r_type=${r_type.value}&category_id=${category_id}&countries=${countries}&regions=${regions}&sentiments=${sentiments}&language=${language}&s_date=${dateRange.value.startDate.format("Y-m-d")} ${s_time.value}&f_date=${dateRange.value.endDate.format("Y-m-d")} ${f_time.value}&from=${from}&to=${end_clipped.value}&resource_length=${resource_count.value}&resources=${_resources}&specifying_sentiments=${specifying_sentiments}&date_mode=${selected_date_mode.value == 'weekly' ? 'daily' : selected_date_mode.value}&dates_filter=${selected_dates_query.value}&sentiment_dates_filter=${temp_sentiment_dates_query}&metrics=${selected_soc_metrics.value}&item_id=${item_id}&f_id=${favorite.id}&label_type=${label_type}`)
-        .then(response => {
-            console.log('analyticstats/update-group-folders', response, item);
-        })
         .catch(error => {
             console.error(error);
         })

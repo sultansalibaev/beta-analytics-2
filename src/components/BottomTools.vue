@@ -427,7 +427,6 @@ import { get_map_keys } from "@/response/options/mapOptions";
 export default {
     watch: {
         selected_soc_metrics() {
-            console.log('watching - selected_soc_metrics');
             if (this.selected_page == 1) {
                 this.getItems();
             } else {
@@ -521,6 +520,8 @@ export default {
             console.log('res_news_percentage', percent)
 
             if (Number(percent ?? 0) > 100) return "loading...";
+
+            if (isNaN(percent)) percent = 0;
 
             return percent + "%";
         },

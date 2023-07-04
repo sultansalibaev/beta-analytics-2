@@ -199,7 +199,6 @@ const _i18n = {
 
 import { langIs } from '@/response/utils/langIs'
 
-console.log(langIs('en'));
 
 function getLangIndex() {
     if (langIs("en")) return 0;

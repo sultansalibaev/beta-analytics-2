@@ -162,11 +162,9 @@ export const pieOptions = computed(() => {
                                 return
                             }
                             if (this.color == "#cccccc") {
-                                console.log('first condition');
                                 this.color = this.options.color = pie_colors[smi_category.value.findIndex(cat => (cat.name === this.name))];
                             }
                             else {
-                                console.log('second condition');
                                 // if (Object.values(categories_copy.value).find(cat => cat.selected)?.selected) {
                                 //     this.selected = this.options.selected = false;
                                 //     this.sliced = this.options.sliced = false;

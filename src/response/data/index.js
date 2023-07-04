@@ -25,7 +25,7 @@
         
         return {
             hourly:  ['по часам<br/>• если период не более 7 дней',   'fa-solid fa-clock',            days_period <= 7, 1000 * 3600 * 24 * days_period],
-            daily:   ['по дням',                                   'fa fa-calendar',               true,             1000 * 3600 * 24 * 30],
+            daily:   ['по дням',                                      'fa fa-calendar',               true,             1000 * 3600 * 24 * 30],
             weekly:  ['по неделям<br/>• если период от 7 дней',       'fa fa-calendar-week',          days_period >= 7, 1000 * 3600 * 24 * 7],
             monthly: ['по месяцам<br/>• если период от 3 дней',       'fa-solid fa-calendar-check',   days_period >= 3, 1000 * 3600 * 24 * 30], // * 12
         }
@@ -55,11 +55,7 @@
         country_regions_loading.value = true;
         axios.get(`/myjs_css/js/highcharts/countries/${file_name}on`)
             .then(response => {
-                console.log('response', response);
-                
                 if (response?.data) Highcharts.maps[`map-${file_name}`] = response?.data;
-        
-                console.log('Highcharts.maps after - ', Highcharts.maps);
             })
             .finally(() => {
                 country_regions_loading.value = false;

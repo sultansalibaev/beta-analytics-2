@@ -19,7 +19,7 @@ Number.prototype.getFixedOne = function() {
 Number.prototype.short = function () {
     const one_billion = 1_000_000_000
     const one_million = 1_000_000
-    let some_divider = this > one_billion ? one_billion : this > one_million ? one_million : 1;
+    let some_divider = this >= one_billion ? one_billion : this >= one_million ? one_million : 1;
     if (divider_obj[some_divider] == '') {
         return this.push_space()
     }
@@ -40,31 +40,16 @@ import { createApp } from 'vue'
 import App from '@/App.vue'
 import '@/assets/tailwind.css'
 
-// import { country_regions_loading } from "@/response/data/index"
-
-
 import HighchartsVue from "highcharts-vue";
 import Highcharts from "highcharts";
 import mapInit from "highcharts/modules/map";
 import accessibilityInit from "highcharts/modules/accessibility";
 import map_world from "@highcharts/map-collection/custom/world.geo.json";
-// import map_ru from "@highcharts/map-collection/countries/ru/ru-all.geo.json";
-// import map_kz from "@/response/json/kz-all.json";
-
-// import { getCountryRegions, countries_with_regions } from "@/response/data/index"
-// import { project, countries, isKazakstan } from "@/response/header"
 
 mapInit(Highcharts);
 accessibilityInit(Highcharts);
 
 Highcharts.maps["map-world"] = map_world;
-// Highcharts.maps["map-kz"] = map_kz;
-// Highcharts.maps["map-ru"] = map_ru;
-
-console.log('Highcharts.maps', Highcharts.maps);
-
-
-console.log('finish first axios request');
 
 const app = createApp(App)
 

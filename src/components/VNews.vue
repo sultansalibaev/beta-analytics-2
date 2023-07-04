@@ -1884,13 +1884,12 @@ export default {
             axios
                 .post(`/ru/news/one-comments`, formData)
                 .then((response) => {
-                    console.log("one-comments - response", response);
                     if (response?.status == 200 && this.modal_item) {
                         this.comments.status = "ready";
                     }
                 })
                 .catch((error) => {
-                    console.log("one-comments - error", error);
+                    console.error("one-item-comments - error", error);
                 });
         },
         hasIn(value, values) {
@@ -1956,9 +1955,6 @@ export default {
                     .get(
                         `/ru/news/${route}?news_id=${this.favorites_modal}&r_type=${this.r_type}&l_id=${favorite.id}&p_id=${this.project.id}`
                     )
-                    .then((response) => {
-                        console.log(response);
-                    })
                     .catch((error) => {
                         console.error(error);
                     });
@@ -1972,9 +1968,6 @@ export default {
                 .get(
                     `/ru/news/deletelabel?news_id=${item.item_id}&r_type=${this.r_type}&l_id=${folder_id}&p_id=${this.project.id}`
                 )
-                .then((response) => {
-                    console.log(response);
-                })
                 .catch((error) => {
                     console.error(error);
                 });
@@ -2029,9 +2022,6 @@ export default {
                 .get(
                     `/ru/news/updatesentiment?p_id=${this.project.id}&id=${item.item_id}&r_type=${this.r_type}&sentiment=${sentiment}`
                 )
-                .then((response) => {
-                    console.log(response);
-                });
         },
         delete_item(item_id) {
             axios
@@ -2119,7 +2109,6 @@ export default {
             // if (this.favorite_search == '') {
             //     if (this.checked_favorites == null) return temp_labels;
             //     temp_labels.sort((a,b) => (Number(b?.selected == this.checked_favorites) - Number(a?.selected == this.checked_favorites)));
-            //     console.log('sortedLabels 2', temp_labels);
             //     return temp_labels;
             // }
 
@@ -2319,19 +2308,15 @@ export default {
             if (!(this.r_type == 2 && newValue)) return;
             this.comments_loading = true;
 
-            console.log("watching modal_item - ", newValue);
 
             axios
                 .get(
                     `/ru/news/get-comments?p_id=${this.project.id}&post_id=${newValue?.item_id}`
                 )
                 .then((response) => {
-                    // console.log('get-comments - response', response);
                     let item_status = response?.data?.status;
                     let item_comments = response?.data?.comments;
 
-                    console.log("item_status", item_status);
-                    console.log("item_comments", item_comments);
                     if (newValue) {
                         this.search_comment = "";
                         this.comments.status = item_status;
@@ -2340,7 +2325,7 @@ export default {
                     }
                 })
                 .catch((error) => {
-                    console.log("get-comments - error", error);
+                    console.error("get-comments - error", error);
                 })
                 .finally(() => {
                     this.comments_loading = false;
