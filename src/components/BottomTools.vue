@@ -352,16 +352,24 @@
                         active: show_percent,
                     }"
                 >
-                    <div
-                        class="front"
-                        v-if="res_news_percentage == 'loading...' || this.resource_count_loading"
-                    >
-                        <i class="fa-solid fa-spinner"></i>
-                    </div>
-                    <div class="front" v-else>{{ res_news_percentage }}</div>
-                    <div class="back">
-                        {{ resource_clipped_news_count.push_space() }}
-                    </div>
+                    <template v-if="this.resource_count_loading">
+                        <div
+                            class="front"
+                        >
+                            <i class="fa-solid fa-spinner"></i>
+                        </div>
+                        <div
+                            class="back"
+                        >
+                            <i class="fa-solid fa-spinner"></i>
+                        </div>
+                    </template>
+                    <template v-else>
+                        <div class="front">{{ res_news_percentage }}</div>
+                        <div class="back white-space-nowrap">
+                            {{ resource_clipped_news_count.push_space() }}
+                        </div>
+                    </template>
                 </div>
                 <div class="res_count_prompt">{{ show_percent ? i18n('Количество публикаций') : i18n('Доля публикаций на выделенных источниках') }}</div>
                 <VRange v-if="r_type == 1" :percent="res_news_info"></VRange>
@@ -519,7 +527,7 @@ export default {
 
             console.log('res_news_percentage', percent)
 
-            if (Number(percent ?? 0) > 100) return "loading...";
+            if (Number(percent ?? 0) > 100) return "100%";
 
             if (isNaN(percent)) percent = 0;
 

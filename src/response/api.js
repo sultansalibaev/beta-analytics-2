@@ -10,11 +10,6 @@ import { computed, watch } from 'vue'
 
 import i18n from "@/response/utils/i18n"
 
-
-
-
-
-
 let firstLoad = true;
 
 export const end_clipped = computed(() => {
@@ -25,7 +20,6 @@ export const end_clipped = computed(() => {
 
 	return start_count
 })
-
 
 const reset_all_selected_data = () => {
 	reset_all.value = true
@@ -76,7 +70,6 @@ const reset_all_selected_data = () => {
 const obj_copy = function (obj) {
 	return JSON.parse(JSON.stringify(obj))
 }
-
 
 export function getProjectCounts() {
 	items_loading.value = true
@@ -446,7 +439,6 @@ export function getResourceCount() {
 		})
 }
 
-
 export const getDynamicsData = () => {
 	items_loading.value = true
 	resource_count_loading.value = true
@@ -696,6 +688,7 @@ watch(enable_metrics, (newValue) => {
 		getSocialMetrics()
 	}
 })
+
 watch(isGrouped, () => {
             
 	getGeneralCount()
@@ -789,7 +782,7 @@ export const getSocialMetrics = () => {
         selected_main_sentiments.value['1'] ? selected_sentiment_dates_query.value['1'] : '',
         selected_main_sentiments.value['0'] ? selected_sentiment_dates_query.value['0'] : '',
         selected_main_sentiments.value['-1'] ? selected_sentiment_dates_query.value['-1'] : '',
-    ].join('_');
+    ].join('_');	axios
 
 	laoding_metrics.value = true
 
@@ -969,8 +962,6 @@ export const getGptLogs = (item_ids = items.value?.map(item => item?.item_id)?.j
 			reset_all.value = false
         })
 };
-
-
 
 export const getSimilarItems = (item_id, per_page = 1) => {
 	
@@ -1352,6 +1343,7 @@ export const getGroupFolders = (item_id) => {
                 });
         })
 };
+
 export const updateGroupFolders = (item_id, favorite) => {
 
     if (!favorites_modal.value) return;
@@ -1427,8 +1419,6 @@ export const updateGroupFolders = (item_id, favorite) => {
             console.error(error);
         })
 };
-
-
 
 function remove_script_from_text(text) {
 	document.getElementById('text-thumbnail').innerHTML = text;
