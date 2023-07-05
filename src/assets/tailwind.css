@@ -113,8 +113,8 @@ body {
     height: 25px;
     cursor: pointer;
 
-    cursor: default;
-    pointer-events: none;
+    /* cursor: default;
+    pointer-events: none; */
 }
 
 .export-text {
@@ -123,12 +123,13 @@ body {
     height: 100%;
     font-size: 13px;
     background: #3B5998;
+    background: rgb(28, 179, 148);
     color: white;
     padding: 0 8px;
 
     border-radius: 3px;
 
-    background: #ccc;
+    /* background: #ccc; */
 }
 
 .m-l-5 {

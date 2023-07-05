@@ -1188,7 +1188,7 @@
             @click.stop
         >
             <div class="delete-resource-title" style="background: #1cb394;">
-                {{ i18n('Выберите избранное') }}
+                {{ favorites_modal != 'general_add_to_folder' ? i18n('Выберите избранное') : i18n('Добавление в избранное') }}
                 <i class="fa fa-close close-item-modal" @click="favorites_modal = false"></i>
             </div>
             <div style="padding: 8px;height: 100%;">
@@ -1205,6 +1205,7 @@
                         />
                     </div>
                     <i
+                        v-if="favorites_modal != 'general_add_to_folder'"
                         @click="
                             favorite_search = '';
                             checked_favorites =
@@ -1214,6 +1215,7 @@
                         style="font-size: 20px; margin-right: 7px"
                     ></i>
                     <i
+                        v-if="favorites_modal != 'general_add_to_folder'"
                         @click="
                             favorite_search = '';
                             checked_favorites =
@@ -1257,15 +1259,23 @@
                             (selected_label_page - 1) * 100 + 100
                         )"
                         :key="i"
-                        @click="multi_toggle_folder(favorite)"
+                        @click="favorites_modal == 'general_add_to_folder' ? general_add_to_folder(favorite) : multi_toggle_folder(favorite)"
                         :title="favorite.name"
                     >
                         <i
+                            v-if="favorites_modal != 'general_add_to_folder'"
                             :class="`fa-${
                                 !favorite.selected ? 'regular' : 'solid'
                             } label-color fa-square${
                                 !favorite.selected ? '' : '-check'
                             }`"
+                            style="font-size: 20px; margin-right: 8px"
+                        ></i>
+                        <i
+                            v-else
+                            :class="`fa-${
+                                !favorite.selected ? 'regular' : 'solid'
+                            } label-color fa-square-plus transition-all`"
                             style="font-size: 20px; margin-right: 8px"
                         ></i>
                         <span
@@ -1342,6 +1352,7 @@
                 <div class="favorite-buttons flex">
                     <input
                         type="text"
+                        @keydown.enter="add_new_label()"
                         :placeholder="i18n('Введите название избранного...')"
                         v-model="label_name"
                     />
@@ -1695,7 +1706,7 @@ import {
     favorites,
     favorites_modal,
 } from "@/response/data/index";
-import { getItems, getSimilarItems, updateGroupSentiment, deleteGroupItems, getGroupFolders, updateGroupFolders } from "@/response/api";
+import { getItems, getSimilarItems, updateGroupSentiment, deleteGroupItems, getGroupFolders, updateGroupFolders, get_favorites, general_add_to_folder } from "@/response/api";
 // import items from '@/response/json/items';
 import {
     r_type,
@@ -1755,7 +1766,9 @@ export default {
             similar_items,
             favorites,
             favorites_modal,
+            general_add_to_folder,
             updateGroupFolders,
+            get_favorites,
         };
     },
     data() {
@@ -1921,6 +1934,11 @@ export default {
             this.selected_soc_metrics = metric_name;
         },
         multi_toggle_folder(favorite) {
+            if (this.favorites_modal == 'general_add_to_folder') {
+                console.log('favorites_modal', this.favorites_modal);
+                return;
+            }
+
             let temp_item = this.items.find(item => item.item_id == this.favorites_modal)
             this.toggle_folder(favorite)
             if (temp_item?.similars_count?.length > 1) {
@@ -1979,12 +1997,17 @@ export default {
             axios
                 .post(`/ru/newlabels`, formData)
                 .then(() => {
-                    let temp_item = this.favorites_modal.find(item => item.item_id == this.favorites_modal) ?? { similars_count: [] };
-                    if (temp_item?.similars_count?.length > 1) {
-                        this.getGroupFolders(this.favorites_modal);
+                    if (this.favorites_modal == 'general_add_to_folder') {
+                        this.get_favorites();
                     }
                     else {
-                        this.get_item_favorites(this.favorites_modal);
+                        let temp_item = [...this.items, ...this.similar_items].find(item => item.item_id == this.favorites_modal) ?? { similars_count: [] };
+                        if (temp_item?.similars_count?.length > 1) {
+                            this.getGroupFolders(this.favorites_modal);
+                        }
+                        else {
+                            this.get_item_favorites(this.favorites_modal);
+                        }
                     }
                     this.label_name = "";
                 })
