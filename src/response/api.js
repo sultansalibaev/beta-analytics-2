@@ -72,10 +72,10 @@ const obj_copy = function (obj) {
 }
 
 export function getProjectCounts() {
-	items_loading.value = true
+	items_loading.value = true;
 
 	axios
-		.get(`/ru/analyticstats/get-project-count?p_id=${project.value.id}&s_date=${dateRange.value.startDate.format("Y-m-d")} ${s_time.value}&f_date=${dateRange.value.endDate.format("Y-m-d")} ${f_time.value}`)
+		.get(`/ru/analyticstats/get-project-count?${params.value.getQuery({}, ['p_id','s_date','f_date'])}`)
 		.then(response => {
 			let temp_soc_obj = {
 				'count': 0,
@@ -213,12 +213,9 @@ export function setSentimentsCount() {
 export function getMainPlacesCount(reset_all_anyway = true) {
 	items_loading.value = true
 	if (reset_all_anyway) reset_all_selected_data()
-	let category_id = Object.keys(selected_social_categories.value).length ? (
-		Object.keys(selected_social_categories.value).filter(soc_key => selected_social_categories.value[soc_key]).join(',')
-	) : 0;
-	let sentiments = Object.keys(selected_main_sentiments.value).filter(sentiment => selected_main_sentiments.value[sentiment]).join(',')
+
 	axios
-		.get(`/ru/analyticstats/get-project-places-count?p_id=${project.value.id}&r_type=${r_type.value}&category_id=${category_id}&sentiments=${sentiments}&s_date=${dateRange.value.startDate.format("Y-m-d")} ${s_time.value}&f_date=${dateRange.value.endDate.format("Y-m-d")} ${f_time.value}`)
+		.get(`/ru/analyticstats/get-project-places-count?${params.value.getQuery({}, ['p_id','r_type','category_id','sentiments','s_date','f_date'])}`)
 		.then(response => {
 
 			other_ids.value = '3';
@@ -330,14 +327,9 @@ export function getMainPlacesCount(reset_all_anyway = true) {
 
 export function getMainSmiCategoriesAndLanguagesCount() {
 	items_loading.value = true
-	let countries = get_map_params.value.countries.join(',')
-	let regions = get_map_params.value.regions.join(',')
-	let category_id = Object.keys(selected_social_categories.value).length ? (
-		Object.keys(selected_social_categories.value).filter(soc_key => selected_social_categories.value[soc_key]).join(',')
-	) : 0;
-	let sentiments = Object.keys(selected_main_sentiments.value).filter(sentiment => selected_main_sentiments.value[sentiment]).join(',')
+
 	axios
-		.get(`/ru/analyticstats/get-project-lang-and-smi-categories-count?p_id=${project.value.id}&r_type=${r_type.value}&category_id=${category_id}&countries=${countries}&regions=${regions}&sentiments=${sentiments}&s_date=${dateRange.value.startDate.format("Y-m-d")} ${s_time.value}&f_date=${dateRange.value.endDate.format("Y-m-d")} ${f_time.value}`)
+		.get(`/ru/analyticstats/get-project-lang-and-smi-categories-count?${params.value.getQuery({}, ['p_id','r_type','category_id','countries','regions','sentiments','s_date','f_date'])}`)
 		.then(response => {
 			let result = response.data.reduce((prev, item) => {
 				let lang_key = item.lang != 10 && item.lang != 4 && item.lang != 5 ? 3 : item.lang;
@@ -391,32 +383,10 @@ export function getMainSmiCategoriesAndLanguagesCount() {
 
 export function getResourceCount() {
 	items_loading.value = true
-	let countries = get_map_params.value.countries.join(',')
-	let regions = get_map_params.value.regions.join(',')
-	let category_id;
-	if (r_type.value == 2) {
-		category_id = Object.keys(selected_social_categories.value).length ? (
-			Object.keys(selected_social_categories.value).filter(soc_key => selected_social_categories.value[soc_key]).join(',')
-		) : 0;
-	}
-	else {
-		category_id = get_selected_smi_categories(selected_categories.value).join(',');
-	}
-	let language = Object.keys(selected_languages.value).length ? (
-		Object.keys(selected_languages.value).filter(lang_id => selected_languages.value[lang_id]).map(lang_id => parseInt(lang_id))
-	) : [];
-
-	let others_index = language.indexOf(3);
-	if ("-1" != others_index && other_ids.value) {
-		language[others_index] = other_ids.value
-	}
-
-	language = language.join(',')
-
-	let sentiments = Object.keys(selected_main_sentiments.value).filter(sentiment => selected_main_sentiments.value[sentiment]).join(',')
 	resource_count_loading.value = true
+
 	axios
-		.get(`/ru/analyticstats/get-project-resource-count?p_id=${project.value.id}&r_type=${r_type.value}&category_id=${category_id}&countries=${countries}&regions=${regions}&sentiments=${sentiments}&language=${language}&s_date=${dateRange.value.startDate.format("Y-m-d")} ${s_time.value}&f_date=${dateRange.value.endDate.format("Y-m-d")} ${f_time.value}`)
+		.get(`/ru/analyticstats/get-project-resource-count?${params.value.getQuery({}, ['p_id','r_type','category_id','countries','regions','sentiments','language','s_date','f_date'])}`)
 		.then(response => {
 			resource_count.value = parseInt(response.data.resource_count) || 0
 			resource_full_news_count.value = parseInt(response.data.resource_full_news_count) || 0
@@ -442,64 +412,9 @@ export function getResourceCount() {
 export const getDynamicsData = () => {
 	items_loading.value = true
 	resource_count_loading.value = true
-    let countries = get_map_params.value.countries.join(',')
-    let regions = get_map_params.value.regions.join(',')
-    let category_id;
-    if (r_type.value == 2) {
-        category_id = Object.keys(selected_social_categories.value).length ? (
-            Object.keys(selected_social_categories.value).filter(soc_key => selected_social_categories.value[soc_key]).join(',')
-        ) : 0;
-    }
-    else {
-        category_id = get_selected_smi_categories(selected_categories.value).join(',');
-    }
-	let language = Object.keys(selected_languages.value).length ? (
-		Object.keys(selected_languages.value).filter(lang_id => selected_languages.value[lang_id]).map(lang_id => parseInt(lang_id))
-	) : [];
-
-	let others_index = language.indexOf(3);
-	if ("-1" != others_index && other_ids.value) {
-		language[others_index] = other_ids.value
-	}
-
-	language = language.join(',')
-    let sentiments = Object.keys(selected_main_sentiments.value).filter(sentiment => selected_main_sentiments.value[sentiment]).join(',')
-
-    let from = start_top_resources.value == 0 ? 0 : start_top_resources.value * each_number.value;
-
-    let _resources = Object.keys(selected_resources.value.resources).length ? (
-        Object.keys(selected_resources.value.resources).filter(lang_id => selected_resources.value.resources[lang_id]).join(',')
-    ) : '';
-
-    let specifying_sentiments = [1, 0, -1].map(sentiment => {
-        let res_obj = selected_resource_sentiment.value.sentiment_resources[sentiment]
-        let res_ids = Object.keys(res_obj).length ? (
-            Object.keys(res_obj).filter(lang_id => res_obj[lang_id]).join(',')
-        ) : '';
-
-        let place_obj = bars_sentiments_selected.value.sentiment_places[sentiment]
-
-        let countries = [];
-        let regions_countries = [];
-        let regions = [];
-
-        Object.keys(place_obj).filter(place_id => place_obj[place_id]).forEach(place_id => {
-            if (place_id.includes('_')) {
-                regions.push(place_id.split('_')[1])
-                regions_countries.push(place_id.split('_')[0])
-            }
-            else {
-                countries.push(place_id)
-            }
-        })
-
-        return `${sentiment}_${res_ids}_${regions.join(',')}_${[...countries, ...regions_countries].join(',')}`
-    })
-
-    specifying_sentiments = specifying_sentiments.join(';')
 
     axios
-        .get(`/ru/analyticstats/get-project-dynamics-data?p_id=${project.value.id}&r_type=${r_type.value}&category_id=${category_id}&countries=${countries}&regions=${regions}&sentiments=${sentiments}&language=${language}&s_date=${dateRange.value.startDate.format("Y-m-d")} ${s_time.value}&f_date=${dateRange.value.endDate.format("Y-m-d")} ${f_time.value}&from=${from}&to=${end_clipped.value}&resource_length=${resource_count.value}&resources=${_resources}&specifying_sentiments=${specifying_sentiments}&date_mode=${selected_date_mode.value == 'weekly' ? 'daily' : selected_date_mode.value}`)
+        .get(`/ru/analyticstats/get-project-dynamics-data?${params.value.getQuery({}, ['dates_filter', 'sentiment_dates_filter'], true)}`)
         .then(response => {
 
 			let obj_dates = response.data.dates.reduce((prev, date) => ({ ...prev, [date.date]: date }), {})
@@ -551,7 +466,7 @@ export const getDynamicsData = () => {
 
 				dynamics.value = temp_weekly_dates.map(weekdates => {
 					let start_date = weekdates[0];
-					obj_dates[from]
+
 					let counts = weekdates.reduce((prev,date) => ({
 						y: prev.y + parseInt((obj_dates[date] && obj_dates[date].y) ?? 0),
 						'-1': prev['-1'] + parseInt((obj_dates[date] && obj_dates[date]['-1']) ?? 0),
@@ -599,70 +514,12 @@ export const getDynamicsData = () => {
 };
 
 export const getGeneralCount = () => {
-    let countries = get_map_params.value.countries.join(',')
-    let regions = get_map_params.value.regions.join(',')
-    let category_id;
-    if (r_type.value == 2) {
-        category_id = Object.keys(selected_social_categories.value).length ? (
-            Object.keys(selected_social_categories.value).filter(soc_key => selected_social_categories.value[soc_key]).join(',')
-        ) : 0;
-    }
-    else {
-        category_id = get_selected_smi_categories(selected_categories.value).join(',');
-    }
-	let language = Object.keys(selected_languages.value).length ? (
-		Object.keys(selected_languages.value).filter(lang_id => selected_languages.value[lang_id]).map(lang_id => parseInt(lang_id))
-	) : [];
-
-	let others_index = language.indexOf(3);
-	if ("-1" != others_index && other_ids.value) {
-		language[others_index] = other_ids.value
-	}
-
-	language = language.join(',')
-    let sentiments = Object.keys(selected_main_sentiments.value).filter(sentiment => selected_main_sentiments.value[sentiment]).join(',')
-
-    let from = start_top_resources.value == 0 ? 0 : start_top_resources.value * each_number.value;
-
-    let _resources = Object.keys(selected_resources.value.resources).length ? (
-        Object.keys(selected_resources.value.resources).filter(lang_id => selected_resources.value.resources[lang_id]).join(',')
-    ) : '';
-
-    let specifying_sentiments = [1, 0, -1].map(sentiment => {
-        let res_obj = selected_resource_sentiment.value.sentiment_resources[sentiment]
-        let res_ids = Object.keys(res_obj).length ? (
-            Object.keys(res_obj).filter(lang_id => res_obj[lang_id]).join(',')
-        ) : '';
-
-        let place_obj = bars_sentiments_selected.value.sentiment_places[sentiment]
-
-        let countries = [];
-        let regions_countries = [];
-        let regions = [];
-
-        Object.keys(place_obj).filter(place_id => place_obj[place_id]).forEach(place_id => {
-            if (place_id.includes('_')) {
-                regions.push(place_id.split('_')[1])
-                regions_countries.push(place_id.split('_')[0])
-            }
-            else {
-                countries.push(place_id)
-            }
-        })
-
-        return `${sentiment}_${res_ids}_${regions.join(',')}_${[...countries, ...regions_countries].join(',')}`
-    })
-
-    specifying_sentiments = specifying_sentiments.join(';')
-
-    let temp_sentiment_dates_query = [
-        selected_main_sentiments.value['1'] ? selected_sentiment_dates_query.value['1'] : '',
-        selected_main_sentiments.value['0'] ? selected_sentiment_dates_query.value['0'] : '',
-        selected_main_sentiments.value['-1'] ? selected_sentiment_dates_query.value['-1'] : '',
-    ].join('_');
 
     return axios
-        .get(`/ru/analyticstats/get-project-general-count?p_id=${project.value.id}&r_type=${r_type.value}&category_id=${category_id}&countries=${countries}&regions=${regions}&sentiments=${sentiments}&language=${language}&s_date=${dateRange.value.startDate.format("Y-m-d")} ${s_time.value}&f_date=${dateRange.value.endDate.format("Y-m-d")} ${f_time.value}&from=${from}&to=${end_clipped.value}&resource_length=${resource_count.value}&resources=${_resources}&specifying_sentiments=${specifying_sentiments}&date_mode=${selected_date_mode.value == 'weekly' ? 'daily' : selected_date_mode.value}&dates_filter=${selected_dates_query.value}&sentiment_dates_filter=${temp_sentiment_dates_query}&from_page=${(selected_page.value - 1) * 20}&grouped=${isGrouped.value}`)
+        .get(`/ru/analyticstats/get-project-general-count?${params.value.getQuery({
+			from_page: (selected_page.value - 1) * 20,
+			grouped: isGrouped.value,
+		})}`)
         .then(response => {
 
             news_count.value = parseInt(response.data.news_count)
@@ -722,68 +579,6 @@ export const getSocialMetrics = () => {
 
 	if (!enable_metrics.value) return;
 
-	let countries = get_map_params.value.countries.join(',')
-    let regions = get_map_params.value.regions.join(',')
-    let category_id;
-    if (r_type.value == 2) {
-        category_id = Object.keys(selected_social_categories.value).length ? (
-            Object.keys(selected_social_categories.value).filter(soc_key => selected_social_categories.value[soc_key]).join(',')
-        ) : 0;
-    }
-    else {
-        category_id = get_selected_smi_categories(selected_categories.value).join(',');
-    }
-	let language = Object.keys(selected_languages.value).length ? (
-		Object.keys(selected_languages.value).filter(lang_id => selected_languages.value[lang_id]).map(lang_id => parseInt(lang_id))
-	) : [];
-
-	let others_index = language.indexOf(3);
-	if ("-1" != others_index && other_ids.value) {
-		language[others_index] = other_ids.value
-	}
-
-	language = language.join(',')
-    let sentiments = Object.keys(selected_main_sentiments.value).filter(sentiment => selected_main_sentiments.value[sentiment]).join(',')
-
-    let from = start_top_resources.value == 0 ? 0 : start_top_resources.value * each_number.value;
-
-    let _resources = Object.keys(selected_resources.value.resources).length ? (
-        Object.keys(selected_resources.value.resources).filter(lang_id => selected_resources.value.resources[lang_id]).join(',')
-    ) : '';
-
-    let specifying_sentiments = [1, 0, -1].map(sentiment => {
-        let res_obj = selected_resource_sentiment.value.sentiment_resources[sentiment]
-        let res_ids = Object.keys(res_obj).length ? (
-            Object.keys(res_obj).filter(lang_id => res_obj[lang_id]).join(',')
-        ) : '';
-
-        let place_obj = bars_sentiments_selected.value.sentiment_places[sentiment]
-
-        let countries = [];
-        let regions_countries = [];
-        let regions = [];
-
-        Object.keys(place_obj).filter(place_id => place_obj[place_id]).forEach(place_id => {
-            if (place_id.includes('_')) {
-                regions.push(place_id.split('_')[1])
-                regions_countries.push(place_id.split('_')[0])
-            }
-            else {
-                countries.push(place_id)
-            }
-        })
-
-        return `${sentiment}_${res_ids}_${regions.join(',')}_${[...countries, ...regions_countries].join(',')}`
-    })
-
-    specifying_sentiments = specifying_sentiments.join(';')
-
-    let temp_sentiment_dates_query = [
-        selected_main_sentiments.value['1'] ? selected_sentiment_dates_query.value['1'] : '',
-        selected_main_sentiments.value['0'] ? selected_sentiment_dates_query.value['0'] : '',
-        selected_main_sentiments.value['-1'] ? selected_sentiment_dates_query.value['-1'] : '',
-    ].join('_');	axios
-
 	laoding_metrics.value = true
 
 	soc_metrics.value = {
@@ -794,7 +589,7 @@ export const getSocialMetrics = () => {
 	}
 
 	axios
-		.get(`/ru/analyticstats/get-project-metrics-data?p_id=${project.value.id}&r_type=${r_type.value}&category_id=${category_id}&countries=${countries}&regions=${regions}&sentiments=${sentiments}&language=${language}&s_date=${dateRange.value.startDate.format("Y-m-d")} ${s_time.value}&f_date=${dateRange.value.endDate.format("Y-m-d")} ${f_time.value}&from=${from}&to=${end_clipped.value}&resource_length=${resource_count.value}&resources=${_resources}&specifying_sentiments=${specifying_sentiments}&date_mode=${selected_date_mode.value == 'weekly' ? 'daily' : selected_date_mode.value}&dates_filter=${selected_dates_query.value}&sentiment_dates_filter=${temp_sentiment_dates_query}`)
+		.get(`/ru/analyticstats/get-project-metrics-data?${params.value.getQuery()}`)
 		.then(response => {
 			soc_metrics.value = response.data.metrics
 			laoding_metrics.value = false
@@ -806,74 +601,17 @@ export const getSocialMetrics = () => {
 };
 
 export const getItems = () => {
-    let countries = get_map_params.value.countries.join(',')
-    let regions = get_map_params.value.regions.join(',')
-    let category_id;
-    if (r_type.value == 2) {
-        category_id = Object.keys(selected_social_categories.value).length ? (
-            Object.keys(selected_social_categories.value).filter(soc_key => selected_social_categories.value[soc_key]).join(',')
-        ) : 0;
-    }
-    else {
-        category_id = get_selected_smi_categories(selected_categories.value).join(',');
-    }
-	let language = Object.keys(selected_languages.value).length ? (
-		Object.keys(selected_languages.value).filter(lang_id => selected_languages.value[lang_id]).map(lang_id => parseInt(lang_id))
-	) : [];
-
-	let others_index = language.indexOf(3);
-	if ("-1" != others_index && other_ids.value) {
-		language[others_index] = other_ids.value
-	}
-
-	language = language.join(',')
-    let sentiments = Object.keys(selected_main_sentiments.value).filter(sentiment => selected_main_sentiments.value[sentiment]).join(',')
-
-    let from = start_top_resources.value == 0 ? 0 : start_top_resources.value * each_number.value;
-
-    let _resources = Object.keys(selected_resources.value.resources).length ? (
-        Object.keys(selected_resources.value.resources).filter(lang_id => selected_resources.value.resources[lang_id]).join(',')
-    ) : '';
-
-    let specifying_sentiments = [1, 0, -1].map(sentiment => {
-        let res_obj = selected_resource_sentiment.value.sentiment_resources[sentiment]
-        let res_ids = Object.keys(res_obj).length ? (
-            Object.keys(res_obj).filter(lang_id => res_obj[lang_id]).join(',')
-        ) : '';
-
-        let place_obj = bars_sentiments_selected.value.sentiment_places[sentiment]
-
-        let countries = [];
-        let regions_countries = [];
-        let regions = [];
-
-        Object.keys(place_obj).filter(place_id => place_obj[place_id]).forEach(place_id => {
-            if (place_id.includes('_')) {
-                regions.push(place_id.split('_')[1])
-                regions_countries.push(place_id.split('_')[0])
-            }
-            else {
-                countries.push(place_id)
-            }
-        })
-
-        return `${sentiment}_${res_ids}_${regions.join(',')}_${[...countries, ...regions_countries].join(',')}`
-    })
-
-    specifying_sentiments = specifying_sentiments.join(';')
-
-    let temp_sentiment_dates_query = [
-        selected_main_sentiments.value['1'] ? selected_sentiment_dates_query.value['1'] : '',
-        selected_main_sentiments.value['0'] ? selected_sentiment_dates_query.value['0'] : '',
-        selected_main_sentiments.value['-1'] ? selected_sentiment_dates_query.value['-1'] : '',
-    ].join('_');
 
 
 	items_loading.value = true
 
 
     axios
-        .get(`/ru/analyticstats/get-project-items?p_id=${project.value.id}&r_type=${r_type.value}&category_id=${category_id}&countries=${countries}&regions=${regions}&sentiments=${sentiments}&language=${language}&s_date=${dateRange.value.startDate.format("Y-m-d")} ${s_time.value}&f_date=${dateRange.value.endDate.format("Y-m-d")} ${f_time.value}&from=${from}&to=${end_clipped.value}&resource_length=${resource_count.value}&resources=${_resources}&specifying_sentiments=${specifying_sentiments}&date_mode=${selected_date_mode.value == 'weekly' ? 'daily' : selected_date_mode.value}&dates_filter=${selected_dates_query.value}&sentiment_dates_filter=${temp_sentiment_dates_query}&metrics=${selected_soc_metrics.value}&from_page=${(selected_page.value - 1) * 20}&grouped=${isGrouped.value}`)
+        .get(`/ru/analyticstats/get-project-items?${params.value.getQuery({
+			metrics: selected_soc_metrics.value,
+			from_page: (selected_page.value - 1) * 20,
+			grouped: isGrouped.value,
+		})}`)
         .then(response => {
             let obj_similar_items = response?.data?.similar_items?.reduce((prev, item) => ({
 				...prev, [item.item_id]: {
@@ -969,70 +707,12 @@ export const getSimilarItems = (item_id, per_page = 1) => {
 
 	if (!item_id) return;
 
-    let countries = get_map_params.value.countries.join(',')
-    let regions = get_map_params.value.regions.join(',')
-    let category_id;
-    if (r_type.value == 2) {
-        category_id = Object.keys(selected_social_categories.value).length ? (
-            Object.keys(selected_social_categories.value).filter(soc_key => selected_social_categories.value[soc_key]).join(',')
-        ) : 0;
-    }
-    else {
-        category_id = get_selected_smi_categories(selected_categories.value).join(',');
-    }
-	let language = Object.keys(selected_languages.value).length ? (
-		Object.keys(selected_languages.value).filter(lang_id => selected_languages.value[lang_id]).map(lang_id => parseInt(lang_id))
-	) : [];
-
-	let others_index = language.indexOf(3);
-	if ("-1" != others_index && other_ids.value) {
-		language[others_index] = other_ids.value
-	}
-
-	language = language.join(',')
-    let sentiments = Object.keys(selected_main_sentiments.value).filter(sentiment => selected_main_sentiments.value[sentiment]).join(',')
-
-    let from = start_top_resources.value == 0 ? 0 : start_top_resources.value * each_number.value;
-
-    let _resources = Object.keys(selected_resources.value.resources).length ? (
-        Object.keys(selected_resources.value.resources).filter(lang_id => selected_resources.value.resources[lang_id]).join(',')
-    ) : '';
-
-    let specifying_sentiments = [1, 0, -1].map(sentiment => {
-        let res_obj = selected_resource_sentiment.value.sentiment_resources[sentiment]
-        let res_ids = Object.keys(res_obj).length ? (
-            Object.keys(res_obj).filter(lang_id => res_obj[lang_id]).join(',')
-        ) : '';
-
-        let place_obj = bars_sentiments_selected.value.sentiment_places[sentiment]
-
-        let countries = [];
-        let regions_countries = [];
-        let regions = [];
-
-        Object.keys(place_obj).filter(place_id => place_obj[place_id]).forEach(place_id => {
-            if (place_id.includes('_')) {
-                regions.push(place_id.split('_')[1])
-                regions_countries.push(place_id.split('_')[0])
-            }
-            else {
-                countries.push(place_id)
-            }
-        })
-
-        return `${sentiment}_${res_ids}_${regions.join(',')}_${[...countries, ...regions_countries].join(',')}`
-    })
-
-    specifying_sentiments = specifying_sentiments.join(';')
-
-    let temp_sentiment_dates_query = [
-        selected_main_sentiments.value['1'] ? selected_sentiment_dates_query.value['1'] : '',
-        selected_main_sentiments.value['0'] ? selected_sentiment_dates_query.value['0'] : '',
-        selected_main_sentiments.value['-1'] ? selected_sentiment_dates_query.value['-1'] : '',
-    ].join('_');
-
     axios
-        .get(`/ru/similar-items/get-items?p_id=${project.value.id}&r_type=${r_type.value}&category_id=${category_id}&countries=${countries}&regions=${regions}&sentiments=${sentiments}&language=${language}&s_date=${dateRange.value.startDate.format("Y-m-d")} ${s_time.value}&f_date=${dateRange.value.endDate.format("Y-m-d")} ${f_time.value}&from=${from}&to=${end_clipped.value}&resource_length=${resource_count.value}&resources=${_resources}&specifying_sentiments=${specifying_sentiments}&date_mode=${selected_date_mode.value == 'weekly' ? 'daily' : selected_date_mode.value}&dates_filter=${selected_dates_query.value}&sentiment_dates_filter=${temp_sentiment_dates_query}&metrics=${selected_soc_metrics.value}&from_page=${(per_page - 1) * 20}&item_id=${item_id}`)
+        .get(`/ru/similar-items/get-items?${params.value.getQuery({
+			metrics: selected_soc_metrics.value,
+			from_page: (per_page - 1) * 20,
+			item_id,
+		})}`)
         .then(response => {
             let obj_items_items = response?.data?.items?.reduce((prev, item) => ({ ...prev, [item.news_id]: item }), {})
             let obj_items_metrics = response?.data?.metrics?.metrics?.reduce((prev, item) => ({ ...prev, [item.news_id]: item }), {})
@@ -1088,70 +768,12 @@ export const updateGroupSentiment = (item_id, selected_sentiment) => {
 		['-1','0','1'].includes(selected_sentiment + '')
 	)) return;
 
-    let countries = get_map_params.value.countries.join(',')
-    let regions = get_map_params.value.regions.join(',')
-    let category_id;
-    if (r_type.value == 2) {
-        category_id = Object.keys(selected_social_categories.value).length ? (
-            Object.keys(selected_social_categories.value).filter(soc_key => selected_social_categories.value[soc_key]).join(',')
-        ) : 0;
-    }
-    else {
-        category_id = get_selected_smi_categories(selected_categories.value).join(',');
-    }
-	let language = Object.keys(selected_languages.value).length ? (
-		Object.keys(selected_languages.value).filter(lang_id => selected_languages.value[lang_id]).map(lang_id => parseInt(lang_id))
-	) : [];
-
-	let others_index = language.indexOf(3);
-	if ("-1" != others_index && other_ids.value) {
-		language[others_index] = other_ids.value
-	}
-
-	language = language.join(',')
-    let sentiments = Object.keys(selected_main_sentiments.value).filter(sentiment => selected_main_sentiments.value[sentiment]).join(',')
-
-    let from = start_top_resources.value == 0 ? 0 : start_top_resources.value * each_number.value;
-
-    let _resources = Object.keys(selected_resources.value.resources).length ? (
-        Object.keys(selected_resources.value.resources).filter(lang_id => selected_resources.value.resources[lang_id]).join(',')
-    ) : '';
-
-    let specifying_sentiments = [1, 0, -1].map(sentiment => {
-        let res_obj = selected_resource_sentiment.value.sentiment_resources[sentiment]
-        let res_ids = Object.keys(res_obj).length ? (
-            Object.keys(res_obj).filter(lang_id => res_obj[lang_id]).join(',')
-        ) : '';
-
-        let place_obj = bars_sentiments_selected.value.sentiment_places[sentiment]
-
-        let countries = [];
-        let regions_countries = [];
-        let regions = [];
-
-        Object.keys(place_obj).filter(place_id => place_obj[place_id]).forEach(place_id => {
-            if (place_id.includes('_')) {
-                regions.push(place_id.split('_')[1])
-                regions_countries.push(place_id.split('_')[0])
-            }
-            else {
-                countries.push(place_id)
-            }
-        })
-
-        return `${sentiment}_${res_ids}_${regions.join(',')}_${[...countries, ...regions_countries].join(',')}`
-    })
-
-    specifying_sentiments = specifying_sentiments.join(';')
-
-    let temp_sentiment_dates_query = [
-        selected_main_sentiments.value['1'] ? selected_sentiment_dates_query.value['1'] : '',
-        selected_main_sentiments.value['0'] ? selected_sentiment_dates_query.value['0'] : '',
-        selected_main_sentiments.value['-1'] ? selected_sentiment_dates_query.value['-1'] : '',
-    ].join('_');
-
     axios
-        .get(`/ru/analyticstats/update-group-sentiment?p_id=${project.value.id}&r_type=${r_type.value}&category_id=${category_id}&countries=${countries}&regions=${regions}&sentiments=${sentiments}&language=${language}&s_date=${dateRange.value.startDate.format("Y-m-d")} ${s_time.value}&f_date=${dateRange.value.endDate.format("Y-m-d")} ${f_time.value}&from=${from}&to=${end_clipped.value}&resource_length=${resource_count.value}&resources=${_resources}&specifying_sentiments=${specifying_sentiments}&date_mode=${selected_date_mode.value == 'weekly' ? 'daily' : selected_date_mode.value}&dates_filter=${selected_dates_query.value}&sentiment_dates_filter=${temp_sentiment_dates_query}&metrics=${selected_soc_metrics.value}&item_id=${item_id}&selected_sentiment=${selected_sentiment}`)
+        .get(`/ru/analyticstats/update-group-sentiment?${params.value.getQuery({
+			metrics: selected_soc_metrics.value,
+			item_id,
+			selected_sentiment,
+		})}`)
         .catch(error => {
             console.error(error);
         })
@@ -1167,70 +789,12 @@ export const deleteGroupItems = (item_id) => {
 
 	if (!item_id) return;
 
-    let countries = get_map_params.value.countries.join(',')
-    let regions = get_map_params.value.regions.join(',')
-    let category_id;
-    if (r_type.value == 2) {
-        category_id = Object.keys(selected_social_categories.value).length ? (
-            Object.keys(selected_social_categories.value).filter(soc_key => selected_social_categories.value[soc_key]).join(',')
-        ) : 0;
-    }
-    else {
-        category_id = get_selected_smi_categories(selected_categories.value).join(',');
-    }
-	let language = Object.keys(selected_languages.value).length ? (
-		Object.keys(selected_languages.value).filter(lang_id => selected_languages.value[lang_id]).map(lang_id => parseInt(lang_id))
-	) : [];
-
-	let others_index = language.indexOf(3);
-	if ("-1" != others_index && other_ids.value) {
-		language[others_index] = other_ids.value
-	}
-
-	language = language.join(',')
-    let sentiments = Object.keys(selected_main_sentiments.value).filter(sentiment => selected_main_sentiments.value[sentiment]).join(',')
-
-    let from = start_top_resources.value == 0 ? 0 : start_top_resources.value * each_number.value;
-
-    let _resources = Object.keys(selected_resources.value.resources).length ? (
-        Object.keys(selected_resources.value.resources).filter(lang_id => selected_resources.value.resources[lang_id]).join(',')
-    ) : '';
-
-    let specifying_sentiments = [1, 0, -1].map(sentiment => {
-        let res_obj = selected_resource_sentiment.value.sentiment_resources[sentiment]
-        let res_ids = Object.keys(res_obj).length ? (
-            Object.keys(res_obj).filter(lang_id => res_obj[lang_id]).join(',')
-        ) : '';
-
-        let place_obj = bars_sentiments_selected.value.sentiment_places[sentiment]
-
-        let countries = [];
-        let regions_countries = [];
-        let regions = [];
-
-        Object.keys(place_obj).filter(place_id => place_obj[place_id]).forEach(place_id => {
-            if (place_id.includes('_')) {
-                regions.push(place_id.split('_')[1])
-                regions_countries.push(place_id.split('_')[0])
-            }
-            else {
-                countries.push(place_id)
-            }
-        })
-
-        return `${sentiment}_${res_ids}_${regions.join(',')}_${[...countries, ...regions_countries].join(',')}`
-    })
-
-    specifying_sentiments = specifying_sentiments.join(';')
-
-    let temp_sentiment_dates_query = [
-        selected_main_sentiments.value['1'] ? selected_sentiment_dates_query.value['1'] : '',
-        selected_main_sentiments.value['0'] ? selected_sentiment_dates_query.value['0'] : '',
-        selected_main_sentiments.value['-1'] ? selected_sentiment_dates_query.value['-1'] : '',
-    ].join('_');
-
     axios
-        .get(`/ru/analyticstats/delete-group-items?p_id=${project.value.id}&r_type=${r_type.value}&category_id=${category_id}&countries=${countries}&regions=${regions}&sentiments=${sentiments}&language=${language}&s_date=${dateRange.value.startDate.format("Y-m-d")} ${s_time.value}&f_date=${dateRange.value.endDate.format("Y-m-d")} ${f_time.value}&from=${from}&to=${end_clipped.value}&resource_length=${resource_count.value}&resources=${_resources}&specifying_sentiments=${specifying_sentiments}&date_mode=${selected_date_mode.value == 'weekly' ? 'daily' : selected_date_mode.value}&dates_filter=${selected_dates_query.value}&sentiment_dates_filter=${temp_sentiment_dates_query}&metrics=${selected_soc_metrics.value}&item_id=${item_id}&p_user_id=${p_user_id.value}`)
+        .get(`/ru/analyticstats/delete-group-items?${params.value.getQuery({
+			metrics: selected_soc_metrics.value,
+			item_id,
+			p_user_id: p_user_id.value,
+		})}`)
         .catch(error => {
             console.error(error);
         })
@@ -1244,73 +808,15 @@ export const getGroupFolders = (item_id) => {
 
 	if (!item_id) return;
 
-    let countries = get_map_params.value.countries.join(',')
-    let regions = get_map_params.value.regions.join(',')
-    let category_id;
-    if (r_type.value == 2) {
-        category_id = Object.keys(selected_social_categories.value).length ? (
-            Object.keys(selected_social_categories.value).filter(soc_key => selected_social_categories.value[soc_key]).join(',')
-        ) : 0;
-    }
-    else {
-        category_id = get_selected_smi_categories(selected_categories.value).join(',');
-    }
-	let language = Object.keys(selected_languages.value).length ? (
-		Object.keys(selected_languages.value).filter(lang_id => selected_languages.value[lang_id]).map(lang_id => parseInt(lang_id))
-	) : [];
-
-	let others_index = language.indexOf(3);
-	if ("-1" != others_index && other_ids.value) {
-		language[others_index] = other_ids.value
-	}
-
-	language = language.join(',')
-    let sentiments = Object.keys(selected_main_sentiments.value).filter(sentiment => selected_main_sentiments.value[sentiment]).join(',')
-
-    let from = start_top_resources.value == 0 ? 0 : start_top_resources.value * each_number.value;
-
-    let _resources = Object.keys(selected_resources.value.resources).length ? (
-        Object.keys(selected_resources.value.resources).filter(lang_id => selected_resources.value.resources[lang_id]).join(',')
-    ) : '';
-
-    let specifying_sentiments = [1, 0, -1].map(sentiment => {
-        let res_obj = selected_resource_sentiment.value.sentiment_resources[sentiment]
-        let res_ids = Object.keys(res_obj).length ? (
-            Object.keys(res_obj).filter(lang_id => res_obj[lang_id]).join(',')
-        ) : '';
-
-        let place_obj = bars_sentiments_selected.value.sentiment_places[sentiment]
-
-        let countries = [];
-        let regions_countries = [];
-        let regions = [];
-
-        Object.keys(place_obj).filter(place_id => place_obj[place_id]).forEach(place_id => {
-            if (place_id.includes('_')) {
-                regions.push(place_id.split('_')[1])
-                regions_countries.push(place_id.split('_')[0])
-            }
-            else {
-                countries.push(place_id)
-            }
-        })
-
-        return `${sentiment}_${res_ids}_${regions.join(',')}_${[...countries, ...regions_countries].join(',')}`
-    })
-
-    specifying_sentiments = specifying_sentiments.join(';')
-
-    let temp_sentiment_dates_query = [
-        selected_main_sentiments.value['1'] ? selected_sentiment_dates_query.value['1'] : '',
-        selected_main_sentiments.value['0'] ? selected_sentiment_dates_query.value['0'] : '',
-        selected_main_sentiments.value['-1'] ? selected_sentiment_dates_query.value['-1'] : '',
-    ].join('_');
-
     let item = items.value.find(item => item.item_id === item_id);
     let group_folders = {};
 
     axios
-        .get(`/ru/analyticstats/get-group-folders?p_id=${project.value.id}&r_type=${r_type.value}&category_id=${category_id}&countries=${countries}&regions=${regions}&sentiments=${sentiments}&language=${language}&s_date=${dateRange.value.startDate.format("Y-m-d")} ${s_time.value}&f_date=${dateRange.value.endDate.format("Y-m-d")} ${f_time.value}&from=${from}&to=${end_clipped.value}&resource_length=${resource_count.value}&resources=${_resources}&specifying_sentiments=${specifying_sentiments}&date_mode=${selected_date_mode.value == 'weekly' ? 'daily' : selected_date_mode.value}&dates_filter=${selected_dates_query.value}&sentiment_dates_filter=${temp_sentiment_dates_query}&metrics=${selected_soc_metrics.value}&item_id=${item_id}&p_user_id=${p_user_id.value}`)
+        .get(`/ru/analyticstats/get-group-folders?${params.value.getQuery({
+			metrics: selected_soc_metrics.value,
+			item_id,
+			p_user_id: p_user_id.value,
+		})}`)
         .then(response => {
             response?.data?.forEach(folder => {
                 group_folders[folder.id] = {
@@ -1350,71 +856,14 @@ export const updateGroupFolders = (item_id, favorite) => {
 
 	if (!item_id) return;
 
-    let countries = get_map_params.value.countries.join(',')
-    let regions = get_map_params.value.regions.join(',')
-    let category_id;
-    if (r_type.value == 2) {
-        category_id = Object.keys(selected_social_categories.value).length ? (
-            Object.keys(selected_social_categories.value).filter(soc_key => selected_social_categories.value[soc_key]).join(',')
-        ) : 0;
-    }
-    else {
-        category_id = get_selected_smi_categories(selected_categories.value).join(',');
-    }
-	let language = Object.keys(selected_languages.value).length ? (
-		Object.keys(selected_languages.value).filter(lang_id => selected_languages.value[lang_id]).map(lang_id => parseInt(lang_id))
-	) : [];
-
-	let others_index = language.indexOf(3);
-	if ("-1" != others_index && other_ids.value) {
-		language[others_index] = other_ids.value
-	}
-
-	language = language.join(',')
-    let sentiments = Object.keys(selected_main_sentiments.value).filter(sentiment => selected_main_sentiments.value[sentiment]).join(',')
-
-    let from = start_top_resources.value == 0 ? 0 : start_top_resources.value * each_number.value;
-
-    let _resources = Object.keys(selected_resources.value.resources).length ? (
-        Object.keys(selected_resources.value.resources).filter(lang_id => selected_resources.value.resources[lang_id]).join(',')
-    ) : '';
-
-    let specifying_sentiments = [1, 0, -1].map(sentiment => {
-        let res_obj = selected_resource_sentiment.value.sentiment_resources[sentiment]
-        let res_ids = Object.keys(res_obj).length ? (
-            Object.keys(res_obj).filter(lang_id => res_obj[lang_id]).join(',')
-        ) : '';
-
-        let place_obj = bars_sentiments_selected.value.sentiment_places[sentiment]
-
-        let countries = [];
-        let regions_countries = [];
-        let regions = [];
-
-        Object.keys(place_obj).filter(place_id => place_obj[place_id]).forEach(place_id => {
-            if (place_id.includes('_')) {
-                regions.push(place_id.split('_')[1])
-                regions_countries.push(place_id.split('_')[0])
-            }
-            else {
-                countries.push(place_id)
-            }
-        })
-
-        return `${sentiment}_${res_ids}_${regions.join(',')}_${[...countries, ...regions_countries].join(',')}`
-    })
-
-    specifying_sentiments = specifying_sentiments.join(';')
-
-    let temp_sentiment_dates_query = [
-        selected_main_sentiments.value['1'] ? selected_sentiment_dates_query.value['1'] : '',
-        selected_main_sentiments.value['0'] ? selected_sentiment_dates_query.value['0'] : '',
-        selected_main_sentiments.value['-1'] ? selected_sentiment_dates_query.value['-1'] : '',
-    ].join('_');
-
     let label_type = favorite.selected ? "add_label" : "remove_from_label";
     axios
-        .get(`/ru/analyticstats/update-group-folders?p_id=${project.value.id}&r_type=${r_type.value}&category_id=${category_id}&countries=${countries}&regions=${regions}&sentiments=${sentiments}&language=${language}&s_date=${dateRange.value.startDate.format("Y-m-d")} ${s_time.value}&f_date=${dateRange.value.endDate.format("Y-m-d")} ${f_time.value}&from=${from}&to=${end_clipped.value}&resource_length=${resource_count.value}&resources=${_resources}&specifying_sentiments=${specifying_sentiments}&date_mode=${selected_date_mode.value == 'weekly' ? 'daily' : selected_date_mode.value}&dates_filter=${selected_dates_query.value}&sentiment_dates_filter=${temp_sentiment_dates_query}&metrics=${selected_soc_metrics.value}&item_id=${item_id}&f_id=${favorite.id}&label_type=${label_type}`)
+        .get(`/ru/analyticstats/update-group-folders?${params.value.getQuery({
+			metrics: selected_soc_metrics.value,
+			item_id,
+			f_id: favorite.id,
+			label_type,
+		})}`)
         .catch(error => {
             console.error(error);
         })
@@ -1425,71 +874,11 @@ export const general_add_to_folder = (favorite) => {
 
 	favorite.selected = true;
 
-
-    let countries = get_map_params.value.countries.join(',')
-    let regions = get_map_params.value.regions.join(',')
-    let category_id;
-    if (r_type.value == 2) {
-        category_id = Object.keys(selected_social_categories.value).length ? (
-            Object.keys(selected_social_categories.value).filter(soc_key => selected_social_categories.value[soc_key]).join(',')
-        ) : 0;
-    }
-    else {
-        category_id = get_selected_smi_categories(selected_categories.value).join(',');
-    }
-	let language = Object.keys(selected_languages.value).length ? (
-		Object.keys(selected_languages.value).filter(lang_id => selected_languages.value[lang_id]).map(lang_id => parseInt(lang_id))
-	) : [];
-
-	let others_index = language.indexOf(3);
-	if ("-1" != others_index && other_ids.value) {
-		language[others_index] = other_ids.value
-	}
-
-	language = language.join(',')
-    let sentiments = Object.keys(selected_main_sentiments.value).filter(sentiment => selected_main_sentiments.value[sentiment]).join(',')
-
-    let from = start_top_resources.value == 0 ? 0 : start_top_resources.value * each_number.value;
-
-    let _resources = Object.keys(selected_resources.value.resources).length ? (
-        Object.keys(selected_resources.value.resources).filter(lang_id => selected_resources.value.resources[lang_id]).join(',')
-    ) : '';
-
-    let specifying_sentiments = [1, 0, -1].map(sentiment => {
-        let res_obj = selected_resource_sentiment.value.sentiment_resources[sentiment]
-        let res_ids = Object.keys(res_obj).length ? (
-            Object.keys(res_obj).filter(lang_id => res_obj[lang_id]).join(',')
-        ) : '';
-
-        let place_obj = bars_sentiments_selected.value.sentiment_places[sentiment]
-
-        let countries = [];
-        let regions_countries = [];
-        let regions = [];
-
-        Object.keys(place_obj).filter(place_id => place_obj[place_id]).forEach(place_id => {
-            if (place_id.includes('_')) {
-                regions.push(place_id.split('_')[1])
-                regions_countries.push(place_id.split('_')[0])
-            }
-            else {
-                countries.push(place_id)
-            }
-        })
-
-        return `${sentiment}_${res_ids}_${regions.join(',')}_${[...countries, ...regions_countries].join(',')}`
-    })
-
-    specifying_sentiments = specifying_sentiments.join(';')
-
-    let temp_sentiment_dates_query = [
-        selected_main_sentiments.value['1'] ? selected_sentiment_dates_query.value['1'] : '',
-        selected_main_sentiments.value['0'] ? selected_sentiment_dates_query.value['0'] : '',
-        selected_main_sentiments.value['-1'] ? selected_sentiment_dates_query.value['-1'] : '',
-    ].join('_');
-
     axios
-        .get(`/ru/analyticstats/add-to-folders?p_id=${project.value.id}&r_type=${r_type.value}&category_id=${category_id}&countries=${countries}&regions=${regions}&sentiments=${sentiments}&language=${language}&s_date=${dateRange.value.startDate.format("Y-m-d")} ${s_time.value}&f_date=${dateRange.value.endDate.format("Y-m-d")} ${f_time.value}&from=${from}&to=${end_clipped.value}&resource_length=${resource_count.value}&resources=${_resources}&specifying_sentiments=${specifying_sentiments}&date_mode=${selected_date_mode.value == 'weekly' ? 'daily' : selected_date_mode.value}&dates_filter=${selected_dates_query.value}&sentiment_dates_filter=${temp_sentiment_dates_query}&metrics=${selected_soc_metrics.value}&f_id=${favorite.id}`)
+        .get(`/ru/analyticstats/add-to-folders?${params.value.getQuery({
+			metrics: selected_soc_metrics.value,
+			f_id: favorite.id,
+		})}`)
 		.then(response => {
 			console.log('add-to-folders', response);
 		})
@@ -1522,3 +911,113 @@ function remove_script_from_text(text) {
 	document.getElementById('text-thumbnail').innerHTML = '';
 	return text;
 }
+
+const params = computed(() => {
+    let countries = get_map_params.value.countries.join(',')
+    let regions = get_map_params.value.regions.join(',')
+    let category_id;
+    if (r_type.value == 2) {
+        category_id = Object.keys(selected_social_categories.value).length ? (
+            Object.keys(selected_social_categories.value).filter(soc_key => selected_social_categories.value[soc_key]).join(',')
+        ) : 0;
+    }
+    else {
+        category_id = get_selected_smi_categories(selected_categories.value).join(',');
+    }
+	let language = Object.keys(selected_languages.value).length ? (
+		Object.keys(selected_languages.value).filter(lang_id => selected_languages.value[lang_id]).map(lang_id => parseInt(lang_id))
+	) : [];
+
+	let others_index = language.indexOf(3);
+	if ("-1" != others_index && other_ids.value) {
+		language[others_index] = other_ids.value
+	}
+
+	language = language.join(',')
+    let sentiments = Object.keys(selected_main_sentiments.value).filter(sentiment => selected_main_sentiments.value[sentiment]).join(',')
+
+    let from = start_top_resources.value == 0 ? 0 : start_top_resources.value * each_number.value;
+
+    let _resources = Object.keys(selected_resources.value.resources).length ? (
+        Object.keys(selected_resources.value.resources).filter(lang_id => selected_resources.value.resources[lang_id]).join(',')
+    ) : '';
+
+    let specifying_sentiments = [1, 0, -1].map(sentiment => {
+        let res_obj = selected_resource_sentiment.value.sentiment_resources[sentiment]
+        let res_ids = Object.keys(res_obj).length ? (
+            Object.keys(res_obj).filter(lang_id => res_obj[lang_id]).join(',')
+        ) : '';
+
+        let place_obj = bars_sentiments_selected.value.sentiment_places[sentiment]
+
+        let countries = [];
+        let regions_countries = [];
+        let regions = [];
+
+        Object.keys(place_obj).filter(place_id => place_obj[place_id]).forEach(place_id => {
+            if (place_id.includes('_')) {
+                regions.push(place_id.split('_')[1])
+                regions_countries.push(place_id.split('_')[0])
+            }
+            else {
+                countries.push(place_id)
+            }
+        })
+
+        return `${sentiment}_${res_ids}_${regions.join(',')}_${[...countries, ...regions_countries].join(',')}`
+    })
+
+    specifying_sentiments = specifying_sentiments.join(';')
+
+    let temp_sentiment_dates_query = [
+        selected_main_sentiments.value['1'] ? selected_sentiment_dates_query.value['1'] : '',
+        selected_main_sentiments.value['0'] ? selected_sentiment_dates_query.value['0'] : '',
+        selected_main_sentiments.value['-1'] ? selected_sentiment_dates_query.value['-1'] : '',
+    ].join('_');
+	let result = {
+		p_id: project.value.id,
+		r_type: r_type.value,
+		category_id: category_id,
+		countries: countries,
+		regions: regions,
+		sentiments: sentiments,
+		language: language,
+		s_date: `${dateRange.value.startDate.format("Y-m-d")} ${s_time.value}`,
+		f_date: `${dateRange.value.endDate.format("Y-m-d")} ${f_time.value}`,
+		from: from,
+		to: end_clipped.value,
+		resource_length: resource_count.value,
+		resources: _resources,
+		specifying_sentiments: specifying_sentiments,
+		date_mode: selected_date_mode.value == 'weekly' ? 'daily' : selected_date_mode.value,
+		dates_filter: selected_dates_query.value,
+		sentiment_dates_filter: temp_sentiment_dates_query,
+	};
+
+	const params = {
+		getObject(redefine = {}, only = [], except = false) {
+			result = { ...result, ...redefine };
+			if (only?.length) {
+				if (except) {
+					only = Object.keys(result).filter((key) => !only.includes(key))
+				}
+				result = Object.defineProperties(
+					result,
+					only.reduce((prev, next) => ({
+						...prev,
+						[next]: {},
+					}), {})
+				);
+			}
+			return result;
+		},
+		getQuery(redefine = {}, only = [], except = false) {
+			result = this.getObject(redefine, only, except);
+			return Object.entries(result)
+				.map(([key_name, value]) => `${key_name}=${value}`)
+				.join('&');
+		},
+	};
+
+	return params;
+})
