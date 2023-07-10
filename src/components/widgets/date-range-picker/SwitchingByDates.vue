@@ -12,7 +12,9 @@
 			<div class="flex">
 				<div class="select-container" style="margin-right:10px;">
 					<select v-model.lazy="month">
-						<option v-for="one_month in all_months" :key="one_month[0]" :value="one_month[0]">{{ i18n(one_month[1]) }}</option>
+                        <template v-for="one_month in all_months" :key="one_month[0]">
+                            <option v-if="parseInt(new Date(min).format('m')) <= parseInt(one_month[0]) && parseInt(one_month[0]) <= parseInt(new Date(max).format('m'))" :value="one_month[0]">{{ i18n(one_month[1]) }}</option>
+                        </template>
 					</select>
 				</div>
 				<div class="select-container">

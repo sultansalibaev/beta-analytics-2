@@ -4,13 +4,7 @@
 		<table>
 			<thead>
 				<tr>
-					<th>Mo</th>
-					<th>Tu</th>
-					<th>We</th>
-					<th>Th</th>
-					<th>Fr</th>
-					<th>Sa</th>
-					<th>Su</th>
+					<th v-for="w in ['Пн','Вт','Ср','Чт','Пт','Сб','Вс']" :key="w">{{ i18n(w) }}</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -45,11 +39,12 @@
 </template>
 
 <script>
+import i18n from "@/response/utils/i18n"
 import { between_dates, current_selected, temp_end_date } from '@/data'
 
 export default {
 	setup() {
-		return { between_dates, current_selected, temp_end_date }
+		return { i18n, between_dates, current_selected, temp_end_date }
 	},
 	data() {
 		return {

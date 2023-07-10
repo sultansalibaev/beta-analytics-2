@@ -112,13 +112,13 @@ let lastWeekDay = new Date(curr.setDate(curr.getDate() - curr.getDay() + 7));
 
 
 export const ranges = reactive(ref({
-	'All period': [minProjectDate.format("Y-m-d"), maxProjectDate.format("Y-m-d")],
-	'Today': [today.format("Y-m-d"), today.format("Y-m-d")],
-	'Yesterday': [yesterday.format("Y-m-d"), yesterday.format("Y-m-d")],
-	'Week': [firstWeekDay.format("Y-m-d"), lastWeekDay.format("Y-m-d")],
-	'30 days': [priorDate.format("Y-m-d"), today.format("Y-m-d")],
-	'This month': [new Date(today.getFullYear(), today.getMonth(), 1).format("Y-m-d"), new Date(today.getFullYear(), today.getMonth() + 1, 0).format("Y-m-d")],
-	'Last month': [new Date(today.getFullYear(), today.getMonth() - 1, 1).format("Y-m-d"), new Date(today.getFullYear(), today.getMonth(), 0).format("Y-m-d")],
+	'За весь вериод': [minProjectDate.format("Y-m-d"), maxProjectDate.format("Y-m-d")],
+	'Сегодня': [today.format("Y-m-d"), today.format("Y-m-d")],
+	'Вчера': [yesterday.format("Y-m-d"), yesterday.format("Y-m-d")],
+	'Неделя': [firstWeekDay.format("Y-m-d"), lastWeekDay.format("Y-m-d")],
+	'30 дней': [priorDate.format("Y-m-d"), today.format("Y-m-d")],
+	'Текущий месяц': [new Date(today.getFullYear(), today.getMonth(), 1).format("Y-m-d"), new Date(today.getFullYear(), today.getMonth() + 1, 0).format("Y-m-d")],
+	'Прошлый месяц': [new Date(today.getFullYear(), today.getMonth() - 1, 1).format("Y-m-d"), new Date(today.getFullYear(), today.getMonth(), 0).format("Y-m-d")],
 	//'This year': [new Date(today.getFullYear(), 0, 1), new Date(today.getFullYear(), 11, 31)],
 }))
 

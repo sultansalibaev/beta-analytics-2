@@ -10,6 +10,14 @@ const _i18n = {
 
     'Выберите период': ['Select a period', 'Деректерді жинау кезеңі'],
 
+    'Пн': ['Mon', 'Дсн'],
+    'Вт': ['Tue', 'Сейс'],
+    'Ср': ['Wed', 'Сәрс'],
+    'Чт': ['Thu', 'Бсн'],
+    'Пт': ['Fri', 'Жм'],
+    'Сб': ['Sat', 'Сб'],
+    'Вс': ['Sun', 'Жс'],
+
     'За весь вериод': ['Бүкіл кезең бойынша', 'All period'],
     'Сегодня': ['Бүгін', 'Today'],
     'Вчера': ['Кеше', 'Yesterday'],
@@ -208,7 +216,7 @@ function getLangIndex() {
 
 const i18n = (text) => {
     if (text == undefined) {
-        console.log('i18n - text = ', text);
+        //console.log('i18n - text = ', text);
         return text;
     }
     text = text + "";

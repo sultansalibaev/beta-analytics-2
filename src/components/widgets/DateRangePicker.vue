@@ -2,7 +2,7 @@
 	<div class="modal">
 		<div class="flex flex-col justify-between bg-white">
 			<div class="date-title p-x-14 m-b-14 flex items-center justify-between text-white">
-				<span>{{ i18n('Выберите период') }}</span>
+				<span style="font-size: 17px;">{{ i18n('Выберите период') }}</span>
 				<i class="fa-solid fa-xmark cursor-pointer" style="font-size: 22px;
         display: flex;
         align-items: center;
@@ -42,8 +42,8 @@ export default {
 	},
 	methods: {
 		isSelectedRange(range) {
-			if (range == 'Yesterday' || range == 'Today') {
-				return this.between_dates[this.ranges[range][0]] && this.between_dates[this.ranges[range][1]]
+			if (['Сегодня', 'Вчера'].includes(range)) {
+				return this.between_dates[this.ranges[range][0]] && this.between_dates[this.ranges[range][1]] && !(Object.values(this.between_dates).includes('start'))
 			}
 			else {
 				return this.ranges[range][0] == Object.keys(this.between_dates)[0] && this.ranges[range][1] == Object.keys(this.between_dates)[1]
@@ -130,7 +130,8 @@ export default {
     cursor: pointer;
 	transition: .1s;
     
-    min-height: 26px;
+    min-height: 28px;
+    font-size: 13.7px;
     display: flex;
     align-items: center;
 }

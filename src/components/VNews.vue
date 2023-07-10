@@ -146,7 +146,7 @@
                         >{{ delete_resource.name }}</a
                     >
                     <div class="resource-category">
-                        {{ delete_resource.category }}
+                        {{ i18n(delete_resource.category) }}
                     </div>
                 </div>
                 <div
@@ -426,16 +426,17 @@
                                         :src="`/media/img/country/${
                                             countries[similar_item.country_id]?.hc
                                         }.png`"
+                                        style="margin-top: -3px;"
                                         width="23"
                                         height="23"
                                         alt=""
                                     />&nbsp;
-                                    <span class="truncate">{{
+                                    <span class="truncate" style="min-height:13px;margin-bottom: -1px;" :title="countries[similar_item.country_id]?.name">{{
                                         `${
-                                            similar_item.country_id == 57 && similar_item.region_id != 0
+                                            similar_item.region_id != 0
                                                 ? regions[similar_item.region_id]?.name
                                                 : countries[similar_item.country_id]?.name
-                                        } | ${similar_item.resource_category}`
+                                        } | ${i18n(similar_item.resource_category.trim())}`
                                     }}</span>
                                 </div>
 
@@ -731,23 +732,22 @@
                                 :src="`/media/img/country/${
                                     countries[modal_item?.country_id]?.hc
                                 }.png`"
+                                style="margin-top: -3px;"
                                 width="23"
                                 height="23"
                                 alt=""
                             />&nbsp;
                             <span
                                 class="truncate"
-                                style="height: 1.1em"
+                                style="height: 1.1em;min-height:13px;margin-bottom: -1px;"
+                                :title="countries[modal_item?.country_id]?.name"
                                 v-html="
                                     `${
-                                        modal_item?.country_id == 57 &&
                                         modal_item?.region_id != 0
-                                            ? regions[modal_item?.region_id]
-                                                  ?.name
-                                            : countries[modal_item?.country_id]
-                                                  ?.name
+                                            ? regions[modal_item?.region_id]?.name
+                                            : countries[modal_item?.country_id]?.name
                                     } &nbsp;|&nbsp; ${
-                                        modal_item?.resource_category
+                                        i18n(modal_item?.resource_category)
                                     }`
                                 "
                             ></span>
@@ -1263,19 +1263,11 @@
                         :title="favorite.name"
                     >
                         <i
-                            v-if="favorites_modal != 'general_add_to_folder'"
-                            :class="`fa-${
+                            :class="`transition-all fa-${
                                 !favorite.selected ? 'regular' : 'solid'
                             } label-color fa-square${
                                 !favorite.selected ? '' : '-check'
                             }`"
-                            style="font-size: 20px; margin-right: 8px"
-                        ></i>
-                        <i
-                            v-else
-                            :class="`fa-${
-                                !favorite.selected ? 'regular' : 'solid'
-                            } label-color fa-square-plus transition-all`"
                             style="font-size: 20px; margin-right: 8px"
                         ></i>
                         <span
@@ -1542,16 +1534,17 @@
                         :src="`/media/img/country/${
                             countries[item.country_id]?.hc
                         }.png`"
+                        style="margin-top: -3px;"
                         width="23"
                         height="23"
                         alt=""
                     />&nbsp;
-                    <span class="truncate">{{
+                    <span class="truncate" style="min-height:13px;margin-bottom: -1px;" :title="countries[item.country_id]?.name">{{
                         `${
-                            item.country_id == 57 && item.region_id != 0
+                            item.region_id != 0
                                 ? regions[item.region_id]?.name
                                 : countries[item.country_id]?.name
-                        } | ${item.resource_category}`
+                        } | ${i18n(item.resource_category)}`
                     }}</span>
                 </div>
 
@@ -2124,6 +2117,29 @@ export default {
                 (week_day ? `, ${i18n(date.format("w", true))}` : "")
             ).trim();
         },
+        login_for_newspapers(url) {
+            //const headers = new Headers();
+            //headers.append('Authorization', 'Basic ' + btoa(username + ':' + password));
+            //headers.append('Authorization', 'Basic aW1hczppbWFz');
+
+            axios
+                .post(url, {
+                    headers: {
+                        //'Authorization': 'Basic ' + btoa('imas:imas'),
+                        "Authorization": "Basic aW1hczppbWFz",
+                        "Access-Control-Allow-Origin": "https://cabinet335.imas.kz",
+                    }
+                })
+                .then(data => {
+                    // Handle the data from the protected resource
+                    console.log(data);
+                })
+                .catch(error => {
+                    // Handle authentication or network error
+                    console.error(error);
+                });
+
+        },
     },
     computed: {
         sortedLabels() {
@@ -2328,9 +2344,13 @@ export default {
             getSimilarItems(this.similars_modal, per_page)
         },
         modal_item(newValue) {
+
+            if (newValue?.category_id === 13) {
+                this.login_for_newspapers(newValue?.link)
+            }
+            
             if (!(this.r_type == 2 && newValue)) return;
             this.comments_loading = true;
-
 
             axios
                 .get(
