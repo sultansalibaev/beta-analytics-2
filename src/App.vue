@@ -42,8 +42,4 @@ export default {
 div {
     line-height: 1;
 }
-.profile-element img {
-    width: 150.7px;
-    margin: 0 auto;
-}
 </style>

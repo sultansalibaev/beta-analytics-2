@@ -14,6 +14,9 @@ body {
     font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
     font-family: Roboto !important;
 }
+#side-menu {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif !important;
+}
 
 
 .social_category,

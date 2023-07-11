@@ -14,12 +14,12 @@
             <input id="rs-range-line" class="rs-range rs-range-temp" :style="{
                 '--max': max == 0 ? 1 : max, // + (start_top_resources + (max - end_top_resources)),
                 '--main-range-bg': `url('/analytics/img/caret-left.png')  left center/contain  no-repeat, url('/analytics/img/caret-right.png')  right center/contain  no-repeat, white`
-            }" type="range" @input="showSliderValue($event)"
+            }" type="range" @input="showSliderValue($event)" onchange="amplitude_event(event, document.querySelector('#p_id').value, 'analytics_reborn', 'move_sources_sliders')"
                 :value="selected_top_resources" min="0" :max="roundMax" step="1">
             <input id="rs-range-line" class="rs-range pos-a-range" type="range" @input="startSliderValue($event)"
-                :value="start_top_resources" min="0" :max="roundMax" step="1" @change="getDynamicsData()">
+                :value="start_top_resources" min="0" :max="roundMax" step="1" @change="getDynamicsData()" onchange="amplitude_event(event, document.querySelector('#p_id').value, 'analytics_reborn', 'move_sources_sliders')">
             <input id="rs-range-line" class="rs-range pos-a-range light_clip" type="range" @input="endSliderValue($event)"
-                :value="end_top_resources" min="0" :max="roundMax" step="1" @change="getDynamicsData()">
+                :value="end_top_resources" min="0" :max="roundMax" step="1" @change="getDynamicsData()" onchange="amplitude_event(event, document.querySelector('#p_id').value, 'analytics_reborn', 'move_sources_sliders')">
 
         </div>
 

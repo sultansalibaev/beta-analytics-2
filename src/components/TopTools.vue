@@ -4,12 +4,20 @@
             <div class="flex justify-between items-center title">
                 <span>{{ i18n(map ? `${map_switch ? 'Регионы' : 'Страны'} источников публикаций` : `Тональность по ${map_switch ? 'регионам' : 'странам'}`) }}</span>
                 <div class="switcher">
-                    <div style="border-radius: 3px 0 0 3px;" @click="map = !map" :class="{
-                        active: map
-                    }">{{ i18n('Карта') }}</div>
-                    <div style="border-radius: 0 3px 3px 0;" @click="map = !map" :class="{
-                        active: !map
-                    }">{{ i18n('Тональность') }}</div>
+                    <div
+                        onclick="amplitude_event(event, document.querySelector('#p_id').value, 'analytics_reborn', 'click_regions_map_view')"
+                        style="border-radius: 3px 0 0 3px;"
+                        @click="map = !map"
+                        :class="{
+                            active: map
+                        }">{{ i18n('Карта') }}</div>
+                    <div
+                        onclick="amplitude_event(event, document.querySelector('#p_id').value, 'analytics_reborn', 'click_regions_sentiment_view')"
+                        style="border-radius: 0 3px 3px 0;"
+                        @click="map = !map"
+                        :class="{
+                            active: !map
+                        }">{{ i18n('Тональность') }}</div>
                 </div>
                 <i class="fa fa-refresh cursor-pointer" id="reset-map" @click="reset_regions" v-if="map && has_selected_place"></i>
                 <i class="fa fa-refresh cursor-pointer" id="reset-map" @click="reset_sentiment" v-else-if="!map && has_selected_sentiment"></i>

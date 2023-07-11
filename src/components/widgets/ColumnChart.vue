@@ -1,5 +1,9 @@
 <template>
-    <highcharts :options="columnOptions" class="column w-full"></highcharts>
+    <highcharts
+        :options="columnOptions"
+        class="column w-full"
+        onclick="if (event?.target?.classList?.contains('highcharts-point')) amplitude_event(event, document.querySelector('#p_id').value, 'analytics_reborn', 'click_sources_bar')"
+        ></highcharts>
 </template>
 
 <script>
@@ -11,6 +15,7 @@ export default {
     },
 };
 </script>
+
 <style>
 .column {
     min-height: 100%;

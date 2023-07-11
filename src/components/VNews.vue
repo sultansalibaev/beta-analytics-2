@@ -10,7 +10,11 @@
             >
         </span>
 
-        <div class="sort-by-metrics flex items-center result-info-m-l-0-1439" v-show="r_type == 2 && !isGrouped">
+        <div
+            class="sort-by-metrics flex items-center result-info-m-l-0-1439"
+            v-show="r_type == 2 && !isGrouped"
+            onclick="amplitude_event(event, document.querySelector('#p_id').value, 'analytics_reborn', 'click_metrics_sort')"
+        >
             <i
                 class="fa fa-thumbs-o-up sort-by-metric prompt-parent"
                 @click="select_metric('likes')"
@@ -112,15 +116,30 @@
 
         
         <div class="switcher ml-auto">
-            <div style="border-radius: 3px 0 0 3px;" @click="isGrouped = false" :class="{
-                active: !isGrouped
-            }">{{ i18n('По одной') }}</div>
-            <div style="border-radius: 0 3px 3px 0;" @click="isGrouped = true" :class="{
-                active: isGrouped
-            }">{{ i18n('По группам') }}</div><!-- сгруппировано -->
+            <div
+                onclick="amplitude_event(event, document.querySelector('#p_id').value, 'analytics_reborn')"
+                data-event_type="click_single_view"
+                style="border-radius: 3px 0 0 3px;"
+                @click="isGrouped = false"
+                :class="{
+                    active: !isGrouped
+                }">{{ i18n('По одной') }}</div>
+            <div
+                onclick="amplitude_event(event, document.querySelector('#p_id').value, 'analytics_reborn')"
+                data-event_type="click_grouped_view"
+                style="border-radius: 0 3px 3px 0;"
+                @click="isGrouped = true"
+                :class="{
+                    active: isGrouped
+                }">{{ i18n('По группам') }}</div><!-- сгруппировано -->
         </div>
 
-        <v-pagination :selected_page="selected_page" :general_count="news_count" :set_selected_page="set_selected_page"/>
+        <v-pagination
+            onclick="amplitude_event(event, document.querySelector('#p_id').value, 'analytics_reborn')"
+            data-event_type="click_switch_news_tab"
+            :selected_page="selected_page"
+            :general_count="news_count"
+            :set_selected_page="set_selected_page"/>
     </div>
 
     <!-- Удаление источника -->
@@ -254,7 +273,13 @@
             </div>
             <div style="padding: 10px 8px 15.5px 8px;height: calc(100% - 43px);background: #f3f3f4;">
                 <div class="wrap-body flex items-center" style="margin-bottom: 10px;">
-                    <v-pagination class="result-info-m-r-auto-1439" :selected_page="selected_similars_page" :general_count="items.find(item => item.item_id == similars_modal)?.similars_count?.length || 0" :set_selected_page="set_selected_similars_page"/>
+                    <v-pagination
+                        onclick="amplitude_event(event, document.querySelector('#p_id').value, 'analytics_reborn')"
+                        data-event_type="click_switch_news_tab"
+                        class="result-info-m-r-auto-1439"
+                        :selected_page="selected_similars_page"
+                        :general_count="items.find(item => item.item_id == similars_modal)?.similars_count?.length || 0"
+                        :set_selected_page="set_selected_similars_page"/>
                 </div>
                 <div class="favorite-buttons flex scrollbar" style="overflow-y: scroll;max-height: calc(100% - 38px);">
                     
@@ -286,6 +311,7 @@
                                             class="item-title__text hover-underline"
                                             :title="similar_item.title"
                                             @click="modal_item = similar_item"
+                                            onclick="amplitude_event(event, document.querySelector('#p_id').value, 'analytics_reborn', 'click_card_open')"
                                         >
                                             {{ similar_item.title }}
                                         </div>
@@ -528,6 +554,8 @@
                                             class="favorites"
                                             style="margin-right: 8px"
                                             @click="chatgpt_item = similar_item"
+                                            onclick="amplitude_event(event, document.querySelector('#p_id').value, 'analytics_reborn')"
+                                            data-event_type="click_card_llm"
                                             v-show="similar_item?.logs !== null"
                                             :disabled="similar_item?.logs === undefined"
                                             :style="similar_item?.logs === undefined ? 'cursor: wait;' : ''"
@@ -636,9 +664,8 @@
                             class="item-title__text hover-underline hover:text-white focus:text-white"
                             style="font-size: 24px; line-height: 1"
                             :title="modal_item?.full_title"
-                        >
-                            {{ modal_item?.full_title }}
-                        </a>
+                            v-html="modal_item?.full_title"
+                        ></a>
 
                         <div
                             class="flex item-info items-center m-b-10"
@@ -1394,6 +1421,7 @@
                             class="item-title__text hover-underline"
                             :title="item.title"
                             @click="modal_item = item"
+                            onclick="amplitude_event(event, document.querySelector('#p_id').value, 'analytics_reborn', 'click_card_open')"
                         >
                             {{ item.title }}
                         </div>
@@ -1645,6 +1673,8 @@
                             class="favorites"
                             style="margin-right: 8px"
                             @click="chatgpt_item = item"
+                            onclick="amplitude_event(event, document.querySelector('#p_id').value, 'analytics_reborn')"
+                            data-event_type="click_card_llm"
                             v-show="item?.logs !== null"
                             :disabled="item?.logs === undefined"
                             :style="item?.logs === undefined ? 'cursor: wait;' : ''"
@@ -1667,7 +1697,13 @@
 
     <!-- Pagination -->
     <div class="wrap-body m-b-15 flex items-center">
-        <v-pagination class="result-info-m-r-auto-1439" :selected_page="selected_page" :general_count="news_count" :set_selected_page="set_selected_page"/>
+        <v-pagination
+            onclick="amplitude_event(event, document.querySelector('#p_id').value, 'analytics_reborn')"
+            data-event_type="click_switch_news_tab"
+            class="result-info-m-r-auto-1439"
+            :selected_page="selected_page"
+            :general_count="news_count"
+            :set_selected_page="set_selected_page"/>
     </div>
     <!-- <i class="fa-solid fa-arrow-up-wide-short"></i> -->
 </template>
@@ -2117,26 +2153,32 @@ export default {
                 (week_day ? `, ${i18n(date.format("w", true))}` : "")
             ).trim();
         },
-        login_for_newspapers(url) {
-            //const headers = new Headers();
-            //headers.append('Authorization', 'Basic ' + btoa(username + ':' + password));
-            //headers.append('Authorization', 'Basic aW1hczppbWFz');
+        login_for_newspapers() {
+            const username = 'imas';
+            const password = 'imas';
+            const credentials = btoa(`${username}:${password}`);
+            const temp_url = 'https://newspapers-service.imas.kz';
 
-            axios
-                .post(url, {
-                    headers: {
-                        //'Authorization': 'Basic ' + btoa('imas:imas'),
-                        "Authorization": "Basic aW1hczppbWFz",
-                        "Access-Control-Allow-Origin": "https://cabinet335.imas.kz",
+            fetch(temp_url, {
+                headers: {
+                    'Authorization': `Basic ${credentials}`
+                },
+                mode: 'no-cors'
+            })
+                .then(response => {
+                    console.log('newspapers-service', response);
+                    if (response.ok) {
+                        return response.blob();
+                    } else {
+                        throw new Error('Network response was not ok.');
                     }
                 })
-                .then(data => {
-                    // Handle the data from the protected resource
-                    console.log(data);
+                .then(blob => {
+                    // Use the downloaded blob as needed
+                    console.log('PDF file downloaded:', blob);
                 })
                 .catch(error => {
-                    // Handle authentication or network error
-                    console.error(error);
+                    console.error('Error downloading PDF file:', error);
                 });
 
         },
@@ -2346,7 +2388,7 @@ export default {
         modal_item(newValue) {
 
             if (newValue?.category_id === 13) {
-                this.login_for_newspapers(newValue?.link)
+                this.login_for_newspapers()
             }
             
             if (!(this.r_type == 2 && newValue)) return;
