@@ -7,11 +7,12 @@
             >
                 <div class="flex justify-between items-center title">
                     <span>{{ i18n('Язык публикаций') }}</span>
-                    <i
+                    <!-- <i
                         class="fa fa-refresh cursor-pointer"
                         @click="reset_languages"
                         v-if="has_selected_languages"
-                    ></i>
+                    ></i> -->
+                    <ResetFilter v-if="has_selected_languages" @click="reset_languages" />
                 </div>
                 <div class="flex map_container" style="height: calc(100% - 24px - 18px);align-items: center;">
                     <div class="flex w-full flex-col" style="margin: auto 0">
@@ -137,7 +138,7 @@
             <div class="bg-white w-full overflow-hidden tool-shadow">
                 <div
                     class="flex justify-between items-center title p-9-10"
-                    style="padding-bottom: 0"
+                    style="padding-bottom: 0;padding-top: 0;margin-top: 9px;"
                 >
                     <span>{{
                         r_type == 1
@@ -145,11 +146,12 @@
                             : i18n("Метрики соцсетей")
                     }}</span>
 
-                    <i
+                    <!-- <i
                         class="fa fa-refresh cursor-pointer"
                         @click="reset_categories"
                         v-if="has_selected_categories && r_type == 1"
-                    ></i>
+                    ></i> -->
+                    <ResetFilter v-if="has_selected_categories && r_type == 1" @click="reset_categories" />
 
                     <label class="toggle" v-show="r_type == 2 && is_high_news_count">
                         <input
@@ -272,7 +274,7 @@
         >
             <div
                 class="flex justify-between items-center title p-9-10"
-                style="padding-bottom: 0;height: 24px;"
+                style="padding-bottom: 0;height: 28px;"
             >
                 <span>
                     <span v-if="staced_column"
@@ -322,7 +324,7 @@
 
                 <!--<v-select @input="set_each_number" :options="each_numbers" :has_img="false" :tabindex="each_numbers.indexOf(each_number)"></v-select>-->
 
-                <i
+                <!-- <i
                     class="fa fa-refresh cursor-pointer"
                     @click="reset_resource"
                     v-if="staced_column && has_selected_resource"
@@ -337,7 +339,11 @@
                 <i
                     class="fa fa-refresh opacity-0 pointer-events-none"
                     v-else
-                ></i>
+                ></i> -->
+                
+                <ResetFilter v-if="staced_column && has_selected_resource" @click="reset_resource" />
+                <ResetFilter v-else-if="!staced_column && has_selected_resource_sentiment" @click="reset_sentiment_resource" />
+                <ResetFilter v-else class="opacity-0 pointer-events-none" />
             </div>
 
             <keep-alive>
@@ -390,6 +396,7 @@
 import i18n from "@/response/utils/i18n"
 // import VSelect from '@/components/UI/VSelect.vue';
 import VRange from "@/components/UI/VRange.vue";
+import ResetFilter from "@/components/UI/icons/ResetFilter.vue"
 import PieChart from "@/components/widgets/PieChart.vue";
 import ColumnChart from "@/components/widgets/ColumnChart.vue";
 import {
@@ -452,6 +459,7 @@ export default {
         ColumnChart,
         // VSelect,
         VRange,
+        ResetFilter,
     },
     methods: {
         set_each_number(option) {

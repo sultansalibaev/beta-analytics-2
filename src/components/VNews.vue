@@ -1742,7 +1742,7 @@
     </div>
 
     <!-- Pagination -->
-    <div class="wrap-body m-b-15 flex items-center">
+    <div class="wrap-body m-b-15 flex items-center" v-show="items?.length">
         <v-pagination
             onclick="amplitude_event(event, document.querySelector('#p_id').value, 'analytics_reborn')"
             data-event_type="click_switch_news_tab"

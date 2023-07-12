@@ -1,7 +1,7 @@
 <template>
     <div class="flex media-header-1439">
         <div class="map bg-white p-9-10 w-half m-r-15 pos-r tool-shadow media-header-item-1439 media-header-margin-1439" style="padding-bottom:0;min-width: calc(50% - 8px);">
-            <div class="flex justify-between items-center title">
+            <div class="flex justify-between items-center title" style="height: 22px;">
                 <span>{{ i18n(map ? `${map_switch ? 'Регионы' : 'Страны'} источников публикаций` : `Тональность по ${map_switch ? 'регионам' : 'странам'}`) }}</span>
                 <div class="switcher">
                     <div
@@ -19,9 +19,13 @@
                             active: !map
                         }">{{ i18n('Тональность') }}</div>
                 </div>
-                <i class="fa fa-refresh cursor-pointer" id="reset-map" @click="reset_regions" v-if="map && has_selected_place"></i>
+                <!-- <i class="fa fa-refresh cursor-pointer" id="reset-map" @click="reset_regions" v-if="map && has_selected_place"></i>
                 <i class="fa fa-refresh cursor-pointer" id="reset-map" @click="reset_sentiment" v-else-if="!map && has_selected_sentiment"></i>
-                <i class="fa fa-refresh opacity-0 pointer-events-none" id="reset-map" v-else></i>
+                <i class="fa fa-refresh opacity-0 pointer-events-none" id="reset-map" v-else></i> -->
+                
+                <ResetFilter id="reset-map" @click="reset_regions" v-if="map && has_selected_place" />
+                <ResetFilter id="reset-map" @click="reset_sentiment" v-else-if="!map && has_selected_sentiment" />
+                <ResetFilter id="reset-map" v-else class="opacity-0 pointer-events-none"  />
             </div>
             <!--  -->
             <div class="flex map_container media-map-960" :style="{
@@ -49,7 +53,7 @@
 
                             <div class="flex items-center" style="white-space: nowrap;text-overflow: ellipsis;overflow: hidden;padding-right: 5px;">
                                 <img :src="`/media/img/country/${country['hc-key']}.png`" v-if="country.isRegion != true" width="25" height="25" class="m-r-5" alt="">
-                                <span style="text-overflow: ellipsis;overflow: hidden;">{{ country.country }}</span>
+                                <span style="text-overflow: ellipsis;overflow: hidden;height: 16px;padding-top: 1px;">{{ country.country }}</span>
                             </div>
 
                             <div class="region-news_count" style="white-space: nowrap;">
@@ -59,7 +63,7 @@
                         <div
                             class="to-only-kz transition-all cursor-pointer"
                             v-if="countries_with_regions[country.id] && countries[country.id]?.regions_file_name"
-                            :title="langIs('kz') ? `${country.country} аймақтары` : `${i18n('Регионы')} ${country.country}`"
+                            :title="`${i18n('Регионы')} - ${country.country}`"
                             @click="toggle_map_switcher(country.id, countries[country.id]?.regions_file_name)"
                         >
                             <i class="fa-solid fa-arrow-right "></i>
@@ -109,7 +113,7 @@
                     }"
                     @click="isKazakstan ? '' : toggle_map_switcher()"
                 >
-                    <div class="prompt">{{ i18n('Регионы') }} {{ countries[current_country_id]?.name }}</div>
+                    <div class="prompt">{{ i18n('Регионы') }} - {{ countries[current_country_id]?.name }}</div>
                 </i>
                 <i
                     class="fa-solid fa-earth-europe prompt-parent"
@@ -124,7 +128,7 @@
             </div>
         </div>
         <div class="map bg-white w-half tool-shadow media-header-item-1439">
-            <div class="flex justify-between items-center title p-9-10" style="padding-bottom:0;margin-bottom:4px">
+            <div class="flex justify-between items-center title p-9-10" style="padding-bottom:0;margin-bottom:4px;height: 32px;">
                 <span>{{ i18n(`Динамика публикаций ${basic_line ? '' : 'по тональности'}`) }}</span>
 
                 <div class="drp flex items-center">
@@ -155,14 +159,18 @@
                     </span>
                 </div>
 
-                <i class="fa fa-refresh cursor-pointer" @click="reset_dynamics" v-if="basic_line" :style="{
+                <!-- <i class="fa fa-refresh cursor-pointer" @click="reset_dynamics" v-if="basic_line" :style="{
                     opacity: has_selected_date ? 1 : 0,
                     pointerEvents: has_selected_date ? 'auto' : 'none',
                 }"></i>
                 <i class="fa fa-refresh cursor-pointer" @click="reset_sentiment_dynamics" v-else-if="!basic_line" :style="{
                     opacity: has_selected_sentiment_date ? 1 : 0,
                     pointerEvents: has_selected_sentiment_date ? 'auto' : 'none',
-                }"></i>
+                }"></i> -->
+                
+                <ResetFilter @click="reset_dynamics" v-if="basic_line && has_selected_date" />
+                <ResetFilter @click="reset_sentiment_dynamics" v-else-if="!basic_line && has_selected_sentiment_date" />
+                <ResetFilter v-else class="opacity-0 pointer-events-none"  />
             </div>
             <div>
                 <LineChart v-if="map" :type="basic_line"></LineChart>
@@ -179,6 +187,7 @@ import i18n from "@/response/utils/i18n"
 import LineChart from '@/components/widgets/LineChart.vue';
 import MapChart from "@/components/widgets/MapChart";
 import BarChart from "@/components/widgets/BarChart";
+import ResetFilter from "@/components/UI/icons/ResetFilter.vue";
 import { selected_regions, places, map, date_modes, selected_date_mode, country_regions_loading, current_country_id, countries_with_regions, selected_dates, selected_sentiment_dates } from "@/response/data/index"
 import { min_height, has_selected_sentiment, reset_sentiment, inBarPercentage, showBarPercentage } from "@/response/options/barOptions"
 import { select_region, select_one_region, reset_regions, region_active, region__MouseOver, region__MouseOut, toggle_map_switcher, map_type_switcher, map_switch } from "@/response/options/mapOptions"
@@ -193,6 +202,7 @@ export default {
         LineChart,
         MapChart,
         BarChart,
+        ResetFilter,
     },
     data() {
         return {

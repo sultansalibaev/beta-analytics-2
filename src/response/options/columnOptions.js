@@ -161,14 +161,6 @@ function getSocialCategoryName (link) {
     else if (link.includes('youtube.')) return 'youtube'
 }
 
-function getPlaceName(resource) {
-    if (resource.country_id == 57) {
-        if (resource.region_id == 0) return countries.value[resource.country_id].name
-        else return regions.value[resource.region_id]?.name ?? 'Не определено'
-    }
-    else return countries.value[resource.country_id]?.name ?? 'Не определено'
-}
-
 export const resources_sliced = computed(() => resources.value.slice(
     selected_top_resources.value * each_number.value,
     selected_top_resources.value * each_number.value +
@@ -180,10 +172,9 @@ export const resources_sliced = computed(() => resources.value.slice(
         name: resource_names.value[resource.res_id].name,
         link: resource_names.value[resource.res_id].link,
         category_name: r_type.value == 1 ? smi_categories.value[resource_names.value[resource.res_id]?.category_id].name_cat : getSocialCategoryName(resource_names.value[resource.res_id].link),
-        place_key: (
-            resource_names.value[resource.res_id].country_id == 57 && resource_names.value[resource.res_id].region_id != 0 ? i18n('Регион') : i18n('Страна')
-        ),
-        place_value: getPlaceName(resource_names.value[resource.res_id]),
+        region_info: resource_names.value[resource.res_id].region_id == 0 ? '' : `</br><span style="font-size:11px;display:inline-flex;align-items:center;overflow:hidden;text-overflow:ellipsis"><b>${i18n('Регион')}:</b>&nbsp;&nbsp;${regions.value[resource_names.value[resource.res_id].region_id]?.name ?? 'Не определено'} </span>`,
+        place_title: resource_names.value[resource.res_id].region_id == 0 ? `title="${countries.value[resource_names.value[resource.res_id].country_id].name}"` : '',
+        place_country: countries.value[resource_names.value[resource.res_id].country_id]?.name ?? 'Не определено',
         place_hc: countries.value[resource_names.value[resource.res_id].country_id]?.hc,
     }
 )))
@@ -281,11 +272,12 @@ export const columnOptions = computed(() => {
         tooltip: {
             //enabled: false,
             headerFormat:
-                `<span style="font-size:11px"><b>${i18n('Источник')}:</b> {point.key} </span></br>`+
+                // `<span style="font-size:11px"><b>${i18n('Источник')}:</b> {point.key} </span></br>`+
                 `<span style="font-size:11px"><b>${i18n('Категория')}:</b> {point.point.category_name} </span></br>`+
-                `<span style="font-size:11px;display:inline-flex;align-items:center;overflow:hidden;text-overflow:ellipsis"><b>{point.point.place_key}:</b>&nbsp;&nbsp;<img src="/media/img/country/{point.point.place_hc}.png" width="22" height="22" alt=""> &nbsp;&nbsp;{point.point.place_value} </span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</br>`,
+                `<span style="font-size:11px;display:inline-flex;align-items:center;overflow:hidden;text-overflow:ellipsis"><b>${i18n('Страна')}:</b>&nbsp;&nbsp;<img {place_title} src="/media/img/country/{point.point.place_hc}.png" width="22" height="22" alt=""> &nbsp;{point.point.place_country} </span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{point.point.region_info}`,
             pointFormat:
-                "</br><span><b>{series.name}:</b> {point.y}</span></br>",
+                // "</br><span><b>{series.name}:</b> {point.y}</span></br>",
+                "",
             shared: true,
             useHTML: true,
         },
@@ -398,7 +390,8 @@ export const columnOptions = computed(() => {
                 },
                 tooltip: {
                     pointFormat:
-                        "</br><span><b>{series.name}:</b> {point.y}</span>",
+                        // "</br><span><b>{series.name}:</b> {point.y}</span>",
+                        "",
                 },
                 dataLabels: {
                     enabled: true,
@@ -479,7 +472,8 @@ export const columnOptions = computed(() => {
                 },
                 tooltip: {
                     pointFormat:
-                        "</br><span><b>{series.name}:</b> {point.y}</span>",
+                        // "</br><span><b>{series.name}:</b> {point.y}</span>",
+                        "",
                 },
                 dataLabels: {
                     enabled: true,
@@ -558,7 +552,8 @@ export const columnOptions = computed(() => {
                 },
                 tooltip: {
                     pointFormat:
-                        "</br><span><b>{series.name}:</b> {point.y}</span>",
+                        // "</br><span><b>{series.name}:</b> {point.y}</span>",
+                        "",
                 },
                 //showInLegend: true,
                 data: resources_sliced.value.map((res_id) => ({
