@@ -473,11 +473,13 @@ body {
     background: #ccc !important;
     border: 1px solid #ccc !important;
     color: #fff !important;
+    fill: #fff !important;
 }
 
 .metric.disabled .metric-icon,
 .metric.disabled:hover .metric-icon {
     color: #fff;
+    fill: #fff;
 }
 
 .metric {
@@ -496,6 +498,7 @@ body {
 
 .metric-icon {
     color: #A7B1C2;
+    fill: #A7B1C2;
     font-size: 50px;
 }
 
