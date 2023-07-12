@@ -1,6 +1,6 @@
 <template>
     <div class="flex media-header-1439">
-        <div class="map bg-white p-9-10 w-half m-r-15 pos-r tool-shadow media-header-item-1439 media-header-margin-1439" style="padding-bottom:0;min-width: calc(50% - 8px);">
+        <div class="map bg-white p-9-10-9-11 w-half m-r-15 pos-r tool-shadow media-header-item-1439 media-header-margin-1439" style="padding-bottom:0;min-width: calc(50% - 8px);">
             <div class="flex justify-between items-center title" style="height: 22px;">
                 <span>{{ i18n(map ? `${map_switch ? 'Регионы' : 'Страны'} источников публикаций` : `Тональность по ${map_switch ? 'регионам' : 'странам'}`) }}</span>
                 <div class="switcher">
@@ -46,7 +46,7 @@
                             }"
                             v-if="!country.isRegion || (country.isRegion && country.id.split('_')[0] == current_country_id)"
                              :title="[
-                                `${i18n('Регион')}: ${country.country}`,
+                                `${country.isRegion != true ? i18n('Страна') : i18n('Регион')}: ${country.country}`,
                                 `${i18n('Публикаций')}: ${country.value.push_space()}`,
                                 `${i18n('Источников')}: ${country.resources.push_space()}`
                             ].join('\n')">
@@ -111,7 +111,6 @@
                     :class="{
                         active: map_switch
                     }"
-                    @click="isKazakstan ? '' : toggle_map_switcher()"
                 >
                     <div class="prompt">{{ i18n('Регионы') }} - {{ countries[current_country_id]?.name }}</div>
                 </i>
@@ -128,7 +127,7 @@
             </div>
         </div>
         <div class="map bg-white w-half tool-shadow media-header-item-1439">
-            <div class="flex justify-between items-center title p-9-10" style="padding-bottom:0;margin-bottom:4px;height: 32px;">
+            <div class="flex justify-between items-center title p-9-10-9-11" style="padding-bottom:0;margin-bottom:4px;height: 32px;">
                 <span>{{ i18n(`Динамика публикаций ${basic_line ? '' : 'по тональности'}`) }}</span>
 
                 <div class="drp flex items-center">

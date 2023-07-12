@@ -192,6 +192,7 @@
                 <div
                     class="resource-place ml-auto flex items-center"
                     style="margin-right: 8px"
+                    :title="countries[delete_resource.country_id]?.name"
                 >
                     <img
                         :src="`/media/img/country/${
@@ -237,7 +238,7 @@
         </div>
     </div>
 
-    <!-- Удаление источника -->
+    <!-- Confirm update all items in group -->
     <div
         class="delete-resource-modal"
         style="z-index: 100000"
@@ -2141,10 +2142,9 @@ export default {
             this.delete_resource_modal = true;
             this.delete_resource = {
                 id: res_id,
-                place:
-                    item.country_id == 57 && item.region_id != 0
-                        ? this.regions[item.region_id]?.name
-                        : this.countries[item.country_id]?.name,
+                place: item.region_id != 0
+                    ? this.regions[item.region_id]?.name
+                    : this.countries[item.country_id]?.name,
                 category: item.resource_category,
                 country_id: item.country_id,
                 link: item.res_link,
@@ -2629,6 +2629,7 @@ export default {
 .nav-pagination span {
     background: white;
     padding: 0 7px;
+    padding-top: 1px;
     cursor: pointer;
     height: 28px;
     display: flex;
@@ -2639,7 +2640,6 @@ export default {
 .nav-pagination span.active {
     border-bottom: 1px solid #3b5998;
     color: #3b5998;
-    padding-top: 1px;
     font-weight: 600;
 }
 

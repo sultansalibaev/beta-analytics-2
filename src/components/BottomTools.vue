@@ -2,7 +2,7 @@
     <div class="flex media-header-1439">
         <div class="flex map w-half m-r-15 media-header-item-1439 media-header-margin-1439 media-metrics-885_769" style="height: 312px;">
             <div
-                class="bg-white p-9-10 m-r-15 tool-shadow media-lang-margin-885_769"
+                class="bg-white p-9-10-9-11 m-r-15 tool-shadow media-lang-margin-885_769"
                 style="min-width: 240px; width: 70%"
             >
                 <div class="flex justify-between items-center title">
@@ -137,7 +137,7 @@
             </div>
             <div class="bg-white w-full overflow-hidden tool-shadow">
                 <div
-                    class="flex justify-between items-center title p-9-10"
+                    class="flex justify-between items-center title p-9-10-9-11"
                     style="padding-bottom: 0;padding-top: 0;margin-top: 9px;"
                 >
                     <span>{{
@@ -167,7 +167,7 @@
                     class="flex map_container"
                     style="padding-right: 0; padding-left: 0;"
                     :class="{
-                        'p-9-10': true,
+                        'p-9-10-9-11': true,
                         'flex-wrap': true,
                     }"
                     :style="r_type == 1 ? 'padding-bottom: 0px;height: calc(100% - 24px - 18px - 50px);align-items: center;' : ''"
@@ -273,7 +273,7 @@
             style="overflow-y: clip;height: 312px;/* height: calc(250px + 35px + 10px + 15px);  */"
         >
             <div
-                class="flex justify-between items-center title p-9-10"
+                class="flex justify-between items-center title p-9-10-9-11"
                 style="padding-bottom: 0;height: 28px;"
             >
                 <span>

@@ -197,7 +197,7 @@ export const columnOptions = computed(() => {
         chart: {
             type: "column",
             height: 200 + 35 + 20,
-            margin: [4, 5, null, 5], // [4, 5, 10, 35]
+            margin: [4, 12, null, 12], // [4, 5, 10, 35]
             defaultSeriesType: "line",
             events: {
                 load: function () {
