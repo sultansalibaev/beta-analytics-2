@@ -1,6 +1,4 @@
-
-
-function getLang() {
+export function getLang() {
     var params = {};
 
     let tmp_params = window.location.href

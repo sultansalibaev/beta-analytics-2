@@ -6,7 +6,7 @@ import { selected_main_sentiments } from "@/response/header";
 
 export const inBarPercentage = reactive(ref(false));
 export const showBarPercentage = reactive(ref(true));
-let min_height = reactive(ref(190));
+let min_height = reactive(ref(190 + 44));
 
 let sentiment_colors = {
     "1": "#1CB394",

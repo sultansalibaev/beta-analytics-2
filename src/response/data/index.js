@@ -5,10 +5,27 @@
         watch,
     } from "vue";
     import { project } from '@/response/header'
+    
+
+    function getRequest() {
+        var params = {};
+
+        if (window.location.href.match(/.*\?.*/)) {
+            let tmp_params = window.location.href.replace(/.*\?/, "").split("&");
+            for (var p = 0; p < tmp_params.length; p++) {
+                var _tmp = tmp_params[p].split("=");
+
+                params[_tmp[0]] = _tmp[1];
+            }
+        }
+        return params;
+}
+    
+const request = getRequest();
 
     export const dateRange = reactive(ref({
-        startDate: project.value.s_date,
-        endDate: project.value.f_date,
+        startDate: request?.startDate ?? project.value.s_date,
+        endDate: request?.endDate ?? project.value.f_date,
     }))
 
 
@@ -16,7 +33,13 @@
     export const thumbnail_dates = reactive(ref([]))
 
     export const selected_categories = reactive(ref({}));
-    export const selected_date_mode = reactive(ref('daily'));
+
+let years_period = new Date(dateRange.value.endDate).getFullYear() - new Date(dateRange.value.startDate).getFullYear();
+let temp_date_mode = 'daily';
+if (years_period > 2) {
+    temp_date_mode = 'monthly';
+}
+export const selected_date_mode = reactive(ref(temp_date_mode));
     export const date_modes = computed(() => {
         const days_period = ((
             new Date(dateRange.value.endDate).valueOf() - new Date(dateRange.value.startDate).valueOf()
@@ -51,8 +74,11 @@
     import axios from 'axios';
     import Highcharts from "highcharts";
 
-    export const getCountryRegions = (file_name = 'kz-all.js') => {
+export const getCountryRegions = (file_name = 'kz-all.js', country_id = 57) => {
         country_regions_loading.value = true;
+
+        if (country_id) current_country_id.value = country_id;
+
         axios.get(`/myjs_css/js/highcharts/countries/${file_name}on`)
             .then(response => {
                 if (response?.data) Highcharts.maps[`map-${file_name}`] = response?.data;

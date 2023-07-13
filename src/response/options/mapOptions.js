@@ -21,8 +21,7 @@ watch(selected_regions, () => {
 export const toggle_map_switcher = (country_id, regions_file_name) => {
     map_switch.value = !map_switch.value;
     if (country_id) {
-        current_country_id.value = country_id
-        getCountryRegions(regions_file_name)
+        getCountryRegions(regions_file_name, country_id)
     }
 }
 

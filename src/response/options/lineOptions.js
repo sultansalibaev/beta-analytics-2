@@ -189,7 +189,7 @@ export const lineOptions = computed(() => {
                 },
             },
             margin: [8 + 4, 15, 28], // [8 + 4, 5, 25, 35] // [0,5,25,35]
-            height: 200
+            height: 200 + 44
         },
         title: { text: "" },
 
@@ -204,7 +204,7 @@ export const lineOptions = computed(() => {
             align: "right",
             verticalAlign: "top",
             floating: true,
-            x: 0,
+            x: -10,
             y: -17,
 
             reversed: true,

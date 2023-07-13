@@ -129,7 +129,8 @@ export const pieOptions = computed(() => {
             labelFormat: "{name}", // : {y}
             padding: 0,
             margin: 0,
-            itemStyle: { "color": "#333333", "cursor": "pointer", "fontSize": "11px", "fontWeight": "600", "textOverflow": "ellipsis" }
+            itemMarginBottom: 2.5,
+            itemStyle: { "color": "#333333", "cursor": "pointer", "fontSize": "11px", "fontWeight": "400", "textOverflow": "ellipsis" }
         },
         tooltip: {
             headerFormat: `<span style="font-size:11px"><b>${i18n('Категория')}:</b> {point.key}</span></br>`,

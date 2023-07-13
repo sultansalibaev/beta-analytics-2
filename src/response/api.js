@@ -12,6 +12,7 @@ import i18n from "@/response/utils/i18n"
 
 let firstLoad = true;
 
+
 export const end_clipped = computed(() => {
 	
 	let start_count = ((end_top_resources.value + 1) * each_number.value);
@@ -64,7 +65,12 @@ const reset_all_selected_data = () => {
         }
     }
     isGrouped.value = false
-    selected_date_mode.value = 'daily'
+    let years_period = new Date(dateRange.value.endDate).getFullYear() - new Date(dateRange.value.startDate).getFullYear();
+    let temp_date_mode = 'daily';
+    if (years_period > 2) {
+        temp_date_mode = 'monthly';
+    }
+    selected_date_mode.value = temp_date_mode
 }
 
 const obj_copy = function (obj) {
@@ -76,7 +82,8 @@ export function getProjectCounts() {
 
 	axios
 		.get(`/ru/analyticstats/get-project-count?${params.value.getQuery({}, ['p_id','s_date','f_date'])}`)
-		.then(response => {
+        .then(response => {
+            console.log('get-project-count', response);
 			let temp_soc_obj = {
 				'count': 0,
 				'1': 0,
@@ -119,7 +126,7 @@ export function getProjectCounts() {
 				social_category['1'] = parseInt(social['1']) || 0
 			})
 
-			response.data.generals.forEach(general => {
+            response.data.generals.forEach(general => {
 				generals_count.value[general.type].count = parseInt(general.count) || 0
 				generals_count.value[general.type]['-1'] = parseInt(general.negative) || 0
 				generals_count.value[general.type]['0'] = parseInt(general.neutral) || 0
@@ -165,14 +172,17 @@ export function getProjectCounts() {
 		.finally(() => {
 			
 			let temp_regions_file_name = '';
-			if (isKazakstan.value) {
-				temp_regions_file_name = countries.value[project.value.place_id]?.regions_file_name;
+            let temp_country_id = 0;
+            if (isKazakstan.value) {
+                let { regions_file_name = false, id = 0 } = countries.value[project.value.place_id]
+                temp_regions_file_name = regions_file_name;
+                temp_country_id = id;
+                if (temp_regions_file_name) getCountryRegions(temp_regions_file_name, temp_country_id)
 			}
-			else {
-				temp_regions_file_name = Object.keys(countries_with_regions.value)[0];
-			}
+			//else {
+			//	temp_regions_file_name = Object.keys(countries_with_regions.value)[0];
+			//}
 
-			if (temp_regions_file_name) getCountryRegions(temp_regions_file_name)
 		})
 }
 
@@ -411,11 +421,13 @@ export function getResourceCount() {
 
 export const getDynamicsData = () => {
 	items_loading.value = true
-	resource_count_loading.value = true
+    resource_count_loading.value = true
 
     axios
         .get(`/ru/analyticstats/get-project-dynamics-data?${params.value.getQuery({}, ['dates_filter', 'sentiment_dates_filter'], true)}`)
         .then(response => {
+
+            console.log('dynamics-data', response);
 
 			let obj_dates = response.data.dates.reduce((prev, date) => ({ ...prev, [date.date]: date }), {})
 
@@ -486,7 +498,8 @@ export const getDynamicsData = () => {
 						week_dates: weekdates,
 						x: new Date(start_date).valueOf(),
 					};
-				})
+                })
+                
 			}
 
             resource_clipped_news_count.value = parseInt(response.data.resource_clipped_news_count);

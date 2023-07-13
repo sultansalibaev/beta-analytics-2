@@ -1,4 +1,5 @@
 import { reactive, ref, watch } from "vue";
+import { getLang } from '@/response/utils/langIs'
 import { dateRange, selected_date_mode, thumbnail_dates } from '@/response/data/index'
 import { project } from '@/response/header'
 import { getProjectCounts } from "@/response/api"
@@ -59,6 +60,7 @@ export function setDateRange() {
 	update_thumbnail_dates()
 
     getProjectCounts()
+    window.history.replaceState('', '', `/${getLang()}/analytics/beta?id=${project.value.id}&startDate=${dateRange.value.startDate}&endDate=${dateRange.value.endDate}`);
 }
 
 function update_thumbnail_dates() {

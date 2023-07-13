@@ -29,7 +29,7 @@
             </div>
             <!--  -->
             <div class="flex map_container media-map-960" :style="{
-                'min-height': (map ? 190 : min_height) + 'px'
+                'min-height': (map ? 190 + 44 : min_height) + 'px'
             }">
                 <div class="map-content flex flex-col media-map-places-list-width-520" style="min-width: 240px;" v-show="map">
 

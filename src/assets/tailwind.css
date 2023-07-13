@@ -243,7 +243,7 @@ body {
     font-size: 14px;
     width: 70%;
     overflow-x: hidden;
-    max-height: 190px;
+    max-height: calc(190px + 44px);
 }
 
 .map-content::-webkit-scrollbar {
