@@ -172,7 +172,7 @@ const _i18n = {
     "Условие": ["Condition", "Шарт"],
     "Запуск": ["launch", "іске қосу"],
     "Информация и пояснение": ["Information and explanation", "Ақпарат және түсіндіру"],
-    "Введите своё условие (...?)": ["Enter your condition (...?)", "Шартыңызды енгізіңіз (...?)"],
+    "Введите своё условие ...": ["Enter your condition ...", "Шартыңызды енгізіңіз ..."],
     "Напиши ответ от лица правительства": ["Write a response on behalf of the government", "Үкімет атынан жауап жазыңыз"],
     "От чьего лица вы ожидаете ответ?": ["From whom do you expect a response?", "Сіз кімнен жауап күтесіз?"],
     "Что передается в ChatGPT": ["What is transmitted in ChatGPT", "ChatGPT-те не беріледі"],

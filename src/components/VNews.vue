@@ -3523,7 +3523,8 @@ i.positive {
     height: 100%;
 }
 .tab-content {
-    padding: 22px;
+    /* padding: 22px; */
+    padding: 14px 17px;
     height: 100%;
     overflow-y: scroll;
     margin: 2px 2px 0 0;

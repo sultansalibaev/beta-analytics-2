@@ -1,121 +1,190 @@
 <template>
-    <div class="container main-block" @click.stop="dropdown_menu = false;used_prompt_list_modal = false;">
-        <div class="row">
-            <div class="col-12">
-                <div class="mb-3">
-                    <!-- <span class="badge text-bg-success">Анализ новости</span> -->
-                    <div class="dropdown dropdown_inline" style="display: flex;">
-                        <button class="f-z-16 btn btn-success dropdown-toggle" type="button" :style="input != '' ? 'background: #ccc !important;border: 1px solid #ccc !important;pointer-events: none;' : ''" data-bs-toggle="dropdown" aria-expanded="false" @click.stop="dropdown_menu = !dropdown_menu">
-                            {{ i18n('Условие') }}
-                        </button>
-                        <ul class="dropdown-menu" :class="{
-                            show: dropdown_menu
-                        }">
-                            <li @click="dropdown_menu=false;change_condition('бизнес')">
-                                <button class="dropdown-item">{{ i18n('Бизнес') }}</button>
-                            </li>
-                            <li @click="dropdown_menu=false;change_condition('государство')">
-                                <button class="dropdown-item">{{ i18n('Государство') }}</button>
-                            </li>
-                            <li @click="dropdown_menu=false;change_condition('сил.структуры')">
-                                <button class="dropdown-item">{{ i18n('Сил.Структуры') }}</button>
-                            </li>
-                            <li @click="dropdown_menu=false;change_condition('разные т.з.')">
-                                <button class="dropdown-item">{{ i18n('Разные т.з.') }}</button>
-                            </li>
-                        </ul>
-
-                        <div class="w-full relative" style="max-width: 400px;margin-left: 10px;">
-                            <input
-                                class="form-control"
-                                id="analyze-input"
-                                type="text"
-                                style="height: 35px !important;border-radius: 3px;max-width: 400px;font-size: 15px !important;"
-                                :placeholder="i18n('Введите своё условие (...?)')"
-                                v-model="input"
-                                @click.stop="used_prompt_list_modal = true"/>
-                            <i
-                                class="fa-solid fa-angle-down input-angle-down"
-                                :class="{
-                                    'rotate-x-180': used_prompt_list_modal
-                                }"
-                                @click.stop="toggle_prompt_list_modal()"
-                            ></i>
-                            <div class="flex flex-col used-prompt-list scrollbar" v-show="used_prompt_list_modal">
-                                <span
-                                    class="used-prompt empty-list_item"
-                                    v-if="sorted_used_prompt_list.length == 0"
-                                >{{ i18n('Список пустой') }}</span>
-                                <span
-                                    class="used-prompt"
-                                    v-else
-                                    v-for="used_prompt in sorted_used_prompt_list"
-                                    :key="used_prompt"
-                                    :title="used_prompt"
-                                    @click="select_analyzed_prompt(used_prompt)"
-                                >{{ used_prompt }}</span>
+    <div @click.stop="select_options_modal = false;used_prompt_list_modal = false;">
+        <!-- <div style="font-size: 18px;font-weight: 500;">Условие</div>
+        <div style="color: #A8A8A8;font-size: 13px;margin: 8px 0 12px 0;">Выберите подходящую точку зрения:</div>
+        <div class="inline-flex relative" style="margin-bottom:12px;">
+            <div @click.stop="select_options_modal = !select_options_modal" class="inline-flex text-white justify-between items-center cursor-pointer select-title">
+                Выберите условие
+                <i class="fa-solid fa-angle-down transition-all" style="margin-left:5px;" :style="select_options_modal ? '' : 'padding-top:3px;'" :class="{
+                    'rotate-x-180': select_options_modal
+                }"></i>
+            </div>
+            <div class="absolute top-full right-0 left-0 transition-all select-options" :style="{
+                    height: select_options_modal ? '141.6px' : '0px'
+                }">
+                <div class="flex flex-col select-none select-options-styles">
+                    <div class="select-option" @click="change_condition('бизнес')" :class="{
+                        active: condition == 'С точки зрения бизнеса'
+                    }">Бизнес</div>
+                    <div class="select-option" @click="change_condition('государство')" :class="{
+                        active: condition == 'С точки зрения государства'
+                    }">Государство</div>
+                    <div class="select-option" @click="change_condition('сил.структуры')" :class="{
+                        active: condition == 'С точки зрения силовых структур'
+                    }">Силовые структуры</div>
+                    <div class="select-option" @click="change_condition('разные т.з.')" :class="{
+                        active: condition == 'C разных точек зрения'
+                    }">Разные точки зрения</div>
+                    <div class="select-option" @click="select_options_modal = condition = undefined" :class="{
+                        active: condition == undefined
+                    }">Своё условие</div>
+                </div>
+            </div>
+        </div>
+        <div class="inline-flex relative" style="margin-bottom:12px;margin-left: 10px;" v-show="condition == undefined">
+            <div @click.stop="used_prompt_list_modal = !used_prompt_list_modal" class="inline-flex text-white justify-between items-center cursor-pointer select-title" style="background: white;border: 1px solid #3b5998;padding: 0;overflow: hidden;color: #858585;width: 350px;">
+                <input
+                    type="text"
+                    class="focus:outline-none"
+                    style="height: 100%;width: 100%;padding: 0 8px 2px;"
+                    :placeholder="i18n('Введите своё условие ...')"
+                    v-model="input">
+                
+                
+                <i class="fa-solid fa-angle-down transition-all" style="margin-left:5px;margin-right: 6px;" :style="used_prompt_list_modal ? '' : 'padding-top: 2px;'" :class="{
+                    'rotate-x-180': used_prompt_list_modal
+                }"></i>
+            </div>
+            <div class="absolute top-full right-0 left-0 transition-all select-options" :style="{
+                    height: used_prompt_list_modal ? '' : '0px',
+                }" style="max-height: 300px;">
+                <div class="flex flex-col select-none select-options-styles">
+                    <div class="select-option pointer-events-none"
+                        style="border-color: #ccc;color: #ccc;"
+                        v-if="sorted_used_prompt_list.length == 0"
+                    >{{ i18n('Список пустой') }}</div>
+                    <div class="select-option" 
+                        v-else
+                        v-for="used_prompt in sorted_used_prompt_list"
+                        :key="used_prompt"
+                        :title="used_prompt"
+                        @click="select_analyzed_prompt(used_prompt)" :class="{
+                        active: input == used_prompt
+                    }">{{ used_prompt }}</div>
+                </div>
+            </div>
+        </div>
+        
+        <div style="color: #A8A8A8;font-size: 13px;margin: 8px 0 12px 0;">Что передаётся в ChatGPT:</div>
+        <div style="font-size: 15px;">{{ i18n('Предоставь мне подробный анализ данной новости') }} {{ input == '' ? condition : input }}</div> -->
+        <div class="container main-block" @click.stop="dropdown_menu = false;used_prompt_list_modal = false;">
+            <div class="row">
+                <div class="col-12">
+                    <div class="mb-3">
+                        <!-- <span class="badge text-bg-success">Анализ новости</span> -->
+                        <div class="dropdown dropdown_inline" style="display: flex;">
+                            <button class="f-z-16 btn btn-success dropdown-toggle" type="button" :style="input != '' ? 'background: #ccc !important;border: 1px solid #ccc !important;pointer-events: none;' : ''" data-bs-toggle="dropdown" aria-expanded="false" @click.stop="dropdown_menu = !dropdown_menu">
+                                {{ i18n('Условие') }}
+                            </button>
+                            <ul class="dropdown-menu" :class="{
+                                show: dropdown_menu
+                            }">
+                                <li @click="dropdown_menu=false;change_condition('бизнес')">
+                                    <button class="dropdown-item">{{ i18n('Бизнес') }}</button>
+                                </li>
+                                <li @click="dropdown_menu=false;change_condition('государство')">
+                                    <button class="dropdown-item">{{ i18n('Государство') }}</button>
+                                </li>
+                                <li @click="dropdown_menu=false;change_condition('сил.структуры')">
+                                    <button class="dropdown-item">{{ i18n('Сил.Структуры') }}</button>
+                                </li>
+                                <li @click="dropdown_menu=false;change_condition('разные т.з.')">
+                                    <button class="dropdown-item">{{ i18n('Разные т.з.') }}</button>
+                                </li>
+                            </ul>
+    
+                            <div class="w-full relative" style="max-width: 400px;margin-left: 10px;">
+                                <input
+                                    class="form-control"
+                                    id="analyze-input"
+                                    type="text"
+                                    style="height: 35px !important;border-radius: 3px;max-width: 400px;font-size: 15px !important;"
+                                    :placeholder="i18n('Введите своё условие (...?)')"
+                                    v-model="input"
+                                    @click.stop="used_prompt_list_modal = true"/>
+                                <i
+                                    class="fa-solid fa-angle-down input-angle-down"
+                                    :class="{
+                                        'rotate-x-180': used_prompt_list_modal
+                                    }"
+                                    @click.stop="toggle_prompt_list_modal()"
+                                ></i>
+                                <div class="flex flex-col used-prompt-list scrollbar" v-show="used_prompt_list_modal">
+                                    <span
+                                        class="used-prompt empty-list_item"
+                                        v-if="sorted_used_prompt_list.length == 0"
+                                    >{{ i18n('Список пустой') }}</span>
+                                    <span
+                                        class="used-prompt"
+                                        v-else
+                                        v-for="used_prompt in sorted_used_prompt_list"
+                                        :key="used_prompt"
+                                        :title="used_prompt"
+                                        @click="select_analyzed_prompt(used_prompt)"
+                                    >{{ used_prompt }}</span>
+                                </div>
                             </div>
                         </div>
+                        <div class="cond" style="margin-top: 10px;">{{ i18n('Что передается в ChatGPT') }}: <i>{{ i18n('Предоставь мне подробный анализ данной новости') }} {{ input == '' ? condition : input }}</i></div>
+                        <!-- <div class="spinner-border text-success" role="status" id="load-circle-analyze">
+                            <span class="visually-hidden">Loading...</span>
+                        </div> -->
+                        <div for="textarea_analyze" class="form-label" style="margin: 12px 0;display:none;">Ввод:</div>
+                        <textarea class="form-control" id="textarea_analyze" style="display:none;" rows="10" :value="chatgpt_item?.text.maxLength(4_000)" disabled></textarea>
+                        <!-- <div>
+                            <button
+                                type="button"
+                                class="f-z-16 btn btn-success btn-control"
+                                :style="input != '' ? 'background: #ccc;border:1px solid #ccc;pointer-events:none' : ''"
+                                @click="push_news">Запуск</button>
+                            <button type="button" class="f-z-16 btn btn-success btn-control" style="margin-left: 10px;" @click="clear">Очистить</button>
+                        </div> -->
                     </div>
-                    <div class="cond" style="margin-top: 10px;">{{ i18n('Что передается в ChatGPT') }}: <i>{{ i18n('Предоставь мне подробный анализ данной новости') }} {{ input == '' ? condition : input }}</i></div>
-                    <!-- <div class="spinner-border text-success" role="status" id="load-circle-analyze">
-                        <span class="visually-hidden">Loading...</span>
-                    </div> -->
-                    <div for="textarea_analyze" class="form-label" style="margin: 12px 0;display:none;">Ввод:</div>
-                    <textarea class="form-control" id="textarea_analyze" style="display:none;" rows="10" :value="chatgpt_item?.text.maxLength(4_000)" disabled></textarea>
-                    <!-- <div>
-                        <button
-                            type="button"
-                            class="f-z-16 btn btn-success btn-control"
-                            :style="input != '' ? 'background: #ccc;border:1px solid #ccc;pointer-events:none' : ''"
-                            @click="push_news">Запуск</button>
-                        <button type="button" class="f-z-16 btn btn-success btn-control" style="margin-left: 10px;" @click="clear">Очистить</button>
-                    </div> -->
-                </div>
-                <div class="mb-3">
-                    <label for="textarea2" class="form-label" style="margin: 7px 0 12px;display:none;">Вывод:
-                        <span class="chatgpt-error" v-show="chatgpt_error">Ошибка со стороны сервера ChatGPT! &nbsp;&nbsp; (попробуйте позже)</span>
-                    </label>
-                    <textarea class="form-control" style="margin-top: 20px;border-radius: 5px;" id="textarea2" rows="10" :value="output" disabled></textarea>
-
-                    <div class="flex" :style="chatgpt_item?.logs[input != '' ? input : condition]?.result ? 'display:none;' : ''">
-                        <button
-                            type="button"
-                            class="f-z-16 btn btn-success btn-control"
-                            @click="push_news"
-                            :disabled="load_circle_analyze || chatgpt_item?.logs[input != '' ? input : condition]?.result">
-                            {{ i18n('Запуск') }}
-                            <i id="load-circle-analyze" v-show="load_circle_analyze" class="fa-solid fa-spinner"></i>
-                        </button>
-                        <button type="button" style="margin: 20px 0 0 auto !important;" class="f-z-16 btn btn-info btn-help" data-bs-toggle="modal" data-bs-target="#exampleModal" @click="text_analyze_modal = true">
-                            {{ i18n('Информация и пояснение') }}
-                        </button>
+                    <div class="mb-3">
+                        <label for="textarea2" class="form-label" style="margin: 7px 0 12px;display:none;">Вывод:
+                            <span class="chatgpt-error" v-show="chatgpt_error">Ошибка со стороны сервера ChatGPT! &nbsp;&nbsp; (попробуйте позже)</span>
+                        </label>
+                        <textarea class="form-control" style="margin-top: 20px;border-radius: 5px;" id="textarea2" rows="10" :value="output" disabled></textarea>
+    
+                        <div class="flex" :style="chatgpt_item?.logs[input != '' ? input : condition]?.result ? 'display:none;' : ''">
+                            <button
+                                type="button"
+                                class="f-z-16 btn btn-success btn-control"
+                                @click="push_news"
+                                :disabled="load_circle_analyze || chatgpt_item?.logs[input != '' ? input : condition]?.result">
+                                {{ i18n('Запуск') }}
+                                <i id="load-circle-analyze" v-show="load_circle_analyze" class="fa-solid fa-spinner"></i>
+                            </button>
+                            <button type="button" style="margin: 20px 0 0 auto !important;" class="f-z-16 btn btn-info btn-help" data-bs-toggle="modal" data-bs-target="#exampleModal" @click="text_analyze_modal = true">
+                                {{ i18n('Информация и пояснение') }}
+                            </button>
+                        </div>
                     </div>
-                </div>
-                <div
-                    class="modal fade left-0 right-0 top-0 bottom-0"
-                    id="exampleModal"
-                    tabindex="-1"
-                    aria-labelledby="exampleModalLabel"
-                    aria-hidden="true"
-                    :style="text_analyze_modal ? 'opacity: 1;overflow: visible;display: block;background-color: #0000006b;' : 'pointer-events: none;'"
-                    @click="text_analyze_modal = false">
-                    <div class="modal-dialog" style="transition: 0.15s;" :style="text_analyze_modal?'top: 25%;':'top: 0px;'" @click.stop>
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h1 class="modal-title fs-5" id="exampleModalLabel" style="font-size: 30px;">Анализ новости</h1>
-                                <!-- <button type="button" class="f-z-16 btn-close" data-bs-dismiss="modal" aria-label="Close"></button> -->
-                            </div>
-                            <div class="modal-body" style="line-height: 1.42857143;">
-                                Анализ новости - это инструмент, при помощи которого Вы можете получить подробный анализ новости от Исcкусственного Интелекта с той или иной точки зрения. На вход подается выражение - запрос: <b>"Предоставь мне подробный анализ данной новости + точка зрения"</b> Во вкладке <b>"Условие"</b> можно выбрать точку зрения.
-                                <br><br>
-                                "Бизнес" - с точки зрения бизнеса.<br>
-                                "Государство" - с точки зрения государства.<br>
-                                "Сил.Структуры" - с точки зрения силовых структур<br>
-                                "Разные т.з." - с разных точек зрения
-                            </div>
-                            <div class="modal-footer" style="height: auto;border-top: 1px solid #e5e5e5;">
-                                <button style="background-color: buttonface;color: #333;" type="button" class="f-z-16 btn btn-secondary" data-bs-dismiss="modal" @click="text_analyze_modal = false">Close</button>
+                    <div
+                        class="modal fade left-0 right-0 top-0 bottom-0"
+                        id="exampleModal"
+                        tabindex="-1"
+                        aria-labelledby="exampleModalLabel"
+                        aria-hidden="true"
+                        :style="text_analyze_modal ? 'opacity: 1;overflow: visible;display: block;background-color: #0000006b;' : 'pointer-events: none;'"
+                        @click="text_analyze_modal = false">
+                        <div class="modal-dialog" style="transition: 0.15s;" :style="text_analyze_modal?'top: 25%;':'top: 0px;'" @click.stop>
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h1 class="modal-title fs-5" id="exampleModalLabel" style="font-size: 30px;">Анализ новости</h1>
+                                    <!-- <button type="button" class="f-z-16 btn-close" data-bs-dismiss="modal" aria-label="Close"></button> -->
+                                </div>
+                                <div class="modal-body" style="line-height: 1.42857143;">
+                                    Анализ новости - это инструмент, при помощи которого Вы можете получить подробный анализ новости от Исcкусственного Интелекта с той или иной точки зрения. На вход подается выражение - запрос: <b>"Предоставь мне подробный анализ данной новости + точка зрения"</b> Во вкладке <b>"Условие"</b> можно выбрать точку зрения.
+                                    <br><br>
+                                    "Бизнес" - с точки зрения бизнеса.<br>
+                                    "Государство" - с точки зрения государства.<br>
+                                    "Сил.Структуры" - с точки зрения силовых структур<br>
+                                    "Разные т.з." - с разных точек зрения
+                                </div>
+                                <div class="modal-footer" style="height: auto;border-top: 1px solid #e5e5e5;">
+                                    <button style="background-color: buttonface;color: #333;" type="button" class="f-z-16 btn btn-secondary" data-bs-dismiss="modal" @click="text_analyze_modal = false">Close</button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -140,6 +209,8 @@
     export default {
         data() {
             return {
+                select_options_modal: false,
+
                 condition: "",
                 input: "",
                 output: "",
@@ -215,6 +286,7 @@
                 textArea.value = ""
             },
             change_condition(statement) {
+                this.select_options_modal = false;
                 if (statement == "бизнес") {this.condition = "С точки зрения бизнеса"} 
                 if (statement == "государство") {this.condition = "С точки зрения государства"} 
                 if (statement == "сил.структуры") {this.condition = "С точки зрения силовых структур"} 
@@ -408,13 +480,13 @@
 }
 .btn-success {
     color: #fff !important;
-    background-color: #5cb85c !important;
-    border-color: #4cae4c !important;
+    background-color: #3B5998 !important;
+    border-color: #3B5998 !important;
 }
 .btn-success:hover {
     color: #fff !important;
-    background-color: #449d44 !important;
-    border-color: #398439 !important;
+    background-color: #324c82 !important;
+    border-color: #324c82 !important;
 }
 .btn-info:hover, .btn-info:focus, .btn-info:active, .btn-info.active, .open .dropdown-toggle.btn-info, .btn-info:active:focus, .btn-info:active:hover, .btn-info.active:hover, .btn-info.active:focus {
     background-color: #21b9bb !important;
@@ -505,5 +577,46 @@ textarea.form-control {
     background: white !important;
     color: #ccc;
     cursor: default;
+}
+
+/*  */
+
+.select-option {
+    padding:6px 7px;
+    cursor:pointer;
+    height:27px;
+    white-space:nowrap;
+    transition: .15s;
+}
+
+.select-option.active,
+.select-option:hover {
+    background: rgb(59, 89, 152);
+    color: white;
+}
+
+.select-option:not(.select-option:last-child) {
+    border-bottom:1px solid rgb(59, 89, 152);
+}
+
+.select-options {
+    z-index:1;
+    overflow-y: clip;
+}
+.select-options-styles {
+    font-size:13px;
+    background:white;
+    border-radius:4px;
+    border:1px solid rgb(59, 89, 152);
+    margin-top: 5px;
+}
+
+.select-title {
+    background:rgb(59, 89, 152);
+    height:27px;
+    padding:0px 8px 2px;
+    border-radius:4px;
+    font-size:13px;
+    width:145px;
 }
 </style>
