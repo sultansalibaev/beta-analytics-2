@@ -1,5 +1,6 @@
 <template>
     <div @click.stop="reset">
+        <input type="hidden" id="media_type" :value="media_type">
         <div class="wrap-body p-t-10">
             <VHeader class="m-b-15" />
             <TopTools class="m-b-15" />
@@ -17,6 +18,7 @@ import BottomTools from './components/BottomTools.vue'
 import VNews from './components/VNews.vue'
 import {
     item_modal,
+    media_type,
 } from "@/response/data/index";
 
 export default {
@@ -28,7 +30,7 @@ export default {
         VNews,
     },
     setup() {
-        return { item_modal }
+        return { item_modal, media_type }
     },
     methods: {
         reset() {

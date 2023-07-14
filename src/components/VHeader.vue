@@ -1,6 +1,6 @@
 <template>
     <div class="flex select-none media-header-1439">
-        <div class="flex w-half m-r-15 media-header-item-1439 media-header-margin-1439 media-header-top-875" onclick="amplitude_event(event, document.querySelector('#p_id').value, 'analytics_reborn')" data-event_type="click_origin_choice">
+        <div class="flex w-half m-r-15 media-header-item-1439 media-header-margin-1439 media-header-top-875" onclick="amplitude_event(event, document.querySelector('#p_id').value, 'analytics_reborn', {media_type: document.querySelector('#media_type').value, event_type: 'click_origin_choice'})">
             <div class="r_type m-r-2" :class="{
                 selected: r_type == 1
             }" @click="r_type = 1;selected_social_categories = {}">
@@ -72,8 +72,7 @@
                 <div class="export-text">
                     <div
                         class="p-b-1" 
-                        onclick="amplitude_event(event, document.querySelector('#p_id').value, 'analytics_reborn')"
-                        data-event_type="click_export_to_labels"
+                        onclick="amplitude_event(event, document.querySelector('#p_id').value, 'analytics_reborn', {media_type: document.querySelector('#media_type').value, event_type: 'click_export_to_labels'})"
                         @click="get_favorites">
                         <!-- {{ i18n('Экспорт') }} -->
                         {{ i18n('Избранное') }}

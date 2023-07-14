@@ -1,22 +1,23 @@
 <template>
     <div class="wrap-body m-b-15 flex items-center result-info-1439">
-        <span>
-            <span style="font-size: 16px">{{ i18n('Результат фильтра') }}:&nbsp;&nbsp;</span>
-            <span class="result-count result-count__items"
-                >{{ news_count.push_space() }}{{ similars_count ? ` + ${similars_count}` : '' }}&nbsp;&nbsp;</span
+        <span style="color:#A8A8A8;line-height: 1.2;">
+            <span style="font-size: 16px;color: #333 !important;">{{ i18n('Результат фильтра') }}:&nbsp;&nbsp;</span>
+            <span class="whitespace-nowrap"><span class="result-count result-count__items"
+                >{{ news_count.push_space() }}{{ similars_count ? ` + ${similars_count}` : '' }}&nbsp;</span
             >
+            <template v-if="isGrouped"> групп </template> новостей</span> <span class="whitespace-nowrap">(
             <span class="result-count result-count__resource"
-                >({{ resources_count.push_space() }})</span
-            >
+                >{{ resources_count.push_space() }}</span
+            > источников)</span>
         </span>
 
         <div
             class="sort-by-metrics flex items-center result-info-m-l-0-1439 overflow-hidden"
             v-show="r_type == 2 && !isGrouped"
-            onclick="amplitude_event(event, document.querySelector('#p_id').value, 'analytics_reborn', 'click_metrics_sort')"
             style="max-height: 27px;"
         >
             <svg fill="#A7B1C2" class="sort-by-metric prompt-parent" 
+                    onclick="amplitude_event(event, document.querySelector('#p_id').value, 'analytics_reborn', {media_type: document.querySelector('#media_type').value, event_type:'click_metrics_sort', metric_type: 'reactions'})"
                     :class="{
                         active: selected_soc_metrics == 'likes',
                         disabled:
@@ -61,6 +62,7 @@
             <i
                 class="fa sort-by-metric prompt-parent fa-comments"
                 @click="select_metric('comments')"
+                onclick="amplitude_event(event, document.querySelector('#p_id').value, 'analytics_reborn', {media_type: document.querySelector('#media_type').value, event_type:'click_metrics_sort', metric_type: 'comments'})"
                 :class="{
                     active: selected_soc_metrics == 'comments',
                     disabled:
@@ -83,6 +85,7 @@
             <i
                 class="fa sort-by-metric prompt-parent fa-share"
                 @click="select_metric('reposts')"
+                onclick="amplitude_event(event, document.querySelector('#p_id').value, 'analytics_reborn', {media_type: document.querySelector('#media_type').value, event_type:'click_metrics_sort', metric_type: 'reposts'})"
                 :class="{
                     active: selected_soc_metrics == 'reposts',
                     disabled:
@@ -105,6 +108,7 @@
             <i
                 class="fa sort-by-metric prompt-parent fa-users"
                 @click="select_metric('members')"
+                onclick="amplitude_event(event, document.querySelector('#p_id').value, 'analytics_reborn', {media_type: document.querySelector('#media_type').value, event_type:'click_metrics_sort', metric_type: 'audience'})"
                 :class="{
                     active: selected_soc_metrics == 'members',
                     disabled:
@@ -128,6 +132,7 @@
                 class="fa-solid sort-by-metric prompt-parent fa-calendar"
                 style="font-size: 17px; padding-bottom: 5px"
                 @click="select_metric('')"
+                onclick="amplitude_event(event, document.querySelector('#p_id').value, 'analytics_reborn', {media_type: document.querySelector('#media_type').value, event_type:'click_metrics_sort', metric_type: 'date'})"
                 :class="{
                     active: selected_soc_metrics == '',
                 }"
@@ -139,16 +144,14 @@
         
         <div class="switcher ml-auto">
             <div
-                onclick="amplitude_event(event, document.querySelector('#p_id').value, 'analytics_reborn')"
-                data-event_type="click_single_view"
+                onclick="amplitude_event(event, document.querySelector('#p_id').value, 'analytics_reborn', {media_type: document.querySelector('#media_type').value, event_type: 'click_single_view'})"
                 style="border-radius: 3px 0 0 3px;"
                 @click="isGrouped = false"
                 :class="{
                     active: !isGrouped
                 }">{{ i18n('По одной') }}</div>
             <div
-                onclick="amplitude_event(event, document.querySelector('#p_id').value, 'analytics_reborn')"
-                data-event_type="click_grouped_view"
+                onclick="amplitude_event(event, document.querySelector('#p_id').value, 'analytics_reborn', {media_type: document.querySelector('#media_type').value, event_type: 'click_grouped_view'})"
                 style="border-radius: 0 3px 3px 0;"
                 @click="isGrouped = true"
                 :class="{
@@ -157,8 +160,7 @@
         </div>
 
         <v-pagination
-            onclick="amplitude_event(event, document.querySelector('#p_id').value, 'analytics_reborn')"
-            data-event_type="click_switch_news_tab"
+            onclick="amplitude_event(event, document.querySelector('#p_id').value, 'analytics_reborn', {media_type: document.querySelector('#media_type').value, event_type: 'click_switch_news_tab'})"
             :selected_page="selected_page"
             :general_count="news_count"
             :set_selected_page="set_selected_page"/>
@@ -297,8 +299,7 @@
             <div style="padding: 10px 8px 15.5px 8px;height: calc(100% - 43px);background: #f3f3f4;">
                 <div class="wrap-body flex items-center" style="margin-bottom: 10px;">
                     <v-pagination
-                        onclick="amplitude_event(event, document.querySelector('#p_id').value, 'analytics_reborn')"
-                        data-event_type="click_switch_news_tab"
+                        onclick="amplitude_event(event, document.querySelector('#p_id').value, 'analytics_reborn', {media_type: document.querySelector('#media_type').value, event_type: 'click_switch_news_tab'})"
                         class="result-info-m-r-auto-1439"
                         :selected_page="selected_similars_page"
                         :general_count="items.find(item => item.item_id == similars_modal)?.similars_count?.length || 0"
@@ -334,7 +335,7 @@
                                             class="item-title__text hover-underline"
                                             :title="similar_item.title"
                                             @click="modal_item = similar_item"
-                                            onclick="amplitude_event(event, document.querySelector('#p_id').value, 'analytics_reborn', 'click_card_open')"
+                                            onclick="amplitude_event(event, document.querySelector('#p_id').value, 'analytics_reborn', {media_type: document.querySelector('#media_type').value, event_type:'click_card_open'})"
                                         >
                                             {{ similar_item.title }}
                                         </div>
@@ -581,8 +582,7 @@
                                             class="favorites"
                                             style="margin-right: 8px"
                                             @click="chatgpt_item = similar_item"
-                                            onclick="amplitude_event(event, document.querySelector('#p_id').value, 'analytics_reborn')"
-                                            data-event_type="click_card_llm"
+                                            onclick="amplitude_event(event, document.querySelector('#p_id').value, 'analytics_reborn', {media_type: document.querySelector('#media_type').value, event_type: 'click_card_llm'})"
                                             v-show="similar_item?.logs !== null"
                                             :disabled="similar_item?.logs === undefined"
                                             :style="similar_item?.logs === undefined ? 'cursor: wait;' : ''"
@@ -1465,7 +1465,7 @@
                             class="item-title__text hover-underline"
                             :title="item.title"
                             @click="modal_item = item"
-                            onclick="amplitude_event(event, document.querySelector('#p_id').value, 'analytics_reborn', 'click_card_open')"
+                            onclick="amplitude_event(event, document.querySelector('#p_id').value, 'analytics_reborn', {media_type: document.querySelector('#media_type').value, event_type:'click_card_open'})"
                         >
                             {{ item.title }}
                         </div>
@@ -1721,8 +1721,7 @@
                             class="favorites"
                             style="margin-right: 8px"
                             @click="chatgpt_item = item"
-                            onclick="amplitude_event(event, document.querySelector('#p_id').value, 'analytics_reborn')"
-                            data-event_type="click_card_llm"
+                            onclick="amplitude_event(event, document.querySelector('#p_id').value, 'analytics_reborn', {media_type: document.querySelector('#media_type').value, event_type: 'click_card_llm'})"
                             v-show="item?.logs !== null"
                             :disabled="item?.logs === undefined"
                             :style="item?.logs === undefined ? 'cursor: wait;' : ''"
@@ -1746,8 +1745,7 @@
     <!-- Pagination -->
     <div class="wrap-body m-b-15 flex items-center" v-show="items?.length">
         <v-pagination
-            onclick="amplitude_event(event, document.querySelector('#p_id').value, 'analytics_reborn')"
-            data-event_type="click_switch_news_tab"
+            onclick="amplitude_event(event, document.querySelector('#p_id').value, 'analytics_reborn', {media_type: document.querySelector('#media_type').value, event_type: 'click_switch_news_tab'})"
             class="result-info-m-r-auto-1439"
             :selected_page="selected_page"
             :general_count="news_count"

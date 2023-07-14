@@ -2,7 +2,7 @@
     <highcharts
         :options="columnOptions"
         class="column w-full"
-        onclick="if (event?.target?.classList?.contains('highcharts-point')) amplitude_event(event, document.querySelector('#p_id').value, 'analytics_reborn', 'click_sources_bar')"
+        onclick="if (event?.target?.classList?.contains('highcharts-point')) amplitude_event(event, document.querySelector('#p_id').value, 'analytics_reborn', {media_type: document.querySelector('#media_type').value, event_type: 'click_sources_bar'})"
         ></highcharts>
 </template>
 

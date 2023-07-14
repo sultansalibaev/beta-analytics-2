@@ -5,14 +5,14 @@
                 <span>{{ i18n(map ? `${map_switch ? 'Регионы' : 'Страны'} источников публикаций` : `Тональность по ${map_switch ? 'регионам' : 'странам'}`) }}</span>
                 <div class="switcher">
                     <div
-                        onclick="amplitude_event(event, document.querySelector('#p_id').value, 'analytics_reborn', 'click_regions_map_view')"
+                        onclick="amplitude_event(event, document.querySelector('#p_id').value, 'analytics_reborn', {media_type: document.querySelector('#media_type').value, event_type: 'click_regions_map_view'})"
                         style="border-radius: 3px 0 0 3px;"
                         @click="map = !map"
                         :class="{
                             active: map
                         }">{{ i18n('Карта') }}</div>
                     <div
-                        onclick="amplitude_event(event, document.querySelector('#p_id').value, 'analytics_reborn', 'click_regions_sentiment_view')"
+                        onclick="amplitude_event(event, document.querySelector('#p_id').value, 'analytics_reborn', {media_type: document.querySelector('#media_type').value, event_type: 'click_regions_sentiment_view'})"
                         style="border-radius: 0 3px 3px 0;"
                         @click="map = !map"
                         :class="{
