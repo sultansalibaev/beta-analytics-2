@@ -291,59 +291,62 @@
                             res_news_percentage }}</span>-->
                 </span>
 
-                <div class="switcher" v-show="!staced_column">
-                    <div
-                        style="border-radius: 3px 0 0 3px;"
-                        @click="inColumnPercentage = !inColumnPercentage"
-                        :class="{
-                            active: !inColumnPercentage,
-                        }"
-                    >
-                        {{ i18n('Абсолютный') }}
+                <div style="display: flex;align-items: center;gap: 10px;">
+                    <div class="switcher" v-show="!staced_column">
+                        <div
+                            style="border-radius: 3px 0 0 3px;"
+                            @click="inColumnPercentage = !inColumnPercentage"
+                            :class="{
+                                active: !inColumnPercentage,
+                            }"
+                        >
+                            {{ i18n('Абсолютный') }}
+                        </div>
+                        <div
+                            style="border-radius: 0 2px 2px 0;"
+                            @click="inColumnPercentage = !inColumnPercentage"
+                            :class="{
+                                active: inColumnPercentage,
+                            }"
+                        >
+                            {{ i18n('Доля') }}
+                        </div>
+                        <div
+                            :style="{
+                                width: inColumnPercentage ? 'auto' : 0,
+                                marginLeft: inColumnPercentage ? '3px' : 0,
+                                padding: inColumnPercentage ? '0 5px 0 6px' : 0,
+                            }"
+                            style='overflow: hidden;fontWeight: 900;fontFamily: "Font Awesome 5 Free";transition: .25s;border-radius: 0 2px 2px 0;'
+                            :class="{
+                                active: inColumnPercentage && showColumnPercentage
+                            }" @click="showColumnPercentage = !showColumnPercentage">%</div>
                     </div>
-                    <div
-                        style="border-radius: 0 2px 2px 0;"
-                        @click="inColumnPercentage = !inColumnPercentage"
-                        :class="{
-                            active: inColumnPercentage,
-                        }"
-                    >
-                        {{ i18n('Доля') }}
-                    </div>
-                    <div
-                        :style="{
-                            width: inColumnPercentage ? 'auto' : 0,
-                            marginLeft: inColumnPercentage ? '3px' : 0,
-                            padding: inColumnPercentage ? '0 5px 0 6px' : 0,
-                        }"
-                        style='overflow: hidden;fontWeight: 900;fontFamily: "Font Awesome 5 Free";transition: .25s;border-radius: 0 2px 2px 0;'
-                        :class="{
-                            active: inColumnPercentage && showColumnPercentage
-                        }" @click="showColumnPercentage = !showColumnPercentage">%</div>
+    
+                    <!--<v-select @input="set_each_number" :options="each_numbers" :has_img="false" :tabindex="each_numbers.indexOf(each_number)"></v-select>-->
+    
+                    <!-- <i
+                        class="fa fa-refresh cursor-pointer"
+                        @click="reset_resource"
+                        v-if="staced_column && has_selected_resource"
+                    ></i>
+                    <i
+                        class="fa fa-refresh cursor-pointer"
+                        @click="reset_sentiment_resource"
+                        v-else-if="
+                            !staced_column && has_selected_resource_sentiment
+                        "
+                    ></i>
+                    <i
+                        class="fa fa-refresh opacity-0 pointer-events-none"
+                        v-else
+                    ></i> -->
+                    
+                    <ResetFilter v-if="staced_column && has_selected_resource" @click="reset_resource" />
+                    <ResetFilter v-else-if="!staced_column && has_selected_resource_sentiment" @click="reset_sentiment_resource" />
+                    <!-- <ResetFilter v-else class="opacity-0 pointer-events-none" /> -->
                 </div>
 
-                <!--<v-select @input="set_each_number" :options="each_numbers" :has_img="false" :tabindex="each_numbers.indexOf(each_number)"></v-select>-->
-
-                <!-- <i
-                    class="fa fa-refresh cursor-pointer"
-                    @click="reset_resource"
-                    v-if="staced_column && has_selected_resource"
-                ></i>
-                <i
-                    class="fa fa-refresh cursor-pointer"
-                    @click="reset_sentiment_resource"
-                    v-else-if="
-                        !staced_column && has_selected_resource_sentiment
-                    "
-                ></i>
-                <i
-                    class="fa fa-refresh opacity-0 pointer-events-none"
-                    v-else
-                ></i> -->
-                
-                <ResetFilter v-if="staced_column && has_selected_resource" @click="reset_resource" />
-                <ResetFilter v-else-if="!staced_column && has_selected_resource_sentiment" @click="reset_sentiment_resource" />
-                <ResetFilter v-else class="opacity-0 pointer-events-none" />
             </div>
 
             <keep-alive>

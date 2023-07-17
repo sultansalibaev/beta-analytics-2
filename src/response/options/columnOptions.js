@@ -74,8 +74,8 @@ export const reset_sentiment_resource = function () {
 };
 import axios from 'axios'
 import { get_map_params } from "@/response/options/mapOptions"
-import { selected_social_categories, selected_categories, selected_languages, dateRange } from "@/response/data/index"
-import { selected_main_sentiments, project } from "@/response/header"
+import { selected_categories, selected_languages, dateRange } from "@/response/data/index"
+import { selected_main_sentiments, project, selected_social_categories } from "@/response/header"
 import { s_time, f_time } from '@/data'
 
 const waiting = reactive(ref(false))
@@ -378,7 +378,7 @@ export const columnOptions = computed(() => {
                     },
                 },
                 name: i18n("Позитивные"),
-                color: "#1CB394",
+                color: "#18BB9C", // #1CB394
                 states: {
                     hover: {
                         color: "#157e69",
@@ -537,7 +537,7 @@ export const columnOptions = computed(() => {
                     },
                 },
                 name: i18n("Негативные"),
-                color: "#EC5E5E",
+                color: "#f2696b", // #EC5E5E
                 states: {
                     hover: {
                         color: "#a03e3e",

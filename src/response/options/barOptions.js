@@ -9,9 +9,9 @@ export const showBarPercentage = reactive(ref(true));
 let min_height = reactive(ref(190 + 44));
 
 let sentiment_colors = {
-    "1": "#1CB394",
+    "1": "#18BB9C", // #1CB394
     "0": "#F2B90A",
-    "-1": "#EC5E5E",
+    "-1": "#f2696b", // #EC5E5E
 }
 
 let sentiment_states_colors = {
@@ -83,7 +83,7 @@ let barOptions = computed(() => {
     //     cursor: 'pointer',
     //     //showInLegend: false,
     //     name: 'Positive',
-    //     color: "#1CB394",
+    //     color: "#18BB9C", // 1CB394
     //     states: {
     //         hover: {
     //             color: '#157e69',
@@ -120,7 +120,7 @@ let barOptions = computed(() => {
     //     cursor: 'pointer',
     //     //showInLegend: false,
     //     name: 'Negative',
-    //     color: "#EC5E5E",
+    //     color: "#f2696b", // #EC5E5E
     //     states: {
     //         hover: {
     //             color: '#a03e3e',

@@ -1,67 +1,56 @@
 <template>
-    <div class="container main-block p-0">
-        <!-- <div class="col-3" style="max-width: 250px;min-width: 250px;overflow-y: scroll;max-height: 60vh;display: none;">
-            <ul v-for="(item, index) in news" class="list-group" style="margin-bottom: 7px;">
-                <li class="list-group-item" style="padding: 7px 11px;">{{ index }} -  {{ item.substring(0, 20) }}</li>
-            </ul>
-        </div> -->
-        <div class="row w-full m-0">
-            <div class="col-12">
-                
-                <div class="mb-3">
-                    <!-- <span class="badge text-bg-success">Обобщение</span> -->
-                    <!-- <div class="spinner-border text-success" role="status" id="load-circle">
-                        <span class="visually-hidden">Loading...</span>
-                    </div> -->
-                    <div style="display: inline-block">{{ i18n('Что передается в ChatGPT') }}: <i>{{ i18n('Предоставь мне главное из новости в 3-4 предложениях и выдели ключевые лица, игроков, компании и т.д. в новости') }}</i></div>
-                    <div for="textarea_home" class="form-label" style="margin: 12px 0;display: none;">Ввод:</div>
-                    <textarea class="form-control" style="display: none;" id="textarea_home" rows="10" :value="chatgpt_item?.text.maxLength(4_000)" disabled></textarea>
-                    <!-- <div>
-                        <button type="button" class="f-z-16 btn btn-success btn-control" @click="add_text">Добавить новость</button>
-                        <button type="button" class="f-z-16 btn btn-success btn-control" style="margin-left: 10px;" @click="clear">Очистить</button>
-                    </div> -->
-                </div>
-                <div class="mb-3">
-                    <label for="home_textarea2" class="form-label" style="margin: 7px 0 12px;display: none;">Вывод: 
-                        <span class="chatgpt-error" v-show="chatgpt_error">Ошибка со стороны сервера ChatGPT! &nbsp;&nbsp; (попробуйте позже)</span>
-                    </label>
-                    <textarea class="form-control" style="margin-top: 20px;border-radius: 5px;" id="home_textarea2" rows="10" :value="output" disabled></textarea>
-                    <div class="flex" :style="chatgpt_item?.logs['Обобщение']?.result ? 'display:none;' : ''">
-                        <button type="button" class="f-z-16 btn btn-success btn-control" :disabled="load_circle || chatgpt_item?.logs['Обобщение']?.result" @click="prepare_data">
-                            {{ i18n('Запуск') }}
-                            <i id="load-circle"
-                            v-show="load_circle"
-                            class="fa-solid fa-spinner"></i>
-                        </button>
-                        <button type="button" style="margin: 20px 0 0 auto !important;" class="f-z-16 btn btn-info btn-help" data-bs-toggle="modal" data-bs-target="#exampleModal" @click="home_view_modal = true">
-                            {{ i18n('Информация и пояснение') }}
-                        </button>
+    
+    <div>
+        
+        <textarea class="form-control" id="textarea_analyze" style="display:none;" rows="10" :value="chatgpt_item?.text.maxLength(4_000)" disabled></textarea>
+        
+        <div style="color: #A8A8A8;font-size: 13px;margin: 8px 0 12px 0;">{{ i18n('Что передается в ChatGPT') }}:</div>
+        <div style="font-size: 15px;margin-bottom: 12px;">{{ i18n('Предоставь мне главное из новости в 3-4 предложениях и выдели ключевые лица, игроков, компании и т.д. в новости') }}</div>
+
+        <pre style="margin-bottom: 12px;font-family: Roboto;line-height: 1.7!important;font-size: 13.5px!important;white-space: pre-wrap;" v-show="output">{{ output }}</pre>
+
+        <div class="flex items-center justify-between" style="height: 27px;">
+            <button
+                style="background: #3b5998;height: 27px;padding: 0 8px 2px;border-radius: 4px;font-size: 13px;color: white;"
+                @click="prepare_data"
+                :disabled="load_circle || chatgpt_item?.logs['Обобщение']?.result"
+                v-show="!chatgpt_item?.logs['Обобщение']?.result"
+            >
+                {{ i18n('Запуск') }}
+                <i id="load-circle-analyze" v-show="load_circle" class="fa-solid fa-spinner"></i>
+            </button>
+            <button
+                type="button"
+                data-bs-toggle="modal"
+                data-bs-target="#exampleModal"
+                @click="home_view_modal = true"
+                class="ml-auto"
+                style="font-size: 13px;color: #2F82FF;text-decoration: underline;"
+            >{{ i18n('Информация и пояснение') }}</button>
+        </div>
+        
+        <div
+            class="modal fade left-0 right-0 top-0 bottom-0"
+            id="exampleModal"
+            tabindex="-1"
+            aria-labelledby="exampleModalLabel"
+            aria-hidden="true"
+            :style="home_view_modal ? 'opacity: 1;overflow: visible;display: block;background-color: #0000006b;' : 'pointer-events: none;'"
+            @click="home_view_modal = false">
+            <div class="modal-dialog" style="transition: 0.15s;" :style="home_view_modal?'top: 25%;':'top: 0px;'" @click.stop>
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel" style="font-size: 30px;">Обощение</h1>
+                        <!-- <button type="button" class="f-z-16 btn-close" data-bs-dismiss="modal" aria-label="Close"></button> -->
                     </div>
-                </div>
-            </div>
-            <div
-                class="modal fade left-0 right-0 top-0 bottom-0"
-                id="exampleModal"
-                tabindex="-1"
-                aria-labelledby="exampleModalLabel"
-                aria-hidden="true"
-                :style="home_view_modal ? 'opacity: 1;overflow: visible;display: block;background-color: #0000006b;' : 'pointer-events: none;'"
-                @click="home_view_modal = false">
-                <div class="modal-dialog" style="transition: 0.15s;" :style="home_view_modal?'top: 25%;':'top: 0px;'" @click.stop>
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h1 class="modal-title fs-5" id="exampleModalLabel" style="font-size: 30px;">Обощение</h1>
-                            <!-- <button type="button" class="f-z-16 btn-close" data-bs-dismiss="modal" aria-label="Close"></button> -->
-                        </div>
-                        <div class="modal-body" style="line-height: 1.42857143;">
-                            Обобщение - это инструмент, при помощи которого вы можете выделить главное из своих новостей, а также вывести ключевые лица из текста(Если это возможно). На вход для языковой модели GPT подается специальное выражение-запрос: <b>"Предоставь мне главное из новости в 3-4 предложениях и выдели ключевые лица, игроков, компании и т.д. в новости"</b> которое применяется для каждой введенной новости. <br>
-                            Список новостей можно наблюдать на панели слева.
-                            <br><br>
-                            Кнопка "Запуск" отправит ваши новости в GPT и сгенерирует ответ
-                        </div>
-                        <div class="modal-footer" style="height: auto;border-top: 1px solid #e5e5e5;">
-                            <button style="background-color: buttonface;color: #333;" type="button" class="f-z-16 btn btn-secondary" data-bs-dismiss="modal" @click="home_view_modal = false">Close</button>
-                        </div>
+                    <div class="modal-body" style="line-height: 1.42857143;">
+                        Обобщение - это инструмент, при помощи которого вы можете выделить главное из своих новостей, а также вывести ключевые лица из текста(Если это возможно). На вход для языковой модели GPT подается специальное выражение-запрос: <b>"Предоставь мне главное из новости в 3-4 предложениях и выдели ключевые лица, игроков, компании и т.д. в новости"</b> которое применяется для каждой введенной новости. <br>
+                        Список новостей можно наблюдать на панели слева.
+                        <br><br>
+                        Кнопка "Запуск" отправит ваши новости в GPT и сгенерирует ответ
+                    </div>
+                    <div class="modal-footer" style="height: auto;border-top: 1px solid #e5e5e5;">
+                        <button style="background-color: buttonface;color: #333;" type="button" class="f-z-16 btn btn-secondary" data-bs-dismiss="modal" @click="home_view_modal = false">Close</button>
                     </div>
                 </div>
             </div>
@@ -152,7 +141,7 @@
 
                 const temp_chatgpt_item = JSON.parse(JSON.stringify(this.chatgpt_item))
 
-                prepared_data = "\n"
+                prepared_data = ""
 
                 this.chatgpt_error = false;
 
@@ -170,7 +159,7 @@
                                 ],
                             });
                             console.log(completion.data.choices[0].message.content)
-                            prepared_data = prepared_data + "\n\n" + completion.data.choices[0].message.content + "\n\n================================"
+                            prepared_data = completion.data.choices[0].message.content
 
                             let temp_output = prepared_data
 

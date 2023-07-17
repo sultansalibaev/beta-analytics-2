@@ -3,13 +3,13 @@
         <div class="flex w-half m-r-15 media-header-item-1439 media-header-margin-1439 media-header-top-875" onclick="amplitude_event(event, document.querySelector('#p_id').value, 'analytics_reborn', {media_type: document.querySelector('#media_type').value, event_type: 'click_origin_choice'})">
             <div class="r_type m-r-2" :class="{
                 selected: r_type == 1
-            }" @click="r_type = 1;selected_social_categories = {}">
+            }" @click="r_type = 1;selected_social_categories = {};update_get_request_params()">
                 <i class="fa fa-newspaper-o block"></i>
                 <div>{{ generals_count['1'].count.push_space() }}</div>
             </div>
             <div class="r_type m-r-10" :class="{
                 selected: r_type == 2
-            }" @click="r_type = 2">
+            }" @click="r_type = 2;update_get_request_params()">
                 <i class="fa fa-comments block"></i>
                 <div>{{ generals_count['2'].count.push_space() }}</div>
             </div>
@@ -87,8 +87,9 @@
 import i18n from "@/response/utils/i18n"
 import DateRangePicker from '@/components/widgets/DateRangePicker';
 import { modal } from '@/data'
-import { places, selected_regions, selected_categories, selected_languages, resources, resource_names, resource_count, resource_clipped_news_count, resource_full_news_count, column_news_count, selected_social_categories, dynamics, offsetLeft, offsetRight, selected_resources, selected_resource_sentiment, bars_sentiments_selected, selected_date_mode, dateRange, reset_all, get_selected_smi_categories, favorites_modal, favorites } from "@/response/data/index"
-import { r_type, project, languages_count, languages_general_data, categories_general_data, smi_category, smi_categories, selected_main_sentiments, socials, countries, regions, social_categories, generals_count, main_sentiments_count } from "@/response/header"
+import { places, selected_regions, selected_categories, selected_languages, resources, resource_names, resource_count, resource_clipped_news_count, resource_full_news_count, column_news_count, dynamics, offsetLeft, offsetRight, selected_resources, selected_resource_sentiment, bars_sentiments_selected, selected_date_mode, dateRange, reset_all, get_selected_smi_categories, favorites_modal, favorites } from "@/response/data/index"
+import { update_get_request_params } from "@/data/index"
+import { r_type, project, languages_count, languages_general_data, categories_general_data, smi_category, smi_categories, selected_main_sentiments, socials, countries, regions, social_categories, generals_count, main_sentiments_count, selected_social_categories } from "@/response/header"
 import { getProjectCounts, getMainPlacesCount, getDynamicsData, setSentimentsCount, getMainSmiCategoriesAndLanguagesCount, getResourceCount, get_favorites } from "@/response/api"
 import { get_map_params, map_type_switcher } from "@/response/options/mapOptions"
 import { selected_top_resources, each_number, start_top_resources, end_top_resources, max, getResourceData } from "@/response/options/columnOptions"
@@ -98,7 +99,7 @@ export default {
         DateRangePicker,
     },
     setup() {
-        return { i18n, get_selected_smi_categories, favorites_modal, favorites, getProjectCounts, getMainPlacesCount, getDynamicsData, setSentimentsCount, getMainSmiCategoriesAndLanguagesCount, getResourceCount, get_favorites, selected_top_resources, each_number, places, map_type_switcher, start_top_resources, end_top_resources, max, selected_regions, selected_categories, selected_languages, resources, getResourceData, resource_names, resource_count, resource_clipped_news_count, resource_full_news_count, column_news_count, selected_social_categories, social_categories, generals_count, main_sentiments_count, dynamics, offsetLeft, offsetRight, selected_resources, selected_resource_sentiment, bars_sentiments_selected, selected_date_mode, dateRange, modal, reset_all, r_type, project, languages_count, get_map_params, languages_general_data, categories_general_data, smi_category, smi_categories, selected_main_sentiments, socials, countries, regions }
+        return { update_get_request_params, i18n, get_selected_smi_categories, favorites_modal, favorites, getProjectCounts, getMainPlacesCount, getDynamicsData, setSentimentsCount, getMainSmiCategoriesAndLanguagesCount, getResourceCount, get_favorites, selected_top_resources, each_number, places, map_type_switcher, start_top_resources, end_top_resources, max, selected_regions, selected_categories, selected_languages, resources, getResourceData, resource_names, resource_count, resource_clipped_news_count, resource_full_news_count, column_news_count, selected_social_categories, social_categories, generals_count, main_sentiments_count, dynamics, offsetLeft, offsetRight, selected_resources, selected_resource_sentiment, bars_sentiments_selected, selected_date_mode, dateRange, modal, reset_all, r_type, project, languages_count, get_map_params, languages_general_data, categories_general_data, smi_category, smi_categories, selected_main_sentiments, socials, countries, regions }
     },
     methods: {
         img_url(name) {
@@ -120,6 +121,8 @@ export default {
 
                 this.selected_social_categories[id] = !this.selected_social_categories[id];
             }
+
+            this.update_get_request_params()
         },
         select_main_sentiment(event, id) {
             this.selected_main_sentiments[id] = !this.selected_main_sentiments[id];

@@ -4,7 +4,7 @@ import {
     computed,
     watch,
 } from "vue";
-import { project, r_type } from '@/response/header'
+import { project, r_type, selected_social_categories } from '@/response/header'
 
 
 function getRequest() {
@@ -21,7 +21,7 @@ function getRequest() {
     return params;
 }
 
-const request = getRequest();
+export const request = getRequest();
 
 export const dateRange = reactive(ref({
     startDate: request?.startDate ?? project.value.s_date,
@@ -95,7 +95,6 @@ export const places = reactive(ref({
 export const reset_all = reactive(ref(false))
 
 export const selected_regions = reactive(ref({}))
-export const selected_social_categories = reactive(ref({}))
 export const dynamics = reactive(ref([]))
 export const resources = reactive(ref([]))
 export const resource_count = reactive(ref(0))

@@ -3,29 +3,30 @@
         <div class="map bg-white p-9-10-9-11 w-half m-r-15 pos-r tool-shadow media-header-item-1439 media-header-margin-1439" style="padding-bottom:0;min-width: calc(50% - 8px);">
             <div class="flex justify-between items-center title" style="height: 22px;">
                 <span>{{ i18n(map ? `${map_switch ? 'Регионы' : 'Страны'} источников публикаций` : `Тональность по ${map_switch ? 'регионам' : 'странам'}`) }}</span>
-                <div class="switcher">
-                    <div
-                        onclick="amplitude_event(event, document.querySelector('#p_id').value, 'analytics_reborn', {media_type: document.querySelector('#media_type').value, event_type: 'click_regions_map_view'})"
-                        style="border-radius: 3px 0 0 3px;"
-                        @click="map = !map"
-                        :class="{
-                            active: map
-                        }">{{ i18n('Карта') }}</div>
-                    <div
-                        onclick="amplitude_event(event, document.querySelector('#p_id').value, 'analytics_reborn', {media_type: document.querySelector('#media_type').value, event_type: 'click_regions_sentiment_view'})"
-                        style="border-radius: 0 3px 3px 0;"
-                        @click="map = !map"
-                        :class="{
-                            active: !map
-                        }">{{ i18n('Тональность') }}</div>
+                <div style="display: flex;align-items: center;gap: 10px;">
+                    <div class="switcher">
+                        <div
+                            onclick="amplitude_event(event, document.querySelector('#p_id').value, 'analytics_reborn', {media_type: document.querySelector('#media_type').value, event_type: 'click_regions_map_view'})"
+                            style="border-radius: 3px 0 0 3px;"
+                            @click="map = !map"
+                            :class="{
+                                active: map
+                            }">{{ i18n('Карта') }}</div>
+                        <div
+                            onclick="amplitude_event(event, document.querySelector('#p_id').value, 'analytics_reborn', {media_type: document.querySelector('#media_type').value, event_type: 'click_regions_sentiment_view'})"
+                            style="border-radius: 0 3px 3px 0;"
+                            @click="map = !map"
+                            :class="{
+                                active: !map
+                            }">{{ i18n('Тональность') }}</div>
+                    </div>
+                    <!-- <i class="fa fa-refresh cursor-pointer" id="reset-map" @click="reset_regions" v-if="map && has_selected_place"></i>
+                    <i class="fa fa-refresh cursor-pointer" id="reset-map" @click="reset_sentiment" v-else-if="!map && has_selected_sentiment"></i>
+                    <i class="fa fa-refresh opacity-0 pointer-events-none" id="reset-map" v-else></i> -->
+                    
+                    <ResetFilter id="reset-map" @click="reset_regions" v-if="map && has_selected_place" />
+                    <ResetFilter id="reset-map" @click="reset_sentiment" v-else-if="!map && has_selected_sentiment" />
                 </div>
-                <!-- <i class="fa fa-refresh cursor-pointer" id="reset-map" @click="reset_regions" v-if="map && has_selected_place"></i>
-                <i class="fa fa-refresh cursor-pointer" id="reset-map" @click="reset_sentiment" v-else-if="!map && has_selected_sentiment"></i>
-                <i class="fa fa-refresh opacity-0 pointer-events-none" id="reset-map" v-else></i> -->
-                
-                <ResetFilter id="reset-map" @click="reset_regions" v-if="map && has_selected_place" />
-                <ResetFilter id="reset-map" @click="reset_sentiment" v-else-if="!map && has_selected_sentiment" />
-                <ResetFilter id="reset-map" v-else class="opacity-0 pointer-events-none"  />
             </div>
             <!--  -->
             <div class="flex map_container media-map-960" :style="{
@@ -129,47 +130,51 @@
         <div class="map bg-white w-half tool-shadow media-header-item-1439">
             <div class="flex justify-between items-center title p-9-10-9-11" style="padding-bottom:0;margin-bottom:4px;height: 32px;">
                 <span>{{ i18n(`Динамика публикаций ${basic_line ? '' : 'по тональности'}`) }}</span>
-
-                <div class="drp flex items-center">
-                    <span class="date-mode_container">
-                        <div class="flex items-center">
-                            <template v-for="[key, value] in Object.entries(date_modes)" :key="value[1]">
-                                <i
-                                    :disabled="!value[2]"
-                                    @click="set_date_mode(value[2], key)"
-                                    :class="{
-                                        [value[1]]: true,
-                                        disabled: !value[2],
-                                        active: selected_date_mode == key
-                                    }"
-                                    style="font-size: 15px;"
-                                    :style="`border-radius: ${key == 'hourly' ? '0 3px 3px 0' : key == 'monthly' ? '3px 0 0 3px' : '0'};`"
-                                    class=" flex items-center justify-center cursor-pointer prompt-parent"
-                                >
-                                    <div class="prompt" :style="!value[2] ? '--prompt-color: #bbb !important' : ''" v-html="i18n(value[0])"></div>
-                                </i>
-                            </template>
-                        </div>
-                        <!-- <i :class="{
-                            [date_modes[selected_date_mode][1]]: true,
-                        }" class="active flex items-center justify-center cursor-pointer prompt-parent" style="border-radius: 3px">
-                            <div class="prompt" v-html="date_modes[selected_date_mode][0]"></div>
-                        </i> -->
-                    </span>
+                <div style="display: flex;align-items: center;gap: 10px;">
+                    <div class="drp flex items-center">
+                        <span class="date-mode_container">
+                            <div class="flex items-center">
+                                <template v-for="[key, value] in Object.entries(date_modes)" :key="value[1]">
+                                    <i
+                                        :disabled="!value[2]"
+                                        @click="set_date_mode(value[2], key)"
+                                        :class="{
+                                            [value[1]]: true,
+                                            disabled: !value[2],
+                                            active: selected_date_mode == key
+                                        }"
+                                        style="font-size: 15px;"
+                                        :style="`border-radius: ${key == 'hourly' ? '0 3px 3px 0' : key == 'monthly' ? '3px 0 0 3px' : '0'};`"
+                                        class=" flex items-center justify-center cursor-pointer prompt-parent"
+                                    >
+                                        <div
+                                            class="prompt"
+                                            :style="!value[2] ? 'right: 0;left: unset;--prompt-before-left: auto;--prompt-before-right: 8px;--prompt-color: #bbb !important;' : 'right: 0;left: unset;--prompt-before-left: auto;--prompt-before-right: 8px;'"
+                                            v-html="i18n(value[0])"></div>
+                                    </i>
+                                </template>
+                            </div>
+                            <!-- <i :class="{
+                                [date_modes[selected_date_mode][1]]: true,
+                            }" class="active flex items-center justify-center cursor-pointer prompt-parent" style="border-radius: 3px">
+                                <div class="prompt" v-html="date_modes[selected_date_mode][0]"></div>
+                            </i> -->
+                        </span>
+                    </div>
+    
+                    <!-- <i class="fa fa-refresh cursor-pointer" @click="reset_dynamics" v-if="basic_line" :style="{
+                        opacity: has_selected_date ? 1 : 0,
+                        pointerEvents: has_selected_date ? 'auto' : 'none',
+                    }"></i>
+                    <i class="fa fa-refresh cursor-pointer" @click="reset_sentiment_dynamics" v-else-if="!basic_line" :style="{
+                        opacity: has_selected_sentiment_date ? 1 : 0,
+                        pointerEvents: has_selected_sentiment_date ? 'auto' : 'none',
+                    }"></i> -->
+                    
+                    <ResetFilter @click="reset_dynamics" v-if="basic_line && has_selected_date" />
+                    <ResetFilter @click="reset_sentiment_dynamics" v-else-if="!basic_line && has_selected_sentiment_date" />
+                    <!-- <ResetFilter v-else class="opacity-0 pointer-events-none"  /> -->
                 </div>
-
-                <!-- <i class="fa fa-refresh cursor-pointer" @click="reset_dynamics" v-if="basic_line" :style="{
-                    opacity: has_selected_date ? 1 : 0,
-                    pointerEvents: has_selected_date ? 'auto' : 'none',
-                }"></i>
-                <i class="fa fa-refresh cursor-pointer" @click="reset_sentiment_dynamics" v-else-if="!basic_line" :style="{
-                    opacity: has_selected_sentiment_date ? 1 : 0,
-                    pointerEvents: has_selected_sentiment_date ? 'auto' : 'none',
-                }"></i> -->
-                
-                <ResetFilter @click="reset_dynamics" v-if="basic_line && has_selected_date" />
-                <ResetFilter @click="reset_sentiment_dynamics" v-else-if="!basic_line && has_selected_sentiment_date" />
-                <ResetFilter v-else class="opacity-0 pointer-events-none"  />
             </div>
             <div>
                 <LineChart v-if="map" :type="basic_line"></LineChart>

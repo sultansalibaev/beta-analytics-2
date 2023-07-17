@@ -58,14 +58,14 @@ export const has_selected_sentiment_date = computed(() => {
 
 // let minRange;
 let sentimentColor = {
-    1: "#1CB394",
+    1: "#18BB9C", // #1CB394
     0: "#F2B90A",
-    "-1": "#EC5E5E",
+    "-1": "#f2696b", // #EC5E5E
 };
 let color_to_sentiment = {
-    "#1CB394": "1",
+    "#18BB9C": "1",
     "#F2B90A": "0",
-    "#EC5E5E": "-1",
+    "#f2696b": "-1", // #EC5E5E
 };
 
 //if (s_date == f_date) {

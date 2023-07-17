@@ -1,7 +1,7 @@
 import { reactive, ref, watch } from "vue";
 import { getLang } from '@/response/utils/langIs'
 import { dateRange, selected_date_mode, thumbnail_dates } from '@/response/data/index'
-import { project } from '@/response/header'
+import { project, r_type, selected_social_categories } from '@/response/header'
 import { getProjectCounts } from "@/response/api"
 
 export const temp_end_date = reactive(ref(null))
@@ -59,8 +59,21 @@ export function setDateRange() {
 
 	update_thumbnail_dates()
 
-    getProjectCounts()
-    window.history.replaceState('', '', `/${getLang()}/analytics/beta?id=${project.value.id}&startDate=${dateRange.value.startDate}&endDate=${dateRange.value.endDate}`);
+    getProjectCounts(false)
+
+	update_get_request_params()
+}
+
+export const update_get_request_params = () => {
+	
+	let category_id = '';
+	
+    if (r_type.value == 2) {
+        category_id = Object.keys(selected_social_categories.value).length ? (
+            Object.keys(selected_social_categories.value).filter(soc_key => selected_social_categories.value[soc_key]).join(',')
+        ) : 0;
+    }
+    window.history.replaceState('', '', `/${getLang()}/analytics/beta?id=${project.value.id}&startDate=${dateRange.value.startDate}&endDate=${dateRange.value.endDate}&r_type=${r_type.value}&category_id=${category_id}`);
 }
 
 function update_thumbnail_dates() {

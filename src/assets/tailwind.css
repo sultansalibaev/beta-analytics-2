@@ -424,6 +424,10 @@ body {
     background: #3B5998;
     color: white;
 }
+.region.active .region-news_count span:first-child,
+.region:hover .region-news_count span:first-child {
+    color: white !important;
+}
 
 .region-news_count {
     font-size: 12.5px;
@@ -623,7 +627,9 @@ body {
     transform: rotate(90deg);
 }
 :root {
-    --prompt-color: #7cb5ec
+    --prompt-color: #7cb5ec;
+    --prompt-before-left: 5px;
+    --prompt-before-right: unset;
 }
 .prompt {
     position: absolute!important;
@@ -647,7 +653,8 @@ body {
     content: "▶";
     position: absolute;
     bottom: 100%;
-    left: 5px;
+    left: var(--prompt-before-left);
+    right: var(--prompt-before-right);
     color: var(--prompt-color) !important;
     height: 9px;
     transform: rotate(-90deg);

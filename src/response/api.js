@@ -1,7 +1,7 @@
 import axios from 'axios'
-import { project, socials, countries, regions, social_categories, generals_count, smi_categories, r_type, main_sentiments_count, selected_main_sentiments, languages_count, languages_general_data, categories_general_data, smi_category, search_tags, isKazakstan } from '@/response/header'
+import { project, socials, countries, regions, social_categories, generals_count, smi_categories, r_type, main_sentiments_count, selected_main_sentiments, languages_count, languages_general_data, categories_general_data, smi_category, search_tags, isKazakstan, selected_social_categories } from '@/response/header'
 import {
-    dateRange, selected_social_categories, places, selected_categories, selected_languages, resource_count, resource_full_news_count, column_news_count, resources, offsetLeft, offsetRight, resource_clipped_news_count, selected_resources, selected_resource_sentiment, bars_sentiments_selected, selected_dates, selected_sentiment_dates, selected_date_mode, dynamics, soc_metrics, enable_metrics, is_high_news_count, news_count, similars_count, resources_count, items, items_loading, selected_page, selected_soc_metrics, resource_count_loading, laoding_metrics, selected_regions, reset_all, get_selected_smi_categories, isGrouped, similar_items, similar_items_loading, thumbnail_dates, countries_with_regions, getCountryRegions, other_ids, p_user_id, favorites, favorites_modal, current_country_id } from '@/response/data/index'
+    dateRange, places, selected_categories, selected_languages, resource_count, resource_full_news_count, column_news_count, resources, offsetLeft, offsetRight, resource_clipped_news_count, selected_resources, selected_resource_sentiment, bars_sentiments_selected, selected_dates, selected_sentiment_dates, selected_date_mode, dynamics, soc_metrics, enable_metrics, is_high_news_count, news_count, similars_count, resources_count, items, items_loading, selected_page, selected_soc_metrics, resource_count_loading, laoding_metrics, selected_regions, reset_all, get_selected_smi_categories, isGrouped, similar_items, similar_items_loading, thumbnail_dates, countries_with_regions, getCountryRegions, other_ids, p_user_id, favorites, favorites_modal, current_country_id, request } from '@/response/data/index'
 import { getResourceData, selected_top_resources, start_top_resources, end_top_resources, each_number, max } from '@/response/options/columnOptions'
 import { get_map_params } from '@/response/options/mapOptions'
 import { selected_dates_query, selected_sentiment_dates_query } from '@/response/options/lineOptions'
@@ -77,7 +77,7 @@ const obj_copy = function (obj) {
 	return JSON.parse(JSON.stringify(obj))
 }
 
-export function getProjectCounts() {
+export function getProjectCounts(update_period = true) {
 	items_loading.value = true;
 
 	axios
@@ -149,7 +149,15 @@ export function getProjectCounts() {
 				return prev
 			}, {})
 
-            r_type.value = (generals_count.value[1].count > 0) ? 1 : 2;
+			if (update_period) r_type.value = request?.r_type ?? ((generals_count.value[1].count > 0) ? 1 : 2);
+
+			console.log('request?.category_id', request?.category_id, selected_social_categories.value, request);
+			
+			if (request?.category_id) {
+				selected_social_categories.value = request?.category_id.split(',').reduce((prev, soc_id) => ({...prev, [soc_id]: true}), {});
+				console.log('request?.category_id', request?.category_id, selected_social_categories.value);
+			}
+			console.log('request?.category_id', request?.category_id, selected_social_categories.value);
             
             if (firstLoad && r_type.value == 2) {
                 console.log('Smi Empty');
