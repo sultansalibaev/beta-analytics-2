@@ -1,80 +1,81 @@
 <template>
     
     <div @click.stop="used_prompt_list_modal = false;">
-        
-        <textarea class="form-control" id="textarea_analyze" style="display:none;" rows="10" :value="chatgpt_item?.text.maxLength(4_000)" disabled></textarea>
-
-        <!-- <div style="font-size: 18px;font-weight: 500;">Условие</div>
-        <div style="color: #A8A8A8;font-size: 13px;margin: 8px 0 12px 0;">Выберите подходящую точку зрения:</div> -->
-        <div class="inline-flex relative" style="margin-bottom:8px;">
-            <div
-                @click.stop="toggle_prompt_list_modal()" 
-                :class="{
-                    'select-input-error': input == ''
-                }"
-                class="inline-flex text-white justify-between items-center cursor-pointer select-title"
-                style="background: white;border: 1px solid #3b5998;padding: 0;overflow: hidden;color: #858585;width: 350px;"
-            >
-                <input
-                    type="text"
-                    class="focus:outline-none"
-                    style="height: 100%;width: 100%;padding: 0 8px 2px;"
-                    :placeholder="i18n('Напиши ответ от лица правительства')"
-                    id="analyze-input"
-                    @click.stop="used_prompt_list_modal = true"
-                    v-model="input">
-                
-                
-                <i class="fa-solid fa-angle-down transition-all" style="margin-left:5px;margin-right: 6px;" :style="used_prompt_list_modal ? '' : 'padding-top: 2px;'" :class="{
-                    'rotate-x-180': used_prompt_list_modal
-                }"></i>
-            </div>
-            <div class="absolute top-full right-0 left-0 transition-all select-options" :style="{
-                    height: used_prompt_list_modal ? '' : '0px',
-                }" style="max-height: 300px;">
-                <div class="flex flex-col select-none select-options-styles">
-                    <div class="select-option pointer-events-none"
-                        style="border-color: #ccc;color: #ccc;"
-                        v-if="sorted_used_prompt_list.length == 0"
-                    >{{ i18n('Список пустой') }}</div>
-                    <div
-                        class="select-option" 
-                        v-else
-                        v-for="used_prompt in sorted_used_prompt_list"
-                        :key="used_prompt"
-                        :title="used_prompt"
-                        @click="input = used_prompt;used_prompt_list_modal = false;"
-                        :class="{
-                            active: input == used_prompt
-                        }">{{ used_prompt }}</div>
+        <div class="relative">
+            
+            <textarea class="form-control" id="textarea_analyze" style="display:none;" rows="10" :value="chatgpt_item?.text.maxLength(4_000)" disabled></textarea>
+    
+            <!-- <div style="font-size: 18px;font-weight: 500;">Условие</div>
+            <div style="color: #A8A8A8;font-size: 13px;margin: 8px 0 12px 0;">Выберите подходящую точку зрения:</div> -->
+            <div style="color: #A8A8A8;font-size: 13px;margin: 8px 0 12px 0;">{{ i18n('От чьего лица вы ожидаете ответ') }}:</div>
+            <div class="inline-flex relative" style="margin-bottom:8px;">
+                <div
+                    @click.stop="toggle_prompt_list_modal()" 
+                    class="inline-flex text-white justify-between items-center cursor-pointer select-title"
+                    style="background: white;border: 1px solid #3b5998;padding: 0;overflow: hidden;color: #858585;width: 350px;"
+                >
+                    <input
+                        type="text"
+                        class="focus:outline-none"
+                        style="height: 100%;width: 100%;padding: 0 8px 2px;"
+                        :placeholder="i18n('Напиши ответ от лица правительства')"
+                        id="analyze-input"
+                        @click.stop="used_prompt_list_modal = true"
+                        v-model="input">
+                    
+                    
+                    <i class="fa-solid fa-angle-down transition-all" style="margin-left:5px;margin-right: 6px;" :style="used_prompt_list_modal ? '' : 'padding-top: 2px;'" :class="{
+                        'rotate-x-180': used_prompt_list_modal
+                    }"></i>
+                </div>
+                <div class="absolute top-full right-0 left-0 transition-all select-options" :style="{
+                        height: used_prompt_list_modal ? '' : '0px',
+                    }" style="max-height: 300px;">
+                    <div class="flex flex-col select-none select-options-styles">
+                        <div class="select-option pointer-events-none"
+                            style="border-color: #ccc;color: #ccc;"
+                            v-if="sorted_used_prompt_list.length == 0"
+                        >{{ i18n('Список пустой') }}</div>
+                        <div
+                            class="select-option" 
+                            v-else
+                            v-for="used_prompt in sorted_used_prompt_list"
+                            :key="used_prompt"
+                            :title="used_prompt"
+                            @click="input = used_prompt;used_prompt_list_modal = false;"
+                            :class="{
+                                active: input == used_prompt
+                            }">{{ used_prompt }}</div>
+                    </div>
                 </div>
             </div>
-        </div>
-        <span v-show="input == ''" style="margin-left: 5px;color: red;font-size:13px;white-space: nowrap;">{{ i18n('От чьего лица вы ожидаете ответ?') }}</span>
-        
-        <div style="color: #A8A8A8;font-size: 13px;margin: 8px 0 12px 0;">{{ i18n('Что передается в ChatGPT') }}:</div>
-        <div style="font-size: 15px;margin-bottom: 12px;">{{ i18n('Проанализируй данную новость и сформируй ответ на ее основе.') }} {{ input }}</div>
-
-        <pre style="margin-bottom: 12px;font-family: Roboto;line-height: 1.7!important;font-size: 13.5px!important;white-space: pre-wrap;" v-show="output">{{ output }}</pre>
-
-        <div class="flex items-center justify-between" style="height: 27px;">
-            <button
-                style="background: #3b5998;height: 27px;padding: 0 8px 2px;border-radius: 4px;font-size: 13px;color: white;"
-                @click="push_news"
-                :disabled="load_circle_analyze || chatgpt_item?.logs[input]?.result"
-                v-show="!chatgpt_item?.logs[input]?.result"
-            >
-                {{ i18n('Запуск') }}
-                <i id="load-circle-analyze" v-show="load_circle_analyze" class="fa-solid fa-spinner"></i>
-            </button>
-            <button
-                type="button"
-                data-bs-toggle="modal"
-                data-bs-target="#exampleModal"
-                @click="text_analyze_modal = true"
-                class="ml-auto"
-                style="font-size: 13px;color: #2F82FF;text-decoration: underline;"
-            >{{ i18n('Информация и пояснение') }}</button>
+            <!-- <span v-show="input == ''" style="margin-left: 5px;color: red;font-size:13px;white-space: nowrap;">{{ i18n('От чьего лица вы ожидаете ответ?') }}</span> -->
+            
+            <div style="color: #A8A8A8;font-size: 13px;margin: 8px 0 12px 0;">{{ i18n('Что передается в ChatGPT') }}:</div>
+            <div style="font-size: 15px;margin-bottom: 12px;">{{ i18n('Проанализируй данную новость и сформируй ответ на ее основе') }} {{ (input + '').trim() }}</div>
+    
+            <pre style="margin-bottom: 12px;font-family: Roboto;line-height: 1.7!important;font-size: 13.5px!important;white-space: pre-wrap;" v-show="output">{{ output }}</pre>
+    
+            <div class="flex items-center justify-between" style="height: 27px;">
+                <button
+                    style="background: #3b5998;height: 27px;padding: 0 8px 2px;border-radius: 4px;font-size: 13px;color: white;"
+                    @click="push_news"
+                    :disabled="load_circle_analyze || chatgpt_item?.logs[input]?.result"
+                    v-show="!chatgpt_item?.logs[input]?.result"
+                >
+                    {{ i18n('Запуск') }}
+                    <i id="load-circle-analyze" v-show="load_circle_analyze" class="fa-solid fa-spinner"></i>
+                </button>
+                <button
+                    type="button"
+                    data-bs-toggle="modal"
+                    data-bs-target="#exampleModal"
+                    @click="text_analyze_modal = true"
+                    class="ml-auto"
+                    style="font-size: 13px;color: #2F82FF;text-decoration: underline;position: absolute;right: 0;top: -2px
+                    ;"
+                >{{ i18n('Информация и пояснение') }}</button>
+            </div>
         </div>
         <div
             class="modal fade left-0 right-0 top-0 bottom-0"
@@ -87,11 +88,11 @@
             <div class="modal-dialog" style="transition: 0.15s;" :style="text_analyze_modal?'top: 25%;':'top: 0px;'" @click.stop>
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h1 class="modal-title fs-5" id="exampleModalLabel" style="font-size: 30px;">Реакция</h1>
+                        <h1 class="modal-title fs-5" id="exampleModalLabel" style="font-size: 30px;">Ответ</h1>
                         <!-- <button type="button" class="f-z-16 btn-close" data-bs-dismiss="modal" aria-label="Close"></button> -->
                     </div>
                     <div class="modal-body" style="line-height: 1.42857143;">
-                        Реакция - это инструмент, при помощи которого Вы можете получить реакция на новость от Исcкусственного Интелекта от любого лица. На вход подается выражение - запрос: <b>"Проанализируй данную новость и сформируй ответ на ее основе. + От чьего лица вы ожидаете ответ"</b> В поля для ввода запроса можно написать От чьего лица вы ожидаете (ответ / реакцию).
+                        Ответ - это инструмент, при помощи которого Вы можете получить ответ на новость от Исcкусственного Интелекта от любого лица. На вход подается выражение - запрос: <b>"Проанализируй данную новость и сформируй ответ на ее основе + От чьего лица вы ожидаете ответ"</b> В поля для ввода запроса можно написать От чьего лица вы ожидаете (ответ / реакцию).
                     </div>
                     <div class="modal-footer" style="height: auto;border-top: 1px solid #e5e5e5;">
                         <button style="background-color: buttonface;color: #333;" type="button" class="f-z-16 btn btn-secondary" data-bs-dismiss="modal" @click="text_analyze_modal = false">Close</button>
@@ -194,8 +195,8 @@
                                 model: "gpt-3.5-turbo",
                                 messages: [
                                     {'role': 'system', 'content': 'You are an assistant for the monitoring system. You must analyze the given news and issue an answer based on the given news according to the request'},
-                                    {'role': 'user', 'content': 'Проанализируй данную новость и сформируй ответ на ее основе. ' + temp_promt},
-                                    {'role': 'user', 'content': 'Представленная новость: ' + temp}
+                                    {'role': 'user', 'content': this.i18n('Проанализируй данную новость и сформируй ответ на ее основе') + ' ' + temp_promt},
+                                    {'role': 'user', 'content': this.i18n('Представленная новость') + ': ' + temp}
                                 ],
                             });
                             console.log('completion', completion);
@@ -439,7 +440,7 @@ textarea.form-control {
     padding:0px 8px 2px;
     border-radius:4px;
     font-size:13px;
-    width:145px;
+    width:150px;
 }
 .select-input-error {
     border-color: red !important;

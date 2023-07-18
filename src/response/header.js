@@ -34,7 +34,8 @@ export const social_categories = reactive(ref([
     {id:7,count:0,"-1":0,"0":0,"1":0,icon:"odnoklassniki-square"},
     {id:1,count:0,"-1":0,"0":0,"1":0,icon:"vk"},
     {id:8,count:0,"-1":0,"0":0,"1":0,icon:"at"},
-    {id:5,count:0,"-1":0,"0":0,"1":0,icon:"google-plus"},
+    // {id:5,count:0,"-1":0,"0":0,"1":0,icon:"google-plus"},
+    {id:10,count:0,"-1":0,"0":0,"1":0,icon:"tiktok"},
     {id:6,count:0,"-1":0,"0":0,"1":0,icon:"youtube-play"},
     {id:9,count:0,"-1":0,"0":0,"1":0,icon:"telegram"},
 ]));

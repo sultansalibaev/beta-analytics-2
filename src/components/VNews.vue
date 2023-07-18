@@ -621,7 +621,7 @@
                 }">{{ i18n('Анализ') }}</div>
                 <div class="tab-item" @click="chatgpt_tab = 'TextReaction'" :class="{
                     selected: chatgpt_tab == 'TextReaction'
-                }">{{ i18n('Реакция') }}</div>
+                }">{{ i18n('Ответ') }}</div>
                 <div class="tab-item" @click="chatgpt_tab = 'VGeneralization'" :class="{
                     selected: chatgpt_tab == 'VGeneralization'
                 }">{{ i18n('Обобщение') }}</div>
@@ -2845,6 +2845,18 @@ i.positive {
     background: #5a90ce;
     color: #ee8208;
     vertical-align: text-bottom;
+}
+#project_news .fa-tiktok {
+    background: #000;
+    color: #fff;
+    width: 20px;
+    display: flex;
+    height: 20px;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    border-radius: 4px;
+    padding-top: 1.3px;
 }
 
 .favorites-modal {

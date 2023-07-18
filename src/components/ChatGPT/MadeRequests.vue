@@ -16,7 +16,7 @@
                 </div>
             </div>
             <div class="flex flex-col w-full">
-                <h2>{{ i18n('Реакция') }}</h2>
+                <h2>{{ i18n('Ответ') }}</h2>
                 <input v-model="person_name" class="form-control my-3" type="text" :placeholder="i18n('Введите от чьего лица вы ожидали ответ')" >
                 <div class="used-prompt-list static scrollbar" style="max-height: 400px;">
                     <div class="used-prompt empty-list_item" v-if="sorted_reaction_prompt_list.length == 0">{{ i18n('Список пустой') }}</div>

@@ -111,9 +111,9 @@ export function getProjectCounts(update_period = true) {
 				1: obj_copy(temp_soc_obj),
 				8: obj_copy(temp_soc_obj),
 				5: obj_copy(temp_soc_obj),
+				10: obj_copy(temp_soc_obj),
 				6: obj_copy(temp_soc_obj),
 				9: obj_copy(temp_soc_obj),
-				10: obj_copy(temp_soc_obj),
 			})
 			social_categories.value.forEach(social_category => {
 				if (!socials.value[social_category.id]) {
@@ -236,8 +236,7 @@ export function getMainPlacesCount(reset_all_anyway = true) {
 		.get(`/ru/analyticstats/get-project-places-count?${params.value.getQuery({}, ['p_id','r_type','category_id','sentiments','s_date','f_date'])}`)
 		.then(response => {
 
-			other_ids.value = '3';
-			if (response?.data[0] && response?.data[0]?.other_ids) other_ids.value = response?.data[0]?.other_ids.filter(lang_id => !([5,4,10].includes(lang_id))).join(',')
+			// if (response?.data[0] && response?.data[0]?.other_ids) other_ids.value = response?.data[0]?.other_ids.filter(lang_id => !([5,4,10].includes(lang_id))).join(',')
 			let map_world = {};
 			let map_kz = {};
 
@@ -349,8 +348,13 @@ export function getMainSmiCategoriesAndLanguagesCount() {
 	axios
 		.get(`/ru/analyticstats/get-project-lang-and-smi-categories-count?${params.value.getQuery({}, ['p_id','r_type','category_id','countries','regions','sentiments','s_date','f_date'])}`)
 		.then(response => {
+			
+			let temp_other_lang_ids = {};
+			other_ids.value = '3';
+
 			let result = response.data.reduce((prev, item) => {
 				let lang_key = item.lang != 10 && item.lang != 4 && item.lang != 5 ? 3 : item.lang;
+				if (!([4,5,10].includes(item.lang))) temp_other_lang_ids[item.lang] = true;
 				let temp_count = isNaN(parseInt(item.count)) ? 0 : parseInt(item.count) || 0;
 				if (prev.languages[lang_key]) {
 					if (prev.languages[lang_key][item.category_id]) {
@@ -381,6 +385,8 @@ export function getMainSmiCategoriesAndLanguagesCount() {
 			})
 			languages_general_data.value = result.languages
 			categories_general_data.value = result.categories
+
+			other_ids.value = Object.keys(temp_other_lang_ids).join(',');
 
 			smi_category.value = Object.keys(categories_general_data.value).map(cat_id => {
 				return {
