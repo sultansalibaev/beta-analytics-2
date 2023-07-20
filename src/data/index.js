@@ -71,7 +71,7 @@ export const update_get_request_params = () => {
     if (r_type.value == 2) {
         category_id = Object.keys(selected_social_categories.value).length ? (
             Object.keys(selected_social_categories.value).filter(soc_key => selected_social_categories.value[soc_key]).join(',')
-        ) : 0;
+        ) : '';
     }
     window.history.replaceState('', '', `/${getLang()}/analytics/beta?id=${project.value.id}&startDate=${dateRange.value.startDate}&endDate=${dateRange.value.endDate}&r_type=${r_type.value}&category_id=${category_id}`);
 }
@@ -127,7 +127,7 @@ let lastWeekDay = new Date(curr.setDate(curr.getDate() - curr.getDay() + 7));
 
 
 export const ranges = reactive(ref({
-	'За весь вериод': [minProjectDate.format("Y-m-d"), maxProjectDate.format("Y-m-d")],
+	'За весь период': [minProjectDate.format("Y-m-d"), maxProjectDate.format("Y-m-d")],
 	'Сегодня': [today.format("Y-m-d"), today.format("Y-m-d")],
 	'Вчера': [yesterday.format("Y-m-d"), yesterday.format("Y-m-d")],
 	'Неделя': [firstWeekDay.format("Y-m-d"), lastWeekDay.format("Y-m-d")],

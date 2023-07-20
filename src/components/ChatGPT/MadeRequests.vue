@@ -5,7 +5,7 @@
                 <h2>{{ i18n('Анализ новости') }}</h2>
                 <input v-model="condition_name" class="form-control my-3" type="text" :placeholder="i18n('Введите условие')" >
                 <div class="used-prompt-list static scrollbar" style="max-height: 400px;">
-                    <div class="used-prompt empty-list_item" v-if="sorted_analyze_prompt_list.length == 0">{{ i18n('Список пустой') }}</div>
+                    <div class="used-prompt empty-list_item" v-if="sorted_analyze_prompt_list.length == 0">{{ i18n('Список пуст') }}</div>
                     <div
                         class="used-prompt"
                         v-else v-for="used_prompt in sorted_analyze_prompt_list"
@@ -17,9 +17,9 @@
             </div>
             <div class="flex flex-col w-full">
                 <h2>{{ i18n('Ответ') }}</h2>
-                <input v-model="person_name" class="form-control my-3" type="text" :placeholder="i18n('Введите от чьего лица вы ожидали ответ')" >
+                <input v-model="person_name" class="form-control my-3" type="text" :placeholder="i18n('Введите, от чьего лица вы ожидали ответ')" >
                 <div class="used-prompt-list static scrollbar" style="max-height: 400px;">
-                    <div class="used-prompt empty-list_item" v-if="sorted_reaction_prompt_list.length == 0">{{ i18n('Список пустой') }}</div>
+                    <div class="used-prompt empty-list_item" v-if="sorted_reaction_prompt_list.length == 0">{{ i18n('Список пуст') }}</div>
                     <div
                         class="used-prompt"
                         v-else v-for="used_prompt in sorted_reaction_prompt_list"

@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { project, socials, countries, regions, social_categories, generals_count, smi_categories, r_type, main_sentiments_count, selected_main_sentiments, languages_count, languages_general_data, categories_general_data, smi_category, search_tags, isKazakstan, selected_social_categories } from '@/response/header'
 import {
-    dateRange, places, selected_categories, selected_languages, resource_count, resource_full_news_count, column_news_count, resources, offsetLeft, offsetRight, resource_clipped_news_count, selected_resources, selected_resource_sentiment, bars_sentiments_selected, selected_dates, selected_sentiment_dates, selected_date_mode, dynamics, soc_metrics, enable_metrics, is_high_news_count, news_count, similars_count, resources_count, items, items_loading, selected_page, selected_soc_metrics, resource_count_loading, laoding_metrics, selected_regions, reset_all, get_selected_smi_categories, isGrouped, similar_items, similar_items_loading, thumbnail_dates, countries_with_regions, getCountryRegions, other_ids, p_user_id, favorites, favorites_modal, current_country_id, request } from '@/response/data/index'
+    dateRange, places, selected_categories, selected_languages, resource_count, resource_full_news_count, column_news_count, resources, offsetLeft, offsetRight, resource_clipped_news_count, selected_resources, selected_resource_sentiment, bars_sentiments_selected, selected_dates, selected_sentiment_dates, selected_date_mode, dynamics, soc_metrics, enable_metrics, is_high_news_count, news_count, similars_count, resources_count, items, items_loading, selected_page, selected_soc_metrics, resource_count_loading, laoding_metrics, selected_regions, reset_all, get_selected_smi_categories, isGrouped, similar_items, similar_items_loading, thumbnail_dates, countries_with_regions, getCountryRegions, p_user_id, favorites, favorites_modal, current_country_id, request } from '@/response/data/index'
 import { getResourceData, selected_top_resources, start_top_resources, end_top_resources, each_number, max } from '@/response/options/columnOptions'
 import { get_map_params } from '@/response/options/mapOptions'
 import { selected_dates_query, selected_sentiment_dates_query } from '@/response/options/lineOptions'
@@ -236,7 +236,6 @@ export function getMainPlacesCount(reset_all_anyway = true) {
 		.get(`/ru/analyticstats/get-project-places-count?${params.value.getQuery({}, ['p_id','r_type','category_id','sentiments','s_date','f_date'])}`)
 		.then(response => {
 
-			// if (response?.data[0] && response?.data[0]?.other_ids) other_ids.value = response?.data[0]?.other_ids.filter(lang_id => !([5,4,10].includes(lang_id))).join(',')
 			let map_world = {};
 			let map_kz = {};
 
@@ -329,7 +328,6 @@ export function getMainPlacesCount(reset_all_anyway = true) {
 			places.value['countries'] = map_world;
 			places.value['regions'] = map_kz;
 
-
 			if (r_type.value == 1) {
 				getMainSmiCategoriesAndLanguagesCount()
 			}
@@ -349,13 +347,10 @@ export function getMainSmiCategoriesAndLanguagesCount() {
 		.get(`/ru/analyticstats/get-project-lang-and-smi-categories-count?${params.value.getQuery({}, ['p_id','r_type','category_id','countries','regions','sentiments','s_date','f_date'])}`)
 		.then(response => {
 			
-			let temp_other_lang_ids = {};
-			other_ids.value = '3';
-
 			let result = response.data.reduce((prev, item) => {
 				let lang_key = item.lang != 10 && item.lang != 4 && item.lang != 5 ? 3 : item.lang;
-				if (!([4,5,10].includes(item.lang))) temp_other_lang_ids[item.lang] = true;
 				let temp_count = isNaN(parseInt(item.count)) ? 0 : parseInt(item.count) || 0;
+
 				if (prev.languages[lang_key]) {
 					if (prev.languages[lang_key][item.category_id]) {
 						prev.languages[lang_key][item.category_id] += temp_count;
@@ -385,8 +380,6 @@ export function getMainSmiCategoriesAndLanguagesCount() {
 			})
 			languages_general_data.value = result.languages
 			categories_general_data.value = result.categories
-
-			other_ids.value = Object.keys(temp_other_lang_ids).join(',');
 
 			smi_category.value = Object.keys(categories_general_data.value).map(cat_id => {
 				return {
@@ -950,7 +943,7 @@ const params = computed(() => {
     if (r_type.value == 2) {
         category_id = Object.keys(selected_social_categories.value).length ? (
             Object.keys(selected_social_categories.value).filter(soc_key => selected_social_categories.value[soc_key]).join(',')
-        ) : 0;
+        ) : '';
     }
     else {
         category_id = get_selected_smi_categories(selected_categories.value).join(',');
@@ -958,11 +951,6 @@ const params = computed(() => {
 	let language = Object.keys(selected_languages.value).length ? (
 		Object.keys(selected_languages.value).filter(lang_id => selected_languages.value[lang_id]).map(lang_id => parseInt(lang_id))
 	) : [];
-
-	let others_index = language.indexOf(3);
-	if ("-1" != others_index && other_ids.value) {
-		language[others_index] = other_ids.value
-	}
 
 	language = language.join(',')
     let sentiments = Object.keys(selected_main_sentiments.value).filter(sentiment => selected_main_sentiments.value[sentiment]).join(',')

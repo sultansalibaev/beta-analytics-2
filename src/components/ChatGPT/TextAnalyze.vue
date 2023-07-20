@@ -23,9 +23,9 @@
                         <div class="select-option" @click="change_condition('государство')" :class="{
                             active: condition == i18n('с точки зрения государства')
                         }">{{ i18n('Государство') }}</div>
-                        <div class="select-option" @click="change_condition('гражданин страны')" :class="{
+                        <div class="select-option" @click="change_condition('граждане страны')" :class="{
                             active: condition == i18n('с точки зрения гражданина страны')
-                        }">{{ i18n('Гражданин страны') }}</div>
+                        }">{{ i18n('Граждане страны') }}</div>
                         <div class="select-option" @click="change_condition('сил.структуры')" :class="{
                             active: condition == i18n('с точки зрения силовых структур')
                         }">{{ i18n('Силовые структуры') }}</div>
@@ -61,7 +61,7 @@
                         <div class="select-option pointer-events-none"
                             style="border-color: #ccc;color: #ccc;"
                             v-if="sorted_used_prompt_list.length == 0"
-                        >{{ i18n('Список пустой') }}</div>
+                        >{{ i18n('Список пуст') }}</div>
                         <div class="select-option" 
                             v-else
                             v-for="used_prompt in sorted_used_prompt_list"
@@ -75,7 +75,7 @@
             </div>
             
             <div style="color: #A8A8A8;font-size: 13px;margin: 8px 0 12px 0;">{{ i18n('Что передается в ChatGPT') }}:</div>
-            <div style="font-size: 15px;margin-bottom: 12px;">{{ i18n('Предоставь мне подробный анализ данной новости') }} {{ input == '' ? i18n(condition) : input }}</div>
+            <div style="font-size: 15px;margin-bottom: 12px;">{{ i18n('Проведите подробный анализ данной новости') }} {{ input == '' ? i18n(condition) : input }}</div>
     
             <pre style="margin-bottom: 12px;font-family: Roboto;line-height: 1.7!important;font-size: 13.5px!important;white-space: pre-wrap;" v-show="output">{{ output }}</pre>
     
@@ -96,7 +96,7 @@
                     @click="text_analyze_modal = true"
                     class="ml-auto"
                     style="font-size: 13px;color: #2F82FF;text-decoration: underline;position: absolute;right: 0;top: 6px;"
-                >{{ i18n('Информация и пояснение') }}</button>
+                >{{ i18n('Информация') }}</button>
             </div>  
         </div>
         <div
@@ -110,20 +110,12 @@
             <div class="modal-dialog" style="transition: 0.15s;" :style="text_analyze_modal?'top: 25%;':'top: 0px;'" @click.stop>
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h1 class="modal-title fs-5" id="exampleModalLabel" style="font-size: 30px;">Анализ новости</h1>
+                        <h1 class="modal-title fs-5" id="exampleModalLabel" style="font-size: 30px;">{{ i18n('Анализ новости') }}</h1>
                         <!-- <button type="button" class="f-z-16 btn-close" data-bs-dismiss="modal" aria-label="Close"></button> -->
                     </div>
-                    <div class="modal-body" style="line-height: 1.42857143;">
-                        Анализ новости - это инструмент, при помощи которого Вы можете получить подробный анализ новости от Исcкусственного Интелекта с той или иной точки зрения. На вход подается выражение - запрос: <b>"Предоставь мне подробный анализ данной новости + точка зрения"</b> Во вкладке <b>"Условие"</b> можно выбрать точку зрения.
-                        <br><br>
-                        "Бизнес" - с точки зрения бизнеса.<br>
-                        "Государство" - с точки зрения государства.<br>
-                        "Гражданин страны" - с точки зрения гражданина страны<br>
-                        "Сил.Структуры" - с точки зрения силовых структур<br>
-                        "Разные т.з." - с разных точек зрения
-                    </div>
+                    <div class="modal-body" style="line-height: 1.42857143;" v-html="tab_info"></div>
                     <div class="modal-footer" style="height: auto;border-top: 1px solid #e5e5e5;">
-                        <button style="background-color: buttonface;color: #333;" type="button" class="f-z-16 btn btn-secondary" data-bs-dismiss="modal" @click="text_analyze_modal = false">Close</button>
+                        <button style="background-color: buttonface;color: #333;" type="button" class="f-z-16 btn btn-secondary" data-bs-dismiss="modal" @click="text_analyze_modal = false">{{ i18n('Закрыть') }}</button>
                     </div>
                 </div>
             </div>
@@ -148,11 +140,18 @@
             const default_requests = {
                 "бизнес": this.i18n("с точки зрения бизнеса"),
                 "государство": this.i18n("с точки зрения государства"),
-                "гражданин страны": this.i18n("с точки зрения гражданина страны"),
+                "граждане страны": this.i18n("с точки зрения гражданина страны"),
                 "сил.структуры": this.i18n("с точки зрения силовых структур"),
                 "разные т.з.": this.i18n("с разных точек зрения"),
             };
+            const tab_info = this.i18n(`Анализ перспективы - это инструмент, при помощи которого вы можете получить от языковой модели подробный анализ публикации с той или иной точки зрения. На вход GPT подается выражение - запрос: <b>"Проведите подробный анализ данной новости с точки зрения ..."</b> <br> В меню <b>"Условие"</b> можно выбрать одну из общественных групп или задать свою.<br><br> После выбора нажмите <b>"Запуск"</b> и подождите, пока сформируется ответ (10-20 секунд).`) + `<br><br>
+                        "${ i18n('Бизнес') }" - ${ i18n("с точки зрения бизнеса") }<br>
+                        "${ i18n('Государство') }" - ${ i18n("с точки зрения государства") }<br>
+                        "${ i18n('Граждане страны') }" - ${ i18n("с точки зрения гражданина страны") }<br>
+                        "${ i18n('Силовые структуры') }" - ${ i18n("с точки зрения силовых структур") }<br>
+                        "${ i18n('Разные точки зрения') }" - ${ i18n("с разных точек зрения") }`
             return {
+                tab_info: tab_info,
                 default_requests: default_requests,
                 select_options_modal: false,
 
@@ -221,7 +220,7 @@
                 if (this.default_requests[statement]) {this.condition = this.default_requests[statement]} 
                 // if (statement == "бизнес") {this.condition = "с точки зрения бизнеса"} 
                 // if (statement == "государство") {this.condition = "с точки зрения государства"} 
-                // if (statement == "гражданин страны") {this.condition = "с точки зрения гражданина страны"} 
+                // if (statement == "граждане страны") {this.condition = "с точки зрения гражданина страны"} 
                 // if (statement == "сил.структуры") {this.condition = "с точки зрения силовых структур"} 
                 // if (statement == "разные т.з.") {this.condition = "с разных точек зрения"} 
             },
@@ -265,7 +264,7 @@
                                 model: "gpt-3.5-turbo",
                                 messages: [
                                     {'role': 'system', 'content': 'You are an assistant for the monitoring system. You must give your own analysis of the presented news.'},
-                                    {'role': 'user', 'content': this.i18n('Предоставь мне подробный анализ данной новости') + ' ' + temp_condition},
+                                    {'role': 'user', 'content': this.i18n('Проведите подробный анализ данной новости') + ' ' + temp_condition},
                                     {'role': 'user', 'content': this.i18n('Представленная новость') + ': ' + temp}
                                 ],
                             });
@@ -323,14 +322,14 @@
 
                 
         
-                const temp_log_key = log_keys.find(prompt => (this.analyze_select.includes(prompt)) && !(["Обобщение", "Generalization", "Жалпылау"].includes(prompt)) && this.chatgpt_item?.logs[prompt]?.type == 'analyze')
+                const temp_log_key = log_keys.find(prompt => (this.analyze_select.includes(prompt)) && !(["Обобщение", "Summary", "Жалпылау"].includes(prompt)) && this.chatgpt_item?.logs[prompt]?.type == 'analyze')
 
                 if (temp_log_key) {
                     this.condition = temp_log_key
                 }
 
                 if (this.condition == '') {
-                    const log_key = log_keys.find(prompt => (!this.analyze_select.includes(prompt)) && !(["Обобщение", "Generalization", "Жалпылау"].includes(prompt)) && this.chatgpt_item?.logs[prompt]?.type == 'analyze')
+                    const log_key = log_keys.find(prompt => (!this.analyze_select.includes(prompt)) && !(["Обобщение", "Summary", "Жалпылау"].includes(prompt)) && this.chatgpt_item?.logs[prompt]?.type == 'analyze')
                     if (log_key) this.input = log_key
                 }
         
@@ -343,7 +342,7 @@
                     this.updateOutput()
                     this.used_prompt_list = Object.values(this.chatgpt_item?.logs).filter(log => (
                         log?.type == 'analyze' &&
-                        !(["Обобщение", "Generalization", "Жалпылау"].includes(log?.promt)) &&
+                        !(["Обобщение", "Summary", "Жалпылау"].includes(log?.promt)) &&
                         !this.analyze_select.includes(log?.promt)
                     )).map(log => log?.promt)
                 }
@@ -356,7 +355,7 @@
                 if (newValue == 'TextAnalyze' && this.chatgpt_item != null) {
                     this.used_prompt_list = Object.values(this.chatgpt_item?.logs).filter(log => (
                         log?.type == 'analyze' &&
-                        !(["Обобщение", "Generalization", "Жалпылау"].includes(log?.promt)) &&
+                        !(["Обобщение", "Summary", "Жалпылау"].includes(log?.promt)) &&
                         !this.analyze_select.includes(log?.promt)
                     )).map(log => log?.promt)
                     if (this.chatgpt_log != null && this.chatgpt_log?.type == 'analyze') {

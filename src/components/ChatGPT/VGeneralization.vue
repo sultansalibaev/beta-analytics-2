@@ -5,8 +5,9 @@
             
             <textarea class="form-control" id="textarea_analyze" style="display:none;" rows="10" :value="chatgpt_item?.text.maxLength(4_000)" disabled></textarea>
             
+            <div style="font-size: 18px;font-weight: 500;">{{ i18n('Обзор публикации') }}</div>
             <div style="color: #A8A8A8;font-size: 13px;margin: 8px 0 12px 0;">{{ i18n('Что передается в ChatGPT') }}:</div>
-            <div style="font-size: 15px;margin-bottom: 12px;">{{ i18n('Предоставь мне главное из новости в 3-4 предложениях и выдели ключевые лица, игроков, компании и т.д. из новости') }}</div>
+            <div style="font-size: 15px;margin-bottom: 12px;">{{ i18n('Сформулируйте главную информацию новости в 3-4 предложения. Затем выделите основных действующих лиц, компании, службы') }}</div>
     
             <pre style="margin-bottom: 12px;font-family: Roboto;line-height: 1.7!important;font-size: 13.5px!important;white-space: pre-wrap;" v-show="output">{{ output }}</pre>
     
@@ -26,8 +27,8 @@
                     data-bs-target="#exampleModal"
                     @click="home_view_modal = true"
                     class="ml-auto"
-                    style="font-size: 13px;color: #2F82FF;text-decoration: underline;position: absolute;right: 0;top: -2px;"
-                >{{ i18n('Информация и пояснение') }}</button>
+                    style="font-size: 13px;color: #2F82FF;text-decoration: underline;position: absolute;right: 0;top: 6px;"
+                >{{ i18n('Информация') }}</button>
             </div>
             
         </div>
@@ -42,17 +43,12 @@
             <div class="modal-dialog" style="transition: 0.15s;" :style="home_view_modal?'top: 25%;':'top: 0px;'" @click.stop>
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h1 class="modal-title fs-5" id="exampleModalLabel" style="font-size: 30px;">Обощение</h1>
+                        <h1 class="modal-title fs-5" id="exampleModalLabel" style="font-size: 30px;">{{ i18n('Обобщение') }}</h1>
                         <!-- <button type="button" class="f-z-16 btn-close" data-bs-dismiss="modal" aria-label="Close"></button> -->
                     </div>
-                    <div class="modal-body" style="line-height: 1.42857143;">
-                        Обобщение - это инструмент, при помощи которого вы можете выделить главное из своих новостей, а также вывести ключевые лица из текста(Если это возможно). На вход для языковой модели GPT подается специальное выражение-запрос: <b>"Предоставь мне главное из новости в 3-4 предложениях и выдели ключевые лица, игроков, компании и т.д. из новости"</b> которое применяется для каждой введенной новости. <br>
-                        Список новостей можно наблюдать на панели слева.
-                        <br><br>
-                        Кнопка "Запуск" отправит ваши новости в GPT и сгенерирует ответ
-                    </div>
+                    <div class="modal-body" style="line-height: 1.42857143;" v-html="tab_info"></div>
                     <div class="modal-footer" style="height: auto;border-top: 1px solid #e5e5e5;">
-                        <button style="background-color: buttonface;color: #333;" type="button" class="f-z-16 btn btn-secondary" data-bs-dismiss="modal" @click="home_view_modal = false">Close</button>
+                        <button style="background-color: buttonface;color: #333;" type="button" class="f-z-16 btn btn-secondary" data-bs-dismiss="modal" @click="home_view_modal = false">{{ i18n('Закрыть') }}</button>
                     </div>
                 </div>
             </div>
@@ -76,7 +72,9 @@
 
     export default{
         data() {
+            const tab_info = this.i18n(`Обобщение - это инструмент, при помощи которого вы можете обобщить новость, а также выделить ключевых акторов. <br> На вход языковой модели подается текст публикации и выражение-запрос: <b>"Сформулируйте главную информацию новости в 3-4 предложения. Затем выделите основных действующих лиц, компании, службы"</b>. <br><br> Кнопка <b>"Запуск"</b> отправит запрос в GPT. Ответ станет доступен через 10-20 секунд.`);
             return {
+                tab_info: tab_info,
                 news: [],
                 home_view_modal: false,
                 output: '',
@@ -156,7 +154,7 @@
                                 model: "gpt-3.5-turbo",
                                 messages: [
                                     {'role': 'system', 'content': 'You are an assistant for the monitoring system. You must highlight the main thing from the provided news and state it in 3-4 sentences and highlight key persons, players, companies, etc. from the news. Output format - SUMMARY: , KEY_PERSONS_AND_COMPANYS: .'},
-                                    {'role': 'user', 'content': this.i18n('Предоставь мне главное из новости в 3-4 предложениях и выдели ключевые лица, игроков, компании и т.д. из новости')},
+                                    {'role': 'user', 'content': this.i18n('Сформулируйте главную информацию новости в 3-4 предложения. Затем выделите основных действующих лиц, компании, службы')},
                                     {'role': 'user', 'content': this.i18n('Представляемая новость') + ': ' + temp_chatgpt_item?.text.maxLength(4_000)}
                                 ],
                             });

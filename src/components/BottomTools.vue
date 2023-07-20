@@ -196,7 +196,7 @@
                                         <i class="fa-solid fa-spinner" v-if="soc_metrics.likes == 'loading'"></i>
                                         <template v-else>{{ soc_metrics.likes.short() }}</template>
                                     </span>
-                                    <span class="metric-name">{{ i18n('Лайки') }}</span>
+                                    <span class="metric-name">{{ i18n('Реакции') }}</span>
                                 </div>
                             </div>
                             <div

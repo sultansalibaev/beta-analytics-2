@@ -5,10 +5,10 @@
             <span class="whitespace-nowrap"><span class="result-count result-count__items"
                 >{{ news_count.push_space() }}{{ similars_count ? ` + ${similars_count}` : '' }}&nbsp;</span
             >
-            <template v-if="isGrouped"> групп </template> новостей</span> <span class="whitespace-nowrap">(
+            <template v-if="isGrouped"> групп </template> {{ i18n('новостей') }}</span> <span class="whitespace-nowrap">(
             <span class="result-count result-count__resource"
                 >{{ resources_count.push_space() }}</span
-            > источников)</span>
+            > {{ i18n('источников') }})</span>
         </span>
 
         <div
@@ -35,7 +35,7 @@
                             : ''
                         "
                 >
-                    {{ i18n('Сортировка по лайкам (по убыванию)') }}
+                    {{ i18n('Сортировка по реакция (по убыванию)') }}
                 </div>
             </svg>
             <!--<i
@@ -56,7 +56,7 @@
                             : ''
                     "
                 >
-                    {{ i18n('Сортировка по лайкам (по убыванию)') }}
+                    {{ i18n('Сортировка по реакция (по убыванию)') }}
                 </div>
             </i>-->
             <i
@@ -186,8 +186,8 @@
                         class="item-resource"
                         :href="delete_resource.link"
                         :title="delete_resource.name"
-                        >{{ delete_resource.name }}</a
-                    >
+                        style="margin-bottom: 4px;"
+                    >{{ delete_resource.name }}</a>
                     <div class="resource-category">
                         {{ i18n(delete_resource.category) }}
                     </div>
@@ -1085,12 +1085,12 @@
                         <span
                             class="comment-status comment-parsing"
                             v-if="comments?.status == 'ready'"
-                            >{{ i18n('Комментарии на парсинге') }}</span
+                            >{{ i18n('Комментарии собираются') }}</span
                         >
                         <span
                             class="comment-status comment-error"
                             v-else-if="comments?.status == 'failed'"
-                            >{{ i18n('Не получилось спарсить') }}</span
+                            >{{ i18n('Не получилось собрать') }}</span
                         >
                         <span
                             class="comment-status comment-error"

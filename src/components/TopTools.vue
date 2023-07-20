@@ -129,7 +129,7 @@
         </div>
         <div class="map bg-white w-half tool-shadow media-header-item-1439">
             <div class="flex justify-between items-center title p-9-10-9-11" style="padding-bottom:0;margin-bottom:4px;height: 32px;">
-                <span>{{ i18n(`Динамика публикаций ${basic_line ? '' : 'по тональности'}`) }}</span>
+                <span>{{ i18n(`Динамика публикаций ${basic_line ? '' : 'по тональностям'}`) }}</span>
                 <div style="display: flex;align-items: center;gap: 10px;">
                     <div class="drp flex items-center">
                         <span class="date-mode_container">

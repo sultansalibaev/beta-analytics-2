@@ -107,7 +107,6 @@ export const resource_clipped_news_count = reactive(ref(0));
 export const resource_full_news_count = reactive(ref(0));
 export const column_news_count = reactive(ref(0));
 
-export const other_ids = reactive(ref('3'))
 
 export const selected_languages = reactive(ref({
     "10": false,
@@ -251,9 +250,11 @@ export let chatgpt_tab = reactive(ref('TextAnalyze'))
 export let chatgpt_item = reactive(ref(null))
 export let chatgpt_log = reactive(ref(null))
 
+import i18n from "@/response/utils/i18n"
+
 watch(chatgpt_item, (newValue) => {
     const temp_logs = Object.values(newValue?.logs || {});
-    if (temp_logs.length == 1 && newValue?.logs["Обобщение"]?.result) {
+    if (temp_logs.length == 1 && newValue?.logs[i18n("Обобщение")]?.result) {
         chatgpt_tab.value = 'VGeneralization'
     }
     else if (temp_logs.find(log => log?.type == 'analyze') || temp_logs.length == 0) {
@@ -270,7 +271,7 @@ export function chatgpt_more(log) {
         chatgpt_log.value = log
         chatgpt_tab.value = 'TextReaction'
     }
-    else if (log.type == 'analyze' && log.promt == 'Обобщение') {
+    else if (log.type == 'analyze' && ["Обобщение", "Summary", "Жалпылау"].includes(log.promt)) {
         chatgpt_tab.value = 'VGeneralization'
     }
     else {

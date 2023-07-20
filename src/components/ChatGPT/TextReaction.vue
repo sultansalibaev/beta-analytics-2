@@ -5,9 +5,8 @@
             
             <textarea class="form-control" id="textarea_analyze" style="display:none;" rows="10" :value="chatgpt_item?.text.maxLength(4_000)" disabled></textarea>
     
-            <!-- <div style="font-size: 18px;font-weight: 500;">Условие</div>
-            <div style="color: #A8A8A8;font-size: 13px;margin: 8px 0 12px 0;">Выберите подходящую точку зрения:</div> -->
-            <div style="color: #A8A8A8;font-size: 13px;margin: 8px 0 12px 0;">{{ i18n('От чьего лица вы ожидаете ответ') }}:</div>
+            <div style="font-size: 18px;font-weight: 500;">{{ i18n('Ответ в прессу') }}</div>
+            <div style="color: #A8A8A8;font-size: 13px;margin: 8px 0 12px 0;">{{ i18n('Укажите, от кого сформулировать обращение') }}:</div>
             <div class="inline-flex relative" style="margin-bottom:8px;">
                 <div
                     @click.stop="toggle_prompt_list_modal()" 
@@ -18,7 +17,7 @@
                         type="text"
                         class="focus:outline-none"
                         style="height: 100%;width: 100%;padding: 0 8px 2px;"
-                        :placeholder="i18n('Напиши ответ от лица правительства')"
+                        :placeholder="i18n('Деятеля, компании и т.д.')"
                         id="analyze-input"
                         @click.stop="used_prompt_list_modal = true"
                         v-model="input">
@@ -35,7 +34,7 @@
                         <div class="select-option pointer-events-none"
                             style="border-color: #ccc;color: #ccc;"
                             v-if="sorted_used_prompt_list.length == 0"
-                        >{{ i18n('Список пустой') }}</div>
+                        >{{ i18n('Список пуст') }}</div>
                         <div
                             class="select-option" 
                             v-else
@@ -49,10 +48,10 @@
                     </div>
                 </div>
             </div>
-            <!-- <span v-show="input == ''" style="margin-left: 5px;color: red;font-size:13px;white-space: nowrap;">{{ i18n('От чьего лица вы ожидаете ответ?') }}</span> -->
+            <!-- <span v-show="input == ''" style="margin-left: 5px;color: red;font-size:13px;white-space: nowrap;">{{ i18n('Укажите, от кого сформулировать обращение?') }}</span> -->
             
             <div style="color: #A8A8A8;font-size: 13px;margin: 8px 0 12px 0;">{{ i18n('Что передается в ChatGPT') }}:</div>
-            <div style="font-size: 15px;margin-bottom: 12px;">{{ i18n('Проанализируй данную новость и сформируй ответ на ее основе') }} {{ (input + '').trim() }}</div>
+            <div style="font-size: 15px;margin-bottom: 12px;">{{ i18n('Проанализируйте данную новость и сформируйте публичный комментарий для прессы по событию от лица') }} {{ (input + '').trim() }}</div>
     
             <pre style="margin-bottom: 12px;font-family: Roboto;line-height: 1.7!important;font-size: 13.5px!important;white-space: pre-wrap;" v-show="output">{{ output }}</pre>
     
@@ -72,9 +71,8 @@
                     data-bs-target="#exampleModal"
                     @click="text_analyze_modal = true"
                     class="ml-auto"
-                    style="font-size: 13px;color: #2F82FF;text-decoration: underline;position: absolute;right: 0;top: -2px
-                    ;"
-                >{{ i18n('Информация и пояснение') }}</button>
+                    style="font-size: 13px;color: #2F82FF;text-decoration: underline;position: absolute;right: 0;top: 6px;"
+                >{{ i18n('Информация') }}</button>
             </div>
         </div>
         <div
@@ -88,14 +86,12 @@
             <div class="modal-dialog" style="transition: 0.15s;" :style="text_analyze_modal?'top: 25%;':'top: 0px;'" @click.stop>
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h1 class="modal-title fs-5" id="exampleModalLabel" style="font-size: 30px;">Ответ</h1>
+                        <h1 class="modal-title fs-5" id="exampleModalLabel" style="font-size: 30px;">{{ i18n('Ответ') }}</h1>
                         <!-- <button type="button" class="f-z-16 btn-close" data-bs-dismiss="modal" aria-label="Close"></button> -->
                     </div>
-                    <div class="modal-body" style="line-height: 1.42857143;">
-                        Ответ - это инструмент, при помощи которого Вы можете получить ответ на новость от Исcкусственного Интелекта от любого лица. На вход подается выражение - запрос: <b>"Проанализируй данную новость и сформируй ответ на ее основе + От чьего лица вы ожидаете ответ"</b> В поля для ввода запроса можно написать От чьего лица вы ожидаете (ответ / реакцию).
-                    </div>
+                    <div class="modal-body" style="line-height: 1.42857143;" v-html="tab_info"></div>
                     <div class="modal-footer" style="height: auto;border-top: 1px solid #e5e5e5;">
-                        <button style="background-color: buttonface;color: #333;" type="button" class="f-z-16 btn btn-secondary" data-bs-dismiss="modal" @click="text_analyze_modal = false">Close</button>
+                        <button style="background-color: buttonface;color: #333;" type="button" class="f-z-16 btn btn-secondary" data-bs-dismiss="modal" @click="text_analyze_modal = false">{{ i18n('Закрыть') }}</button>
                     </div>
                 </div>
             </div>
@@ -117,7 +113,9 @@
     const openai = new OpenAIApi(configuration);
     export default{
         data() {
+            const tab_info = this.i18n(`Ответ - это инструмент, при помощи которого Вы можете сформулировать публичный комментарий по событию от лица различных акторов. Например, от гендиректора, пресс-службы, представителя администрации и других лиц. <br><br> На вход подается запрос: <b>"Проанализируйте данную новость и сформируйте публичный комментарий для прессы по событию от лица ..."</b>  В поле для ввода укажите, от чьего лица необходимо сформулировать ответ.`);
             return {
+                tab_info: tab_info,
                 input: "",
                 output: "",
                 text_analyze_modal: false,
@@ -195,7 +193,7 @@
                                 model: "gpt-3.5-turbo",
                                 messages: [
                                     {'role': 'system', 'content': 'You are an assistant for the monitoring system. You must analyze the given news and issue an answer based on the given news according to the request'},
-                                    {'role': 'user', 'content': this.i18n('Проанализируй данную новость и сформируй ответ на ее основе') + ' ' + temp_promt},
+                                    {'role': 'user', 'content': this.i18n('Проанализируйте данную новость и сформируйте публичный комментарий для прессы по событию от лица') + ' ' + temp_promt},
                                     {'role': 'user', 'content': this.i18n('Представленная новость') + ': ' + temp}
                                 ],
                             });
