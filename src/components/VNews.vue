@@ -5,7 +5,7 @@
             <span class="whitespace-nowrap"><span class="result-count result-count__items"
                 >{{ news_count.push_space() }}{{ similars_count ? ` + ${similars_count}` : '' }}&nbsp;</span
             >
-            <template v-if="isGrouped"> групп </template> {{ i18n('новостей') }}</span> <span class="whitespace-nowrap">(
+            {{ i18n(`${isGrouped ? 'групп ' : ''}новостей`) }}</span> <span class="whitespace-nowrap">(
             <span class="result-count result-count__resource"
                 >{{ resources_count.push_space() }}</span
             > {{ i18n('источников') }})</span>

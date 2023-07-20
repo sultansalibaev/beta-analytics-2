@@ -171,7 +171,7 @@ export const resources_sliced = computed(() => resources.value.slice(
         ...resource,
         name: resource_names.value[resource.res_id].name,
         link: resource_names.value[resource.res_id].link,
-        category_name: r_type.value == 1 ? smi_categories.value[resource_names.value[resource.res_id]?.category_id].name_cat : getSocialCategoryName(resource_names.value[resource.res_id].link),
+        category_name: r_type.value == 1 ? i18n(smi_categories.value[resource_names.value[resource.res_id]?.category_id].name_cat) : getSocialCategoryName(resource_names.value[resource.res_id].link),
         region_info: resource_names.value[resource.res_id].region_id == 0 ? '' : `</br><span style="font-size:11px;display:inline-flex;align-items:center;overflow:hidden;text-overflow:ellipsis"><b>${i18n('Регион')}:</b>&nbsp;&nbsp;${regions.value[resource_names.value[resource.res_id].region_id]?.name ?? 'Не определено'} </span>`,
         place_title: resource_names.value[resource.res_id].region_id == 0 ? `title="${countries.value[resource_names.value[resource.res_id].country_id].name}"` : '',
         place_country: countries.value[resource_names.value[resource.res_id].country_id]?.name ?? 'Не определено',
