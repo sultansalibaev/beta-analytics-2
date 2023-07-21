@@ -54,7 +54,7 @@
 
                             <div class="flex items-center" style="white-space: nowrap;text-overflow: ellipsis;overflow: hidden;padding-right: 5px;">
                                 <img :src="`/media/img/country/${country['hc-key']}.png`" v-if="country.isRegion != true" width="25" height="25" class="m-r-5" alt="">
-                                <span style="text-overflow: ellipsis;overflow: hidden;height: 16px;padding-top: 1px;">{{ country.country }}</span>
+                                <span style="text-overflow: ellipsis;overflow: hidden;height: 16px;padding-top: 1px;">{{ country.isRegion && country.id.split('_')[1] == 0 ? `Не определен (${countries[current_country_id]?.name}) ` : country.country }}</span>
                             </div>
 
                             <div class="region-news_count" style="white-space: nowrap;">

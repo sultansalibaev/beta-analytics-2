@@ -238,6 +238,7 @@ const _i18n = {
     "групп новостей": ["groups of news", "жаңалықтар тобы"],
     "новостей": ["news", "жаңалықтар"],
     "источников": ["sources", "дереккөздер"],
+    "Группирование публикаций проводится с": ["Grouping of publications has been carried out since", ""],
 
 
 };

@@ -3,6 +3,7 @@ import { getLang } from '@/response/utils/langIs'
 import { dateRange, selected_date_mode, thumbnail_dates } from '@/response/data/index'
 import { project, r_type, selected_social_categories } from '@/response/header'
 import { getProjectCounts } from "@/response/api"
+import axios from "axios";
 
 export const temp_end_date = reactive(ref(null))
 
@@ -14,7 +15,17 @@ export const current_selected = reactive(ref({
 export const modal = reactive(ref(false))
 export const between_dates = reactive(ref({}))
 
-export function select_range_period(period) {
+const default_ranges = {
+	'За весь период': 'during_all_the_time',
+	'Сегодня': 'today',
+	'Вчера': 'yesterday',
+	'Неделя': 'week',
+	'30 дней': 'month',
+	'Текущий месяц': 'current_month',
+	'Прошлый месяц': 'last_month',
+};
+
+export function select_range_period(period, range_name) {
 	between_dates.value = {
 		[period[0]]: 'start',
 		[period[1]]: 'end',
@@ -23,6 +34,10 @@ export function select_range_period(period) {
 	s_time.value = '00:00'
 	f_time.value = '23:59'
 	// current_selected.value.date = {}
+
+	// 
+
+	axios.get(`/ru/user-profile?value=${default_ranges[range_name]}`)
 }
 
 export function setDateRange() {
@@ -121,15 +136,18 @@ yesterday.setHours(0, 0, 0, 0);
 let minProjectDate = new Date(min.value),
 	maxProjectDate = new Date(max.value);
 
-let curr = new Date;
-let firstWeekDay = new Date(curr.setDate(curr.getDate() - curr.getDay() + 1));
-let lastWeekDay = new Date(curr.setDate(curr.getDate() - curr.getDay() + 7));
+// let curr = new Date;
+// let firstWeekDay = new Date(curr.setDate(curr.getDate() - curr.getDay() + 1));
+// let lastWeekDay = new Date(curr.setDate(curr.getDate() - curr.getDay() + 7));
+let firstWeekDay = new Date().minus('date', 6);
+let lastWeekDay = new Date();
 
 
 export const ranges = reactive(ref({
 	'За весь период': [minProjectDate.format("Y-m-d"), maxProjectDate.format("Y-m-d")],
 	'Сегодня': [today.format("Y-m-d"), today.format("Y-m-d")],
 	'Вчера': [yesterday.format("Y-m-d"), yesterday.format("Y-m-d")],
+	// 'Неделя': [firstWeekDay.format("Y-m-d"), lastWeekDay.format("Y-m-d")],
 	'Неделя': [firstWeekDay.format("Y-m-d"), lastWeekDay.format("Y-m-d")],
 	'30 дней': [priorDate.format("Y-m-d"), today.format("Y-m-d")],
 	'Текущий месяц': [new Date(today.getFullYear(), today.getMonth(), 1).format("Y-m-d"), new Date(today.getFullYear(), today.getMonth() + 1, 0).format("Y-m-d")],

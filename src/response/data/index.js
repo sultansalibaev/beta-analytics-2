@@ -195,6 +195,7 @@ export const selected_soc_metrics = reactive(ref(''));
 export const resource_count_loading = reactive(ref(true));
 export const similars_count = reactive(ref(false));
 export const news_count = reactive(ref(0));
+export const first_similar_date = reactive(ref(false));
 export const selected_similars_page = reactive(ref(1));
 export const set_selected_similars_page = page => {
     selected_similars_page.value = parseInt(page);

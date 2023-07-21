@@ -156,7 +156,22 @@
                 @click="isGrouped = true"
                 :class="{
                     active: isGrouped
-                }">{{ i18n('По группам') }}</div><!-- сгруппировано -->
+                }"
+            >{{ i18n('По группам') }}
+                <i class="fa-solid fa-circle-exclamation prompt-parent transition-all" :style="{
+                    width: isGrouped ? '15px' : '0px',
+                    'padding-left': isGrouped ? '1px' : '0px',
+                    'margin-left': isGrouped ? '5px' : '0px',
+                    'margin-right': isGrouped ? '-2px' : '0px',
+                    opacity: isGrouped ? 1 : 0,
+                    'font-size': '14px',
+                }">
+                    <div class="prompt before-bottom">
+                        <template v-if="getLang() == 'kz'">{{ `Жаңалықтарды топтастыру ${getGroupedDate(new Date(first_similar_date))} бастап жүзеге асырылды` }}</template>
+                        <template v-else>{{ i18n('Группирование публикаций проводится с') }} {{ getGroupedDate(new Date(first_similar_date)) }}</template>
+                    </div>
+                </i>
+            </div><!-- сгруппировано -->
         </div>
 
         <v-pagination
@@ -1755,6 +1770,8 @@
 </template>
 
 <script>
+
+import { getLang } from '@/response/utils/langIs'
 import i18n from "@/response/utils/i18n"
 // inline_labels
 //import axios from 'axios'
@@ -1780,6 +1797,7 @@ import {
     p_user_id,
     favorites,
     favorites_modal,
+    first_similar_date,
 } from "@/response/data/index";
 import { getItems, getSimilarItems, updateGroupSentiment, deleteGroupItems, getGroupFolders, updateGroupFolders, get_favorites, general_add_to_folder } from "@/response/api";
 // import items from '@/response/json/items';
@@ -1808,6 +1826,7 @@ export default {
     },
     setup() {
         return {
+            getLang,
             i18n,
             news_count,
             similars_count,
@@ -1841,6 +1860,7 @@ export default {
             similar_items,
             favorites,
             favorites_modal,
+            first_similar_date,
             general_add_to_folder,
             updateGroupFolders,
             get_favorites,
@@ -2196,6 +2216,18 @@ export default {
                     date.format("d")
                 )} ${i18n(date.format("m", true))}${year}` +
                 (week_day ? `, ${i18n(date.format("w", true))}` : "")
+            ).trim();
+        },
+        getGroupedDate(date) {
+            // '23:35, 15 Марта 2023, Среда'
+            let year =
+                new Date().getFullYear() == date.getFullYear()
+                    ? ""
+                    : " " + date.getFullYear();
+            return (
+                `${parseInt(
+                    date.format("d")
+                )} ${i18n(date.format("m", true))}${year}, ${date.format("h:i")}`
             ).trim();
         },
         login_for_newspapers() {
@@ -3576,4 +3608,17 @@ i.positive {
         width: 100%;
     }
 }
+/* .fa-exclamation {
+    color: #3b5998;
+    background: white;
+    margin-left: 5px;
+    width: 15px;
+    height: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    padding-left: 1px;
+    font-size: 10px;
+} */
 </style>

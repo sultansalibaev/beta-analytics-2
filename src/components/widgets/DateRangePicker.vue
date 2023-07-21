@@ -13,7 +13,7 @@
 				<div class="flex flex-col justify-center date-ranges">
 					<span class="date-range" :class="{
 						selected: isSelectedRange(range)
-					}" v-for="range in Object.keys(ranges)" :key="range" @click="select_range_period(ranges[range])">{{ i18n(range) }}</span>
+					}" v-for="range in Object.keys(ranges)" :key="range" @click="select_range_period(ranges[range], range)">{{ i18n(range) }}</span>
 				</div>
 				<switching-by-dates :min="min" :max="max"/>
 			</div>
