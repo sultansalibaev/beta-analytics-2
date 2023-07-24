@@ -1,12 +1,12 @@
 <template>
     <div class="wrap-body m-b-15 flex items-center result-info-1439">
         <span style="color:#A8A8A8;line-height: 1.2;">
-            <span style="font-size: 16px;color: #333 !important;">{{ i18n('Результат фильтра') }}:&nbsp;&nbsp;</span>
+            <span style="font-size: 16px;color: #333 !important;">{{ i18n('Результат фильтра') }}:&nbsp;</span>
             <span class="whitespace-nowrap"><span class="result-count result-count__items"
-                >{{ news_count.push_space() }}{{ similars_count ? ` + ${similars_count}` : '' }}&nbsp;</span
+                >{{ news_count.push_space() }}</span
             >
-            {{ i18n(`${isGrouped ? 'групп ' : ''}новостей`) }}</span> <span class="whitespace-nowrap">(
-            <span class="result-count result-count__resource"
+            {{ i18n(`${isGrouped ? 'групп ' : ''}новостей`) }}</span> <span class="whitespace-nowrap">
+            (<span class="result-count result-count__resource"
                 >{{ resources_count.push_space() }}</span
             > {{ i18n('источников') }})</span>
         </span>
