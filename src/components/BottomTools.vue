@@ -165,7 +165,7 @@
                 </div>
                 <div
                     class="flex map_container"
-                    style="padding-right: 0; padding-left: 0;"
+                    style="padding-right: 0; padding-left: 0;position: relative;z-index: 1;"
                     :class="{
                         'p-9-10-9-11': true,
                         'flex-wrap': true,

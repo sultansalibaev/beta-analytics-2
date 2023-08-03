@@ -14,6 +14,6 @@ export default {
 <style>
 .pie {
     /*min-height: 100%;*/
-    min-height: 270px;
+    min-height: 255px;
 }
 </style>
