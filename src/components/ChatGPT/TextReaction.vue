@@ -51,7 +51,7 @@
             <!-- <span v-show="input == ''" style="margin-left: 5px;color: red;font-size:13px;white-space: nowrap;">{{ i18n('Укажите, от кого сформулировать обращение?') }}</span> -->
             
             <div style="color: #A8A8A8;font-size: 13px;margin: 8px 0 12px 0;">{{ i18n('Что передается в ChatGPT') }}:</div>
-            <div style="font-size: 15px;margin-bottom: 12px;">{{ i18n('Проанализируйте данную новость и сформируйте публичный комментарий для прессы по событию от лица') }} {{ (input + '').trim() }}</div>
+            <div style="font-size: 15px;margin-bottom: 12px;line-height: 1.2">{{ i18n('Проанализируйте данную новость и сформируйте публичный комментарий для прессы по событию от лица') }} {{ (input + '').trim() }}</div>
     
             <pre style="margin-bottom: 12px;font-family: Roboto;line-height: 1.7!important;font-size: 13.5px!important;white-space: pre-wrap;" v-show="output">{{ output }}</pre>
     

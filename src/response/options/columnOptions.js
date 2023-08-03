@@ -74,7 +74,7 @@ export const reset_sentiment_resource = function () {
 };
 import axios from 'axios'
 import { get_map_params } from "@/response/options/mapOptions"
-import { selected_categories, selected_languages, dateRange } from "@/response/data/index"
+import { selected_categories, selected_languages, dateRange, get_selected_smi_categories } from "@/response/data/index"
 import { selected_main_sentiments, project, selected_social_categories } from "@/response/header"
 import { s_time, f_time } from '@/data'
 
@@ -92,15 +92,14 @@ export function getResourceData() {
         ) : 0;
     }
     else {
-        category_id = Object.keys(selected_categories.value).length ? (
-            Object.keys(selected_categories.value).filter(smi_key => selected_categories.value[smi_key]).join(',')
-        ) : 0;
+        category_id = get_selected_smi_categories(selected_categories.value).join(',');
     }
     let language = Object.keys(selected_languages.value).length ? (
         Object.keys(selected_languages.value).filter(lang_id => selected_languages.value[lang_id]).join(',')
     ) : '';
     let sentiments = Object.keys(selected_main_sentiments.value).filter(sentiment => selected_main_sentiments.value[sentiment]).join(',')
     waiting.value = true
+    console.log(`resource-data = category_id = ${category_id}`);
     axios
         .get(`/ru/analyticstats/get-project-resource-data?p_id=${project.value.id}&r_type=${r_type.value}&category_id=${category_id}&countries=${countries}&regions=${regions}&sentiments=${sentiments}&language=${language}&s_date=${dateRange.value.startDate.format("Y-m-d")} ${s_time.value}&f_date=${dateRange.value.endDate.format("Y-m-d")} ${f_time.value}&from=${resources.value.length}&resource_length=${resource_count.value}`)
         .then(response => {

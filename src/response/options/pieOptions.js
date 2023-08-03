@@ -69,6 +69,7 @@ watch(categories_copy, () => {
 
     
     global_filter.value = create_global_filter()
+    console.log('categories_copy watcher', selected_categories.value);
 })
 
 export const has_selected_categories = computed(() => (Object.values(selected_categories.value).filter(cat => (cat || cat === null)).length != 0))
@@ -179,6 +180,8 @@ export const pieOptions = computed(() => {
                                 this.color = this.options.color = "#cccccc";
                             }
 
+                            console.log('before run watcher', JSON.parse(JSON.stringify(categories_copy.value)));
+
                             categories_copy.value = this.series.data.reduce((start, cat) => {
                                 if (cat.options.color == '#cccccc') {
                                     cat.options.selected = null;
@@ -186,6 +189,7 @@ export const pieOptions = computed(() => {
                                 start[cat.options.id_cat] = cat.options;
                                 return start;
                             }, {})
+                            console.log('run watcher', categories_copy.value);
 
                         },
                         click: function () {

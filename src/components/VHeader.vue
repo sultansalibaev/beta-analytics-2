@@ -227,9 +227,10 @@ export default {
             handler(newValue, oldValue) {
                 if (this.reset_all) return
                 let category_id = 0;
-
+                
                 category_id = get_selected_smi_categories(newValue).join(',');
-
+                
+                console.log('selected_categories watcher', category_id === get_selected_smi_categories(oldValue).join(','), category_id, get_selected_smi_categories(oldValue).join(','));
                 if (category_id === get_selected_smi_categories(oldValue).join(',')) return;
 
 

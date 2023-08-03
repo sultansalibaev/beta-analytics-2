@@ -2,7 +2,7 @@
     <div class="wrap-body m-b-15 flex items-center result-info-1439">
         <span style="color:#A8A8A8;line-height: 1.2;">
             <span style="font-size: 16px;color: #333 !important;">{{ i18n('Результат фильтра') }}:&nbsp;</span>
-            <span class="whitespace-nowrap"><span class="result-count result-count__items"
+            <span class="whitespace-nowrap"><span class="result-count result-count__items" :style="isGrouped ? 'color: #11866E;' : ''"
                 >{{ news_count.push_space() }}</span
             >
             {{ i18n(`${isGrouped ? 'групп ' : ''}новостей`) }}</span> <span class="whitespace-nowrap">
@@ -339,7 +339,7 @@
                                 }"
                             >
                                 <div class="inline-flex justify-between m-b-10">
-                                    <div class="inline-flex">
+                                    <div class="inline-flex items-center">
                                         <div
                                             class="item-title__icon"
                                             :style="
@@ -1469,7 +1469,7 @@
                 }"
             >
                 <div class="inline-flex justify-between m-b-10">
-                    <div class="inline-flex">
+                    <div class="inline-flex items-center">
                         <div
                             class="item-title__icon"
                             :style="
@@ -2537,7 +2537,7 @@ export default {
     cursor: pointer;
 }
 .item-title__text {
-    padding-top: 7px;
+    /* padding-top: 7px; */
     cursor: pointer;
     font-weight: 600;
     font-size: 16px;
