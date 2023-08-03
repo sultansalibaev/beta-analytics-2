@@ -104,6 +104,7 @@ export function getResourceData() {
     axios
         .get(`/ru/analyticstats/get-project-resource-data?p_id=${project.value.id}&r_type=${r_type.value}&category_id=${category_id}&countries=${countries}&regions=${regions}&sentiments=${sentiments}&language=${language}&s_date=${dateRange.value.startDate.format("Y-m-d")} ${s_time.value}&f_date=${dateRange.value.endDate.format("Y-m-d")} ${f_time.value}&from=${resources.value.length}&resource_length=${resource_count.value}`)
         .then(response => {
+            console.log('response', response);
             if (response.data.empty_resource_ids) return;
             if (resources.value.length < resource_count.value) {
                 resources.value = [...resources.value, ...response.data.resources];

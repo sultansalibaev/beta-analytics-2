@@ -2230,30 +2230,30 @@ export default {
                 )} ${i18n(date.format("m", true))}${year}, ${date.format("h:i")}`
             ).trim();
         },
-        login_for_newspapers() {
+        login_for_newspapers(temp_url) {
             const username = 'imas';
             const password = 'imas';
             const credentials = btoa(`${username}:${password}`);
-            const temp_url = 'https://newspapers-service.imas.kz';
+            // const temp_url = 'https://newspapers-service.imas.kz';
 
             fetch(temp_url, {
                 headers: {
                     'Authorization': `Basic ${credentials}`
                 },
-                mode: 'no-cors'
+                // mode: 'no-cors'
             })
                 .then(response => {
                     console.log('newspapers-service', response);
-                    if (response.ok) {
-                        return response.blob();
-                    } else {
-                        throw new Error('Network response was not ok.');
-                    }
+                    // if (response.ok) {
+                    //     return response.blob();
+                    // } else {
+                    //     throw new Error('Network response was not ok.');
+                    // }
                 })
-                .then(blob => {
-                    // Use the downloaded blob as needed
-                    console.log('PDF file downloaded:', blob);
-                })
+                // .then(blob => {
+                //     // Use the downloaded blob as needed
+                //     console.log('PDF file downloaded:', blob);
+                // })
                 .catch(error => {
                     console.error('Error downloading PDF file:', error);
                 });
@@ -2465,7 +2465,7 @@ export default {
         modal_item(newValue) {
 
             if (newValue?.category_id === 13) {
-                this.login_for_newspapers()
+                this.login_for_newspapers(newValue?.link)
             }
             
             if (!(this.r_type == 2 && newValue)) return;
