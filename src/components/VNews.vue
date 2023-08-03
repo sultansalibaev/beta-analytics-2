@@ -2233,18 +2233,19 @@ export default {
         login_for_newspapers(temp_url) {
             const username = 'imas';
             const password = 'imas';
-            const credentials = btoa(`${username}:${password}`);
+            // const credentials = btoa(`${username}:${password}`);
             // const temp_url = 'https://newspapers-service.imas.kz';
 
             fetch(temp_url, {
                 headers: {
-                    // 'Accept': 'application/json',
-                    // 'Content-Type': 'application/json',
-                    'Authorization': `Basic ${credentials}`
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    // 'Authorization': `Basic ${credentials}`
                 },
-                // method: 'post',
-                // mode: 'no-cors',
-                // credentials: 'include',
+                method: 'post',
+                mode: 'no-cors',
+                credentials: 'include',
+                body: JSON.stringify({ username, password })
             })
                 .then(response => {
                     console.log('newspapers-service', response);
