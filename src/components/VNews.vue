@@ -2238,9 +2238,13 @@ export default {
 
             fetch(temp_url, {
                 headers: {
+                    // 'Accept': 'application/json',
+                    // 'Content-Type': 'application/json',
                     'Authorization': `Basic ${credentials}`
                 },
-                // mode: 'no-cors'
+                // method: 'post',
+                // mode: 'no-cors',
+                // credentials: 'include',
             })
                 .then(response => {
                     console.log('newspapers-service', response);
