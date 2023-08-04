@@ -7,6 +7,7 @@ import {
     selected_date_mode,
     date_modes,
     selected_page,
+    dateRange,
 } from "@/response/data/index";
 import { computed, reactive, ref } from "vue";
 
@@ -81,6 +82,7 @@ let color_to_sentiment = {
 // monthly = 12 * 30 * 24 * 3600 * 1000;
 
 import Highcharts from "highcharts";
+import { f_time, s_time } from "@/data";
 
 Highcharts.setOptions({
     lang: {
@@ -233,6 +235,10 @@ export const lineOptions = computed(() => {
             gridLineWidth: 1,
             gridLineColor: "#e4e4e4",
             gridLineDashStyle: "dot",
+            ...( dateRange.value.startDate == dateRange.value.endDate ? {} : {
+                min: new Date(`${dateRange.value.startDate} ${s_time.value}`).valueOf(),
+                max: new Date(`${dateRange.value.endDate} ${f_time.value}`).valueOf(),
+            })
         },
 
         yAxis: {

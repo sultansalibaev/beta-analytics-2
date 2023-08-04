@@ -8,12 +8,15 @@ import axios from "axios";
 export const temp_end_date = reactive(ref(null))
 
 export const current_selected = reactive(ref({
-	date: null,
-	type: null,
+	date: dateRange.value.endDate,
+	type: 'end',
 }))
 
 export const modal = reactive(ref(false))
-export const between_dates = reactive(ref({}))
+export const between_dates = reactive(ref({
+	[dateRange.value.startDate]: 'start',
+	[dateRange.value.endDate]: 'end',
+}))
 
 const default_ranges = {
 	'За весь период': 'during_all_the_time',
@@ -41,8 +44,9 @@ export function select_range_period(period, range_name) {
 }
 
 export function setDateRange() {
-    modal.value = false
-    let date_keys = Object.keys(between_dates.value)
+    modal.value = false;
+    let date_keys = Object.keys(between_dates.value);
+	console.log('date_keys', date_keys, between_dates.value);
     if (date_keys.length == 1) {
 
 		between_dates.value = {

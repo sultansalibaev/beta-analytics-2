@@ -67,7 +67,10 @@ const reset_all_selected_data = () => {
     isGrouped.value = false
     let years_period = new Date(dateRange.value.endDate).getFullYear() - new Date(dateRange.value.startDate).getFullYear();
     let temp_date_mode = 'daily';
-    if (years_period > 2) {
+    if (dateRange.value.endDate == dateRange.value.startDate) {
+        temp_date_mode = 'hourly';
+    }
+    else if (years_period > 2) {
         temp_date_mode = 'monthly';
     }
     selected_date_mode.value = temp_date_mode
