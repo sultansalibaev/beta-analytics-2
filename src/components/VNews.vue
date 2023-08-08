@@ -2481,6 +2481,7 @@ export default {
                     `/ru/news/get-comments?p_id=${this.project.id}&post_id=${newValue?.item_id}`
                 )
                 .then((response) => {
+                    console.log('get-comments', response)
                     let item_status = response?.data?.status;
                     let item_comments = response?.data?.comments;
 
