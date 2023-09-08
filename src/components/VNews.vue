@@ -2021,7 +2021,7 @@ export default {
                     : ""
             }) center center / cover no-repeat, url(${
                 this.r_type == 1
-                    ? "https://cabinet333.imas.kz/media/img/resource_logo/news_img.svg"
+                    ? "/media/img/resource_logo/news_img.svg"
                     : "/media/img/resource_logo/no-image.png"
             }) center center / cover no-repeat;`;
         },
