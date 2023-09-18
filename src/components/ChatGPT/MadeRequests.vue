@@ -1,7 +1,7 @@
 <template>
     <div class="made-requests-content">
         <div class="flex justify-around gap-x-10">
-            <div class="flex flex-col w-full">
+            <div class="flex flex-col w-1/2">
                 <h2>{{ i18n('Анализ новости') }}</h2>
                 <input v-model="condition_name" class="form-control my-3" type="text" :placeholder="i18n('Введите условие')" >
                 <div class="used-prompt-list static scrollbar" style="max-height: 400px;">
@@ -15,7 +15,7 @@
                     >{{ used_prompt }}</div>
                 </div>
             </div>
-            <div class="flex flex-col w-full">
+            <div class="flex flex-col w-1/2">
                 <h2>{{ i18n('Ответ') }}</h2>
                 <input v-model="person_name" class="form-control my-3" type="text" :placeholder="i18n('Введите, от чьего лица вы ожидали ответ')" >
                 <div class="used-prompt-list static scrollbar" style="max-height: 400px;">

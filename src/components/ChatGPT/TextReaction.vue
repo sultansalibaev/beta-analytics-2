@@ -119,7 +119,7 @@
                 input: "",
                 output: "",
                 text_analyze_modal: false,
-                used_prompt_list_modal: false,
+                used_prompt_list_modal: true,
                 used_prompt_list: [],
             }
         },
@@ -138,9 +138,16 @@
                 return this.chatgpt_item?.logs && this.input && this.chatgpt_item?.logs[this.input] == 'loading'
             },
             sorted_used_prompt_list() {
-                if (this.input == '') return this.used_prompt_list;
+                let temp_prompt = 'от организации .... в позитивном ключе, объемом на английском языке.'
+                let temp_prompt_list = [
+                    ...this.used_prompt_list,
+                    ...(
+                        this.used_prompt_list.includes(temp_prompt) ? [] : [temp_prompt]
+                    )
+                ];
+                if (this.input == '') return temp_prompt_list;
                 else {
-                    return this.used_prompt_list
+                    return temp_prompt_list
                         .filter(used_prompt => used_prompt?.lowerIncludes(this.input))
                         .sort((a,b) => {
                             if (a?.lowerIncludes(this.input) == false && b?.lowerIncludes(this.input) == false) {
@@ -282,7 +289,7 @@
     }
 </script>
 
-<style>
+<style scoped>
 .btn-help {
     margin: 0 auto;
     margin-top: 30px;
@@ -407,6 +414,8 @@ textarea.form-control {
     cursor:pointer;
     height:27px;
     white-space:nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
     transition: .15s;
 }
 

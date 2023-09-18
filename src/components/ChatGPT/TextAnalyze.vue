@@ -7,16 +7,20 @@
             <div style="font-size: 18px;font-weight: 500;">{{ i18n('Анализ перспективы') }}</div>
             <div style="color: #A8A8A8;font-size: 13px;margin: 8px 0 12px 0;">{{ i18n('Выберите подходящую точку зрения') }}:</div>
             <div class="inline-flex relative" style="margin-bottom:12px;">
-                <div @click.stop="select_options_modal = !select_options_modal" class="inline-flex text-white justify-between items-center cursor-pointer select-title">
+                <div
+                    @click.stop="select_options_modal = !select_options_modal"
+                    class="inline-flex text-white justify-between items-center cursor-pointer select-title"
+                    style="width: 185px;"
+                >
                     {{ i18n('Выберите условие') }}
                     <i class="fa-solid fa-angle-down transition-all" style="margin-left:5px;" :style="select_options_modal ? '' : 'padding-top:3px;'" :class="{
                         'rotate-x-180': select_options_modal
                     }"></i>
                 </div>
                 <div class="absolute top-full right-0 left-0 transition-all select-options" :style="{
-                        height: select_options_modal ? '169px' : '0px'
+                        height: select_options_modal ? '170px' : '0px'
                     }">
-                    <div class="flex flex-col select-none select-options-styles">
+                    <div class="flex flex-col select-none select-options-styles scrollbar" style="height: 165px;">
                         <div class="select-option" @click="change_condition('бизнес')" :class="{
                             active: condition == i18n('с точки зрения бизнеса')
                         }">{{ i18n('Бизнес') }}</div>
@@ -32,6 +36,20 @@
                         <div class="select-option" @click="change_condition('разные т.з.')" :class="{
                             active: condition == i18n('с разных точек зрения')
                         }">{{ i18n('Разные точки зрения') }}</div>
+
+                        <div class="select-option" @click="change_condition('пресс-релиз')" :class="{
+                            active: condition == i18n('и составь пресс-релиз по этой публикации, объемом до 1800 знаков, на русском языке')
+                        }">{{ i18n('Пресс-релиз') }}</div>
+                        <div class="select-option" @click="change_condition('план действий таблицей')" :class="{
+                            active: condition == i18n('и составь план действий для всех участников этой ситуации для ее разрешения и улучшения')
+                        }">{{ i18n('План действий таблицей') }}</div>
+                        <div class="select-option" @click="change_condition('выработай рекомендации')" :class="{
+                            active: condition == i18n('и выработай список из 3-5 рекомендаций для улучшения деятельности организации ... по описанной ситуации')
+                        }">{{ i18n('Выработай рекомендации') }}</div>
+                        <div class="select-option" @click="change_condition('негатив в позитив')" :class="{
+                            active: condition == i18n('и предложи 5 идей как отреагировать на эту публикацию так, чтобы негативный эффект для организации ...Х... перевести в позитивный')
+                        }">{{ i18n('Негатив в позитив') }}</div>
+
                         <div class="select-option" @click="select_options_modal = condition = undefined" :class="{
                             active: condition == undefined
                         }">{{ i18n('Своё условие') }}</div>
@@ -143,13 +161,21 @@
                 "граждане страны": this.i18n("с точки зрения гражданина страны"),
                 "сил.структуры": this.i18n("с точки зрения силовых структур"),
                 "разные т.з.": this.i18n("с разных точек зрения"),
+                "пресс-релиз": this.i18n("и составь пресс-релиз по этой публикации, объемом до 1800 знаков, на русском языке"),
+                "план действий таблицей": this.i18n("и составь план действий для всех участников этой ситуации для ее разрешения и улучшения"),
+                "выработай рекомендации": this.i18n("и выработай список из 3-5 рекомендаций для улучшения деятельности организации ... по описанной ситуации"),
+                "негатив в позитив": this.i18n("и предложи 5 идей как отреагировать на эту публикацию так, чтобы негативный эффект для организации ...Х... перевести в позитивный"),
             };
             const tab_info = this.i18n(`Анализ перспективы - это инструмент, при помощи которого вы можете получить от языковой модели подробный анализ публикации с той или иной точки зрения. На вход GPT подается выражение - запрос: <b>"Проведите подробный анализ данной новости с точки зрения ..."</b> <br> В меню <b>"Условие"</b> можно выбрать одну из общественных групп или задать свою.<br><br> После выбора нажмите <b>"Запуск"</b> и подождите, пока сформируется ответ (10-20 секунд).`) + `<br><br>
                         "${ i18n('Бизнес') }" - ${ i18n("с точки зрения бизнеса") }<br>
                         "${ i18n('Государство') }" - ${ i18n("с точки зрения государства") }<br>
                         "${ i18n('Граждане страны') }" - ${ i18n("с точки зрения гражданина страны") }<br>
                         "${ i18n('Силовые структуры') }" - ${ i18n("с точки зрения силовых структур") }<br>
-                        "${ i18n('Разные точки зрения') }" - ${ i18n("с разных точек зрения") }`
+                        "${ i18n('Разные точки зрения') }" - ${ i18n("с разных точек зрения") }<br>
+                        "${ i18n('Пресс-релиз') }" - ${ i18n("и составь пресс-релиз по этой публикации, объемом до 1800 знаков, на русском языке") }<br>
+                        "${ i18n('План действий таблицей') }" - ${ i18n("и составь план действий для всех участников этой ситуации для ее разрешения и улучшения") }<br>
+                        "${ i18n('Выработай рекомендации') }" - ${ i18n("и выработай список из 3-5 рекомендаций для улучшения деятельности организации ... по описанной ситуации") }<br>
+                        "${ i18n('Негатив в позитив') }" - ${ i18n("и предложи 5 идей как отреагировать на эту публикацию так, чтобы негативный эффект для организации ...Х... перевести в позитивный") }`
             return {
                 tab_info: tab_info,
                 default_requests: default_requests,
@@ -392,6 +418,32 @@
 </script>
 
 <style>
+
+/* Scrollbar */
+
+.scrollbar {
+    overflow-x: clip;
+    overflow-y: scroll;
+}
+
+.scrollbar::-webkit-scrollbar {
+    width: 7px;
+    margin-left: 2px;
+}
+
+.scrollbar::-webkit-scrollbar-track {
+    margin-left: 2px;
+    background-color: transparent;
+}
+
+.scrollbar::-webkit-scrollbar-thumb {
+    /*background-color: #eaeaea;*/
+    background-color: rgb(170, 227, 255);
+    border-radius: 5px;
+}
+
+/* ... */
+
 .btn-help {
     margin: 0 auto;
     margin-top: 30px;
