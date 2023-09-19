@@ -96,7 +96,7 @@ export default {
 
 <style scoped>
 h2 {
-    font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica Neue, Noto Sans, Liberation Sans, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif ;
     font-size: 19px;
     font-weight: 700;
 }

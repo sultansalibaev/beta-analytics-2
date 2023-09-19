@@ -58,7 +58,7 @@
                             </div>
 
                             <div class="region-news_count" style="white-space: nowrap;">
-                                <span style="font-family: sans-serif;font-weight:600;color:#1CB394;">{{ country.value.push_space() }}</span>&nbsp;&nbsp;  <span style="font-family: sans-serif;font-weight:600;color:#7CB5EC;"> ({{ country.resources.push_space() }})</span>
+                                <span style="font-weight:600;color:#1CB394;">{{ country.value.push_space() }}</span>&nbsp;&nbsp;  <span style="font-weight:600;color:#7CB5EC;"> ({{ country.resources.push_space() }})</span>
                             </div>
                         </div>
                         <div

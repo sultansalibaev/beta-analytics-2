@@ -95,7 +95,7 @@
             <div style="color: #A8A8A8;font-size: 13px;margin: 8px 0 12px 0;">{{ i18n('Что передается в ChatGPT') }}:</div>
             <div style="font-size: 15px;margin-bottom: 12px;line-height: 1.2;">{{ i18n('Проведите подробный анализ данной новости') }} {{ input == '' ? i18n(condition) : input }}</div>
     
-            <pre style="margin-bottom: 12px;font-family: Roboto;line-height: 1.7!important;font-size: 13.5px!important;white-space: pre-wrap;" v-show="output">{{ output }}</pre>
+            <pre style="margin-bottom: 12px;line-height: 1.7!important;font-size: 13.5px!important;white-space: pre-wrap;" v-show="output">{{ output }}</pre>
     
             <div class="flex items-center justify-between" style="height: 27px;">
                 <button
@@ -555,7 +555,7 @@
 textarea.form-control {
     word-spacing: 2px;
     letter-spacing: .7px;
-    font-family: 'Roboto';
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif ;
     line-height: 1.7 !important;
     font-size: 13.5px !important;
 }

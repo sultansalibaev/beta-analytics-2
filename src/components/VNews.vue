@@ -2681,7 +2681,7 @@ export default {
 }
 
 .result-count {
-    font-family: sans-serif;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif ;
     font-size: 15px;
     font-weight: 600;
 }
@@ -3244,7 +3244,7 @@ i.positive {
     font-size: 16px;
     line-height: 1.3;
     font-weight: 300;
-    font-family: "open sans", "Helvetica Neue", Helvetica, Arial, sans-serif !important;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif ;
 }
 .full-item-text a {
     color: #23527c;
@@ -3399,7 +3399,7 @@ i.positive {
 .comment-text {
     color: #333;
     font-weight: 300;
-    font-family: "open sans", "Helvetica Neue", Helvetica, Arial, sans-serif !important;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif ;
     text-overflow: ellipsis;
     overflow: hidden;
     padding: 1px 0;
@@ -3418,7 +3418,7 @@ i.positive {
     align-items: center;
     border-radius: 4px;
 
-    font-family: "open sans", "Helvetica Neue", Helvetica, Arial, sans-serif !important;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif ;
     background: white;
     color: white;
     font-size: 12px;
@@ -3447,7 +3447,7 @@ i.positive {
 .comment-title {
     font-size: 20px;
     font-weight: 600;
-    font-family: open sans, Helvetica Neue, Helvetica, Arial, sans-serif !important;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif ;
     margin-right: 10px;
 }
 
@@ -3461,7 +3461,7 @@ i.positive {
     align-items: center;
     height: 28px;
     font-weight: 600;
-    font-family: open sans, Helvetica Neue, Helvetica, Arial, sans-serif !important;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif ;
 }
 .apply-btn:hover {
     background: #138871;
@@ -3533,7 +3533,7 @@ i.positive {
     width: 65% !important;
     height: 80%;
     background: transparent !important;
-    font-family: system-ui,-apple-system,Segoe UI,Roboto,Helvetica Neue,Noto Sans,Liberation Sans,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji",Segoe UI Symbol,"Noto Color Emoji";
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif ;
     font-size: 16px;
     box-shadow: none !important;
     min-width: 940px;
