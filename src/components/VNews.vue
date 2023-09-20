@@ -602,7 +602,7 @@
                                             :disabled="similar_item?.logs === undefined"
                                             :style="similar_item?.logs === undefined ? 'cursor: wait;' : ''"
                                         >
-                                            {{ i18n('Анализ') }}
+                                            {{ i18n('Анализ ChatGPT') }}
                                             <i v-if="Object.values(similar_item?.logs || {}).includes('loading')" class="fa-solid fa-spinner" style="margin-right: -2px;padding-top: 1px;"></i>
                                             <i v-else-if="Object.keys(similar_item?.logs || {}).length" class="fa fa-check" style="color: #18a689;margin-right: -2px;"></i>
                                         </button>
@@ -849,7 +849,7 @@
                 "
             >
                 <div
-                    style="max-width: 1000px; width: 100%; font-size: 16px"
+                    style="max-width: 1150px; width: 100%; font-size: 16px"
                     :style="{
                         maxHeight: modal_item?.newspaper_modal ? '0px' : '',
                         overflow: modal_item?.newspaper_modal ? 'hidden' : '',
@@ -943,6 +943,18 @@
                             style="color: #7cb5ec; border-color: #7cb5ec"
                             ><i class="fa fa-share-alt"></i>{{ i18n('Источник') }}</a
                         >
+                        <button
+                            class="modal-item_btn favorites"
+                            style="margin-right: 8px;cursor: pointer;"
+                            @click="chatgpt_item = modal_item"
+                            v-show="modal_item?.logs !== null"
+                            :disabled="modal_item?.logs === undefined"
+                            :style="modal_item?.logs === undefined ? 'cursor: wait;' : ''"
+                        >
+                            {{ i18n('Анализ ChatGPT') }}
+                            <i v-if="Object.values(modal_item?.logs || {}).includes('loading')" class="fa-solid fa-spinner" style="margin-right: -2px;padding-top: 1px;"></i>
+                            <i v-else-if="Object.keys(modal_item?.logs || {}).length" class="fa fa-check" style="color: #18a689;margin-right: -2px;"></i>
+                        </button>
                         <button
                             class="modal-item_btn favorites red-border-color red-color"
                             @click="delete_item(modal_item?.item_id)"
@@ -1741,7 +1753,7 @@
                             :disabled="item?.logs === undefined"
                             :style="item?.logs === undefined ? 'cursor: wait;' : ''"
                         >
-                            {{ i18n('Анализ') }}
+                            {{ i18n('Анализ ChatGPT') }}
                             <i v-if="Object.values(item?.logs || {}).includes('loading')" class="fa-solid fa-spinner" style="margin-right: -2px;padding-top: 1px;"></i>
                             <i v-else-if="Object.keys(item?.logs || {}).length" class="fa fa-check" style="color: #18a689;margin-right: -2px;"></i>
                         </button>
