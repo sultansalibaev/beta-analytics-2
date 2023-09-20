@@ -8,9 +8,7 @@
             <div style="font-size: 18px;font-weight: 500;">{{ i18n('Обзор публикации') }}</div>
             <div style="color: #A8A8A8;font-size: 13px;margin: 8px 0 12px 0;">{{ i18n('Что передается в ChatGPT') }}:</div>
             <div style="font-size: 15px;margin-bottom: 12px;line-height: 1.2">{{ i18n('Сформулируйте главную информацию новости в 3-4 предложения. Затем выделите основных действующих лиц, компании, службы') }}</div>
-    
-            <pre style="margin-bottom: 12px;line-height: 1.7!important;font-size: 13.5px!important;white-space: pre-wrap;" v-show="output">{{ output }}</pre>
-    
+            
             <div class="flex items-center justify-between" style="height: 27px;">
                 <button
                     style="background: #3b5998;height: 27px;padding: 0 8px 2px;border-radius: 4px;font-size: 13px;color: white;"
@@ -29,6 +27,36 @@
                     class="ml-auto"
                     style="font-size: 13px;color: #2F82FF;text-decoration: underline;position: absolute;right: 0;top: 6px;"
                 >{{ i18n('Информация') }}</button>
+            </div>
+    
+            <div class="flex" style="gap: 15px;">
+                <div
+                    v-html="
+                        chatgpt_item?.type == 1 && chatgpt_item?.category_id == 13
+                            ? ''
+                            : each_replace_all(
+                                chatgpt_item?.full_text.replaceAll(
+                                    `href=&quot;/`,
+                                    `href=&quot;${chatgpt_item?.res_link}/`
+                                ).replaceAll(
+                                    `src=&quot;/`,
+                                    `src=&quot;${chatgpt_item?.res_link}/`
+                                ).replaceAll(
+                                    `srcset=&quot;/`,
+                                    `srcset=&quot;${chatgpt_item?.res_link}/`
+                                ) + '<br/><br/><br/><br/>', false
+                            )
+                    "
+                    class="full-item-text w-full"
+                    :style="{
+                        maxHeight: modal_item?.newspaper_modal ? '0px' : '',
+                        paddingTop: modal_item?.newspaper_modal
+                            ? '0px'
+                            : '10px',
+                    }"
+                    style="margin: 0 auto;"
+                ></div>
+                <pre style="width: 100%;margin-bottom: 12px;line-height: 1.7!important;font-size: 13.5px!important;white-space: pre-wrap;" v-show="output">{{ output }}</pre>
             </div>
             
         </div>
@@ -62,7 +90,8 @@
     import { Configuration, OpenAIApi } from "openai"
     import { chatgpt_item, chatgpt_tab } from '@/response/data/index'
     import { getGptLogs } from '@/response/api'
-	import { r_type } from '@/response/header'
+	import { r_type, search_tags } from '@/response/header'
+    import { getLang } from "@/response/utils/langIs"
     import axios from 'axios'
     const configuration = new Configuration({
         apiKey: "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",
@@ -78,6 +107,11 @@
                 news: [],
                 home_view_modal: false,
                 output: '',
+                answer_lang: {
+                    ru: 'Russian',
+                    en: 'English',
+                    kz: 'Kazakh',
+                },
             }
         },
         setup() {
@@ -87,6 +121,8 @@
                 chatgpt_item,
                 chatgpt_tab,
 				r_type,
+				search_tags,
+				getLang,
             }
         },
         watch: {
@@ -107,6 +143,31 @@
             },
         },
         methods: {
+            each_replace_all(text, slice_text = true) {
+                text = text.trim();
+                if (!text) return text;
+
+                this.search_tags.forEach(tag => {
+                    text = text?.replaceAll(new RegExp(tag, 'g'), (temp) => temp ? `<span class="imas-tag">${temp}</span>` : '')
+                })
+
+                let tagIndex = text.indexOf('<span class="imas-tag">')
+
+                if (tagIndex != -1 && slice_text) {
+                    let start = tagIndex - 250;
+                    let end = tagIndex + 350;
+                    if (start < 0) {
+                        start = 0;
+                        end = 600
+                    }
+                    else if (end > text.length && start + 190 > text.length || end >= text.length) {
+                        start = text.length - 600;
+                    }
+                    text = text.slice(start, end)
+                }
+
+                return text;
+            },
             updateOutput() {
                 if (this.chatgpt_item?.logs && this.chatgpt_item?.logs[this.i18n("Обобщение")]?.type == 'analyze') {
                     this.output = this.chatgpt_item?.logs[this.i18n("Обобщение")]?.result ?? ''
@@ -153,8 +214,8 @@
                             const completion = await openai.createChatCompletion({
                                 model: "gpt-3.5-turbo",
                                 messages: [
-                                    {'role': 'system', 'content': 'You are an assistant for the monitoring system. You must highlight the main thing from the provided news and state it in 3-4 sentences and highlight key persons, players, companies, etc. from the news. Output format - SUMMARY: , KEY_PERSONS_AND_COMPANYS: .'},
-                                    {'role': 'user', 'content': this.i18n('Сформулируйте главную информацию новости в 3-4 предложения. Затем выделите основных действующих лиц, компании, службы')},
+                                    {'role': 'system', 'content': 'You are an assistant for the monitoring system. You must highlight the main thing from the provided news and state it in 3-4 sentences and highlight key persons, players, companies, etc. from the news. Output format - SUMMARY: , KEY_PERSONS_AND_COMPANYS: . ' + `The response language must be in ${this.answer_lang[this.getLang()]}` },
+                                    {'role': 'user', 'content': this.i18n('Сформулируйте главную информацию новости в 3-4 предложения. Затем выделите основных действующих лиц, компании, службы' + `. The response language must be in ${this.answer_lang[this.getLang()]}`)},
                                     {'role': 'user', 'content': this.i18n('Представляемая новость') + ': ' + temp_chatgpt_item?.text.maxLength(4_000)}
                                 ],
                             });
