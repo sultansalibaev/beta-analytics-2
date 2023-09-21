@@ -5,103 +5,106 @@
             
             <textarea class="form-control" id="textarea_analyze" style="display:none;" rows="10" :value="chatgpt_item?.text.maxLength(4_000)" disabled></textarea>
     
-            <div style="font-size: 18px;font-weight: 500;">{{ i18n('Ответ в прессу') }}</div>
-            <div style="color: #A8A8A8;font-size: 13px;margin: 8px 0 12px 0;">{{ i18n('Укажите, от кого сформулировать обращение') }}:</div>
-            <div class="inline-flex relative" style="margin-bottom:8px;">
-                <div
-                    @click.stop="toggle_prompt_list_modal()" 
-                    class="inline-flex text-white justify-between items-center cursor-pointer select-title"
-                    style="background: white;border: 1px solid #3b5998;padding: 0;overflow: hidden;color: #858585;width: 350px;"
-                >
-                    <input
-                        type="text"
-                        class="focus:outline-none"
-                        style="height: 100%;width: 100%;padding: 0 8px 2px;"
-                        :placeholder="i18n('Деятеля, компании и т.д.')"
-                        id="analyze-input"
-                        @click.stop="used_prompt_list_modal = true"
-                        v-model="input">
-                    
-                    
-                    <i class="fa-solid fa-angle-down transition-all" style="margin-left:5px;margin-right: 6px;" :style="used_prompt_list_modal ? '' : 'padding-top: 2px;'" :class="{
-                        'rotate-x-180': used_prompt_list_modal
-                    }"></i>
-                </div>
-                <div class="absolute top-full right-0 left-0 transition-all select-options" :style="{
-                        height: used_prompt_list_modal ? '' : '0px',
-                    }" style="max-height: 300px;">
-                    <div class="flex flex-col select-none select-options-styles">
-                        <div class="select-option pointer-events-none"
-                            style="border-color: #ccc;color: #ccc;"
-                            v-if="sorted_used_prompt_list.length == 0"
-                        >{{ i18n('Список пуст') }}</div>
-                        <div
-                            class="select-option" 
-                            v-else
-                            v-for="used_prompt in sorted_used_prompt_list"
-                            :key="used_prompt"
-                            :title="used_prompt"
-                            @click="input = used_prompt;used_prompt_list_modal = false;"
-                            :class="{
-                                active: input == used_prompt
-                            }">{{ used_prompt }}</div>
-                    </div>
-                </div>
-            </div>
-            <!-- <span v-show="input == ''" style="margin-left: 5px;color: red;font-size:13px;white-space: nowrap;">{{ i18n('Укажите, от кого сформулировать обращение?') }}</span> -->
-            
-            <div style="color: #A8A8A8;font-size: 13px;margin: 8px 0 12px 0;">{{ i18n('Что передается в ChatGPT') }}:</div>
-            <div style="font-size: 15px;margin-bottom: 12px;line-height: 1.2">{{ i18n('Проанализируйте данную новость и сформируйте публичный комментарий для прессы по событию от лица') }} {{ (input + '').trim() }}</div>
-    
-            <div class="flex items-center justify-between" style="height: 27px;">
-                <button
-                    style="background: #3b5998;height: 27px;padding: 0 8px 2px;border-radius: 4px;font-size: 13px;color: white;"
-                    @click="push_news"
-                    :disabled="load_circle_analyze || chatgpt_item?.logs[input]?.result"
-                    v-show="!chatgpt_item?.logs[input]?.result"
-                >
-                    {{ i18n('Запуск') }}
-                    <i id="load-circle-analyze" v-show="load_circle_analyze" class="fa-solid fa-spinner"></i>
-                </button>
-                <button
-                    type="button"
-                    data-bs-toggle="modal"
-                    data-bs-target="#exampleModal"
-                    @click="text_analyze_modal = true"
-                    class="ml-auto"
-                    style="font-size: 13px;color: #2F82FF;text-decoration: underline;position: absolute;right: 0;top: 6px;"
-                >{{ i18n('Информация') }}</button>
-            </div>
-                
-    
             <div class="flex" style="gap: 15px;">
-                <div
-                    v-html="
-                        chatgpt_item?.type == 1 && chatgpt_item?.category_id == 13
-                            ? ''
-                            : each_replace_all(
-                                chatgpt_item?.full_text.replaceAll(
-                                    `href=&quot;/`,
-                                    `href=&quot;${chatgpt_item?.res_link}/`
-                                ).replaceAll(
-                                    `src=&quot;/`,
-                                    `src=&quot;${chatgpt_item?.res_link}/`
-                                ).replaceAll(
-                                    `srcset=&quot;/`,
-                                    `srcset=&quot;${chatgpt_item?.res_link}/`
-                                ) + '<br/><br/><br/><br/>', false
-                            )
-                    "
-                    class="full-item-text w-full"
-                    :style="{
-                        maxHeight: modal_item?.newspaper_modal ? '0px' : '',
-                        paddingTop: modal_item?.newspaper_modal
-                            ? '0px'
-                            : '10px',
-                    }"
-                    style="margin: 0 auto;"
-                ></div>
-                <pre style="width: 100%;margin-bottom: 12px;line-height: 1.7!important;font-size: 13.5px!important;white-space: pre-wrap;" v-show="output">{{ output }}</pre>
+                <div class="w-1/2">
+                    <div style="font-size: 25px;font-weight: 500;display: flex;align-items: center;justify-content: center;height: 80px;">Исходная новость</div>
+                    <div
+                        v-html="
+                            chatgpt_item?.type == 1 && chatgpt_item?.category_id == 13
+                                ? ''
+                                : each_replace_all(
+                                    chatgpt_item?.full_text.replaceAll(
+                                        `href=&quot;/`,
+                                        `href=&quot;${chatgpt_item?.res_link}/`
+                                    ).replaceAll(
+                                        `src=&quot;/`,
+                                        `src=&quot;${chatgpt_item?.res_link}/`
+                                    ).replaceAll(
+                                        `srcset=&quot;/`,
+                                        `srcset=&quot;${chatgpt_item?.res_link}/`
+                                    ) + '<br/><br/><br/><br/>', false
+                                )
+                        "
+                        class="full-item-text w-full"
+                        :style="{
+                            maxHeight: modal_item?.newspaper_modal ? '0px' : '',
+                            paddingTop: modal_item?.newspaper_modal
+                                ? '0px'
+                                : '10px',
+                        }"
+                        style="margin: 0 auto;"
+                    ></div>
+                </div>
+                <div class="w-1/2">
+                    <div style="font-size: 18px;font-weight: 500;">{{ i18n('Ответ в прессу') }}</div>
+                    <div style="color: #A8A8A8;font-size: 13px;margin: 8px 0 12px 0;">{{ i18n('Укажите, от кого сформулировать обращение') }}:</div>
+                    <div class="inline-flex relative" style="margin-bottom:8px;">
+                        <div
+                            @click.stop="toggle_prompt_list_modal()" 
+                            class="inline-flex text-white justify-between items-center cursor-pointer select-title"
+                            style="background: white;border: 1px solid #3b5998;padding: 0;overflow: hidden;color: #858585;width: 250px;"
+                        >
+                            <input
+                                type="text"
+                                class="focus:outline-none"
+                                style="height: 100%;width: 100%;padding: 0 8px 2px;"
+                                :placeholder="i18n('Деятеля, компании и т.д.')"
+                                id="analyze-input"
+                                @click.stop="used_prompt_list_modal = true"
+                                v-model="input">
+                            
+                            
+                            <i class="fa-solid fa-angle-down transition-all" style="margin-left:5px;margin-right: 6px;" :style="used_prompt_list_modal ? '' : 'padding-top: 2px;'" :class="{
+                                'rotate-x-180': used_prompt_list_modal
+                            }"></i>
+                        </div>
+                        <div class="absolute top-full right-0 left-0 transition-all select-options" :style="{
+                                height: used_prompt_list_modal ? '' : '0px',
+                            }" style="max-height: 300px;">
+                            <div class="flex flex-col select-none select-options-styles">
+                                <div class="select-option pointer-events-none"
+                                    style="border-color: #ccc;color: #ccc;"
+                                    v-if="sorted_used_prompt_list.length == 0"
+                                >{{ i18n('Список пуст') }}</div>
+                                <div
+                                    class="select-option" 
+                                    v-else
+                                    v-for="used_prompt in sorted_used_prompt_list"
+                                    :key="used_prompt"
+                                    :title="used_prompt"
+                                    @click="input = used_prompt;used_prompt_list_modal = false;"
+                                    :class="{
+                                        active: input == used_prompt
+                                    }">{{ used_prompt }}</div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- <span v-show="input == ''" style="margin-left: 5px;color: red;font-size:13px;white-space: nowrap;">{{ i18n('Укажите, от кого сформулировать обращение?') }}</span> -->
+                    
+                    <div style="color: #A8A8A8;font-size: 13px;margin: 8px 0 12px 0;">{{ i18n('Что передается в ChatGPT') }}:</div>
+                    <div style="font-size: 15px;margin-bottom: 12px;line-height: 1.2">{{ i18n('Проанализируйте данную новость и сформируйте публичный комментарий для прессы по событию от лица') }} {{ (input + '').trim() }}</div>
+            
+                    <div class="flex items-center justify-between">
+                        <button
+                            style="background: #3b5998;height: 27px;padding: 0 8px 2px;border-radius: 4px;font-size: 13px;color: white;margin-bottom: 12px;"
+                            @click="push_news"
+                            :disabled="load_circle_analyze || chatgpt_item?.logs[input]?.result"
+                            v-show="!chatgpt_item?.logs[input]?.result"
+                        >
+                            {{ i18n('Запуск') }}
+                            <i id="load-circle-analyze" v-show="load_circle_analyze" class="fa-solid fa-spinner"></i>
+                        </button>
+                        <button
+                            type="button"
+                            data-bs-toggle="modal"
+                            data-bs-target="#exampleModal"
+                            @click="text_analyze_modal = true"
+                            class="ml-auto"
+                            style="font-size: 13px;color: #2F82FF;text-decoration: underline;position: absolute;right: 0;top: 6px;"
+                        >{{ i18n('Информация') }}</button>
+                    </div>
+                    <pre style="width: 100%;margin-bottom: 12px;line-height: 1.7!important;font-size: 13.5px!important;white-space: pre-wrap;">{{ output }}</pre>
+                </div>
             </div>
         </div>
         <div

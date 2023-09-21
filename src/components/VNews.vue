@@ -631,6 +631,11 @@
     >
         <div class="flex flex-col chat-gpt-modal" @click.stop>
             <div class="tab-head">
+                <div class="w-1/2 flex">
+                    <div class="tab-item inline-block" @click="chatgpt_tab = 'MadeRequests'" :class="{
+                        selected: chatgpt_tab == 'MadeRequests'
+                    }">{{ i18n('Проделанные запросы') }}</div>
+                </div>
                 <div class="tab-item" @click="chatgpt_tab = 'TextAnalyze'" :class="{
                     selected: chatgpt_tab == 'TextAnalyze'
                 }">{{ i18n('Анализ') }}</div>
@@ -640,9 +645,6 @@
                 <div class="tab-item" @click="chatgpt_tab = 'VGeneralization'" :class="{
                     selected: chatgpt_tab == 'VGeneralization'
                 }">{{ i18n('Обобщение') }}</div>
-                <div class="tab-item" style="margin: 0 auto -1px;" @click="chatgpt_tab = 'MadeRequests'" :class="{
-                    selected: chatgpt_tab == 'MadeRequests'
-                }">{{ i18n('Проделанные запросы') }}</div>
                 <div class="tab-item selected" @click="chatgpt_item = null" style="
                     margin: 0px 0px -1px auto;
                     border-bottom: none;
