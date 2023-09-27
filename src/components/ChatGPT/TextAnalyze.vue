@@ -1,5 +1,95 @@
 <template>
     <div @click.stop="select_options_modal = false;used_prompt_list_modal = false;">
+
+        <div class="right-modal-menu">
+            <div style="font-size: 18px;font-weight: 500;">{{ i18n('Анализ перспективы') }}</div>
+            <div style="color: #A8A8A8;font-size: 13px;margin: 8px 0 12px 0;">{{ i18n('Выберите подходящую точку зрения') }}:</div>
+            <div class="inline-flex relative" style="margin-bottom:12px;">
+                <div
+                    @click.stop="select_options_modal = !select_options_modal"
+                    class="inline-flex text-white justify-between items-center cursor-pointer select-title"
+                    style="width: 185px;"
+                >
+                    {{ i18n('Выберите условие') }}
+                    <i class="fa-solid fa-angle-down transition-all" style="margin-left:5px;" :style="select_options_modal ? '' : 'padding-top:3px;'" :class="{
+                        'rotate-x-180': select_options_modal
+                    }"></i>
+                </div>
+                <div class="absolute top-full right-0 left-0 transition-all select-options" :style="{
+                        height: select_options_modal ? '170px' : '0px'
+                    }">
+                    <div class="flex flex-col select-none select-options-styles scrollbar" style="height: 165px;">
+                        <div class="select-option" @click="change_condition('бизнес')" :class="{
+                            active: condition == i18n('с точки зрения бизнеса')
+                        }">{{ i18n('Бизнес') }}</div>
+                        <div class="select-option" @click="change_condition('государство')" :class="{
+                            active: condition == i18n('с точки зрения государства')
+                        }">{{ i18n('Государство') }}</div>
+                        <div class="select-option" @click="change_condition('граждане страны')" :class="{
+                            active: condition == i18n('с точки зрения гражданина страны')
+                        }">{{ i18n('Граждане страны') }}</div>
+                        <div class="select-option" @click="change_condition('сил.структуры')" :class="{
+                            active: condition == i18n('с точки зрения силовых структур')
+                        }">{{ i18n('Силовые структуры') }}</div>
+                        <div class="select-option" @click="change_condition('разные т.з.')" :class="{
+                            active: condition == i18n('с разных точек зрения')
+                        }">{{ i18n('Разные точки зрения') }}</div>
+
+                        <div class="select-option" @click="change_condition('пресс-релиз')" :class="{
+                            active: condition == i18n('и составь пресс-релиз по этой публикации, объемом до 1800 знаков, на русском языке')
+                        }">{{ i18n('Пресс-релиз') }}</div>
+                        <div class="select-option" @click="change_condition('план действий таблицей')" :class="{
+                            active: condition == i18n('и составь план действий для всех участников этой ситуации для ее разрешения и улучшения')
+                        }">{{ i18n('План действий таблицей') }}</div>
+                        <div class="select-option" @click="change_condition('выработай рекомендации')" :class="{
+                            active: condition == i18n('и выработай список из 3-5 рекомендаций для улучшения деятельности организации ... по описанной ситуации')
+                        }">{{ i18n('Выработай рекомендации') }}</div>
+                        <div class="select-option" @click="change_condition('негатив в позитив')" :class="{
+                            active: condition == i18n('и предложи 5 идей как отреагировать на эту публикацию так, чтобы негативный эффект для организации ... перевести в позитивный')
+                        }">{{ i18n('Негатив в позитив') }}</div>
+
+                        <div class="select-option" @click="select_options_modal = condition = undefined" :class="{
+                            active: condition == undefined
+                        }">{{ i18n('Своё условие') }}</div>
+                    </div>
+                </div>
+            </div>
+            <div class="inline-flex relative w-full" style="margin-bottom:12px;" v-show="condition == undefined">
+                <div @click.stop="toggle_prompt_list_modal()" class="inline-flex text-white justify-between items-center cursor-pointer select-title" style="background: white;border: 1px solid #3b5998;padding: 0;overflow: hidden;color: #858585;max-width: 250px;width: 100%;">
+                    <input
+                        type="text"
+                        class="focus:outline-none"
+                        style="height: 100%;width: 100%;padding: 0 8px 2px;"
+                        :placeholder="i18n('Введите своё условие ...')"
+                        id="analyze-input"
+                        @click.stop="used_prompt_list_modal = true"
+                        v-model="input">
+                    
+                    
+                    <i class="fa-solid fa-angle-down transition-all" style="margin-left:5px;margin-right: 6px;" :style="used_prompt_list_modal ? '' : 'padding-top: 2px;'" :class="{
+                        'rotate-x-180': used_prompt_list_modal
+                    }"></i>
+                </div>
+                <div class="absolute top-full right-0 left-0 transition-all select-options" :style="{
+                        height: used_prompt_list_modal ? '' : '0px',
+                    }" style="max-height: 300px;">
+                    <div class="flex flex-col select-none select-options-styles">
+                        <div class="select-option pointer-events-none"
+                            style="border-color: #ccc;color: #ccc;"
+                            v-if="sorted_used_prompt_list.length == 0"
+                        >{{ i18n('Список пуст') }}</div>
+                        <div class="select-option" 
+                            v-else
+                            v-for="used_prompt in sorted_used_prompt_list"
+                            :key="used_prompt"
+                            :title="used_prompt"
+                            @click="select_analyzed_prompt(used_prompt)" :class="{
+                            active: input == used_prompt
+                        }">{{ used_prompt }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="relative">
             
             <textarea class="form-control" id="textarea_analyze" style="display:none;" rows="10" :value="chatgpt_item?.text.maxLength(4_000)" disabled></textarea>
@@ -35,96 +125,11 @@
                     ></div>
                 </div>
                 <div class="w-1/2">
-                    <div style="font-size: 18px;font-weight: 500;">{{ i18n('Анализ перспективы') }}</div>
-                    <div style="color: #A8A8A8;font-size: 13px;margin: 8px 0 12px 0;">{{ i18n('Выберите подходящую точку зрения') }}:</div>
-                    <div class="inline-flex relative" style="margin-bottom:12px;">
-                        <div
-                            @click.stop="select_options_modal = !select_options_modal"
-                            class="inline-flex text-white justify-between items-center cursor-pointer select-title"
-                            style="width: 185px;"
-                        >
-                            {{ i18n('Выберите условие') }}
-                            <i class="fa-solid fa-angle-down transition-all" style="margin-left:5px;" :style="select_options_modal ? '' : 'padding-top:3px;'" :class="{
-                                'rotate-x-180': select_options_modal
-                            }"></i>
-                        </div>
-                        <div class="absolute top-full right-0 left-0 transition-all select-options" :style="{
-                                height: select_options_modal ? '170px' : '0px'
-                            }">
-                            <div class="flex flex-col select-none select-options-styles scrollbar" style="height: 165px;">
-                                <div class="select-option" @click="change_condition('бизнес')" :class="{
-                                    active: condition == i18n('с точки зрения бизнеса')
-                                }">{{ i18n('Бизнес') }}</div>
-                                <div class="select-option" @click="change_condition('государство')" :class="{
-                                    active: condition == i18n('с точки зрения государства')
-                                }">{{ i18n('Государство') }}</div>
-                                <div class="select-option" @click="change_condition('граждане страны')" :class="{
-                                    active: condition == i18n('с точки зрения гражданина страны')
-                                }">{{ i18n('Граждане страны') }}</div>
-                                <div class="select-option" @click="change_condition('сил.структуры')" :class="{
-                                    active: condition == i18n('с точки зрения силовых структур')
-                                }">{{ i18n('Силовые структуры') }}</div>
-                                <div class="select-option" @click="change_condition('разные т.з.')" :class="{
-                                    active: condition == i18n('с разных точек зрения')
-                                }">{{ i18n('Разные точки зрения') }}</div>
-        
-                                <div class="select-option" @click="change_condition('пресс-релиз')" :class="{
-                                    active: condition == i18n('и составь пресс-релиз по этой публикации, объемом до 1800 знаков, на русском языке')
-                                }">{{ i18n('Пресс-релиз') }}</div>
-                                <div class="select-option" @click="change_condition('план действий таблицей')" :class="{
-                                    active: condition == i18n('и составь план действий для всех участников этой ситуации для ее разрешения и улучшения')
-                                }">{{ i18n('План действий таблицей') }}</div>
-                                <div class="select-option" @click="change_condition('выработай рекомендации')" :class="{
-                                    active: condition == i18n('и выработай список из 3-5 рекомендаций для улучшения деятельности организации ... по описанной ситуации')
-                                }">{{ i18n('Выработай рекомендации') }}</div>
-                                <div class="select-option" @click="change_condition('негатив в позитив')" :class="{
-                                    active: condition == i18n('и предложи 5 идей как отреагировать на эту публикацию так, чтобы негативный эффект для организации ... перевести в позитивный')
-                                }">{{ i18n('Негатив в позитив') }}</div>
-        
-                                <div class="select-option" @click="select_options_modal = condition = undefined" :class="{
-                                    active: condition == undefined
-                                }">{{ i18n('Своё условие') }}</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="inline-flex relative" style="margin-bottom:12px;margin-left: 10px;" v-show="condition == undefined">
-                        <div @click.stop="toggle_prompt_list_modal()" class="inline-flex text-white justify-between items-center cursor-pointer select-title" style="background: white;border: 1px solid #3b5998;padding: 0;overflow: hidden;color: #858585;width: 250px;">
-                            <input
-                                type="text"
-                                class="focus:outline-none"
-                                style="height: 100%;width: 100%;padding: 0 8px 2px;"
-                                :placeholder="i18n('Введите своё условие ...')"
-                                id="analyze-input"
-                                @click.stop="used_prompt_list_modal = true"
-                                v-model="input">
-                            
-                            
-                            <i class="fa-solid fa-angle-down transition-all" style="margin-left:5px;margin-right: 6px;" :style="used_prompt_list_modal ? '' : 'padding-top: 2px;'" :class="{
-                                'rotate-x-180': used_prompt_list_modal
-                            }"></i>
-                        </div>
-                        <div class="absolute top-full right-0 left-0 transition-all select-options" :style="{
-                                height: used_prompt_list_modal ? '' : '0px',
-                            }" style="max-height: 300px;">
-                            <div class="flex flex-col select-none select-options-styles">
-                                <div class="select-option pointer-events-none"
-                                    style="border-color: #ccc;color: #ccc;"
-                                    v-if="sorted_used_prompt_list.length == 0"
-                                >{{ i18n('Список пуст') }}</div>
-                                <div class="select-option" 
-                                    v-else
-                                    v-for="used_prompt in sorted_used_prompt_list"
-                                    :key="used_prompt"
-                                    :title="used_prompt"
-                                    @click="select_analyzed_prompt(used_prompt)" :class="{
-                                    active: input == used_prompt
-                                }">{{ used_prompt }}</div>
-                            </div>
-                        </div>
-                    </div>
                     
                     <div style="color: #A8A8A8;font-size: 13px;margin: 8px 0 12px 0;">{{ i18n('Что передается в ChatGPT') }}:</div>
                     <div style="font-size: 15px;margin-bottom: 12px;line-height: 1.2;">{{ i18n('Проведите подробный анализ данной новости') }} {{ input == '' ? i18n(condition) : input }}</div>
+
+                    <textarea placeholder="Введите дополнительную информацию ..." class="w-full focus:outline-none" v-model="additional_info" style="padding: 9px 7px; border: 1px solid rgb(204, 204, 204); border-radius: 4px; margin-bottom: 12px;"></textarea>
            
                     <div class="flex items-center justify-between">
                         <button
@@ -181,11 +186,13 @@
 	import { r_type, search_tags } from '@/response/header'
     import { getLang } from "@/response/utils/langIs"
     import axios from 'axios'
+                
     const configuration = new Configuration({
-        apiKey: "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",
+        apiKey: process.env.VUE_APP_APIKEY,
     });
-    // let prepared_data = ""
+
     const openai = new OpenAIApi(configuration);
+
     export default {
         data() {
             const default_requests = {
@@ -227,6 +234,7 @@
                     en: 'English',
                     kz: 'Kazakh',
                 },
+                additional_info: '',
             }
         },
         setup() {
@@ -346,6 +354,7 @@
                 this.chatgpt_item.logs[this.condition] = 'loading'
 
 				this.chatgpt_error = false;
+                
 
                 axios.get(`/ru/gpt-service/get-log?news_id=${temp_chatgpt_item?.item_id}&news_type=${temp_r_type}&type=analyze&promt=${temp_condition}`)
                     .then(async (response) => {
@@ -354,7 +363,7 @@
                             const completion = await openai.createChatCompletion({
                                 model: "gpt-3.5-turbo",
                                 messages: [
-                                    {'role': 'system', 'content': 'You are an assistant for the monitoring system. You must give your own analysis of the presented news. ' + `The response language must be in ${this.answer_lang[this.getLang()]}`},
+                                    {'role': 'system', 'content': 'You are an assistant for the monitoring system. You must give your own analysis of the presented news. ' + `The response language must be in ${this.answer_lang[this.getLang()]}. You can also use the information: ${this.additional_info}`}, // you can also use this information
                                     {'role': 'user', 'content': this.i18n('Проведите подробный анализ данной новости') + ' ' + temp_condition + `. The response language must be in ${this.answer_lang[this.getLang()]}` },
                                     {'role': 'user', 'content': this.i18n('Представленная новость') + ': ' + temp}
                                 ],
@@ -670,4 +679,17 @@ textarea.form-control {
     font-size:13px;
     width:150px;
 }
+
+.right-modal-menu {
+    padding: 14px 13px;
+    position: absolute;
+    left: calc(100% + 5px);
+    top: 30px;
+    width: 265px;
+    height: calc(100% - 30px);
+    background: #fff;
+    overflow: hidden;
+    border-radius: 4px;
+}
+
 </style>

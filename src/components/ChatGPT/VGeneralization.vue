@@ -7,7 +7,7 @@
             
             <div class="flex" style="gap: 15px;">
                 <div class="w-1/2">
-                    <div style="font-size: 25px;font-weight: 500;display: flex;align-items: center;justify-content: center;height: 80px;">Исходная новость</div>
+                    <div style="font-size: 25px;font-weight: 500;display: flex;align-items: center;justify-content: center;height: 80px;">Исходный текст публикаций</div>
                     <div
                         v-html="
                             chatgpt_item?.type == 1 && chatgpt_item?.category_id == 13
@@ -98,7 +98,7 @@
     import { getLang } from "@/response/utils/langIs"
     import axios from 'axios'
     const configuration = new Configuration({
-        apiKey: "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",
+        apiKey: process.env.VUE_APP_APIKEY,
     });
     let prepared_data = ""
     const openai = new OpenAIApi(configuration);

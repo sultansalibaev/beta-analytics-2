@@ -629,7 +629,7 @@
         v-show="chatgpt_item"
         @click.stop="chatgpt_item = null"
     >
-        <div class="flex flex-col chat-gpt-modal" @click.stop>
+        <div class="flex flex-col chat-gpt-modal relative" @click.stop>
             <div class="tab-head">
                 <div class="w-1/2 flex">
                     <div class="tab-item inline-block" @click="chatgpt_tab = 'MadeRequests'" :class="{
@@ -3226,7 +3226,7 @@ i.positive {
 .delete-resource-modal > div {
     background: white;
     border-radius: 4px;
-    overflow: hidden;
+    /* overflow: hidden; */
     width: 500px;
     box-shadow: 0 0 11px #ffffff6e;
 }
@@ -3591,6 +3591,7 @@ i.positive {
     padding: 14px 17px;
     height: 100%;
     overflow-y: scroll;
+    overflow-x: visible;
     margin: 2px 2px 0 0;
 }
 .imas-tag {
