@@ -2,91 +2,130 @@
     <div @click.stop="select_options_modal = false;used_prompt_list_modal = false;">
 
         <div class="right-modal-menu">
-            <div style="font-size: 18px;font-weight: 500;">{{ i18n('Анализ перспективы') }}</div>
-            <div style="color: #A8A8A8;font-size: 13px;margin: 8px 0 12px 0;">{{ i18n('Выберите подходящую точку зрения') }}:</div>
-            <div class="inline-flex relative" style="margin-bottom:12px;">
+            <!-- <div style="font-size: 18px;font-weight: 500;">{{ i18n('Анализ перспективы') }}</div> -->
+            <div class="text-wrap-balance" style="color: #A8A8A8;font-size: 13px;margin: 2px 0 12px;">{{ i18n('Выберите подходящую точку зрения') }}:</div>
+
+            <div class="flex flex-col">
                 <div
-                    @click.stop="select_options_modal = !select_options_modal"
+                    @click.stop="request_type = 'analyze';condition = request_value;"
                     class="inline-flex text-white justify-between items-center cursor-pointer select-title"
-                    style="width: 185px;"
+                    style="width: 185px;margin-bottom: 6px;justify-content: center;padding-top: 1px;"
+                    v-for="[request_name, request_value] in Object.entries(default_requests)"
+                    :key="request_name"
                 >
-                    {{ i18n('Выберите условие') }}
-                    <i class="fa-solid fa-angle-down transition-all" style="margin-left:5px;" :style="select_options_modal ? '' : 'padding-top:3px;'" :class="{
-                        'rotate-x-180': select_options_modal
-                    }"></i>
+                    <span class="capitalize-first">{{ i18n(request_name) }}</span>
                 </div>
-                <div class="absolute top-full right-0 left-0 transition-all select-options" :style="{
-                        height: select_options_modal ? '170px' : '0px'
-                    }">
-                    <div class="flex flex-col select-none select-options-styles scrollbar" style="height: 165px;">
-                        <div class="select-option" @click="change_condition('бизнес')" :class="{
-                            active: condition == i18n('с точки зрения бизнеса')
-                        }">{{ i18n('Бизнес') }}</div>
-                        <div class="select-option" @click="change_condition('государство')" :class="{
-                            active: condition == i18n('с точки зрения государства')
-                        }">{{ i18n('Государство') }}</div>
-                        <div class="select-option" @click="change_condition('граждане страны')" :class="{
-                            active: condition == i18n('с точки зрения гражданина страны')
-                        }">{{ i18n('Граждане страны') }}</div>
-                        <div class="select-option" @click="change_condition('сил.структуры')" :class="{
-                            active: condition == i18n('с точки зрения силовых структур')
-                        }">{{ i18n('Силовые структуры') }}</div>
-                        <div class="select-option" @click="change_condition('разные т.з.')" :class="{
-                            active: condition == i18n('с разных точек зрения')
-                        }">{{ i18n('Разные точки зрения') }}</div>
+                <div
+                    @click.stop="request_type = 'analyze';condition = undefined;"
+                    v-show="!(request_type == 'analyze' && condition == undefined)"
+                    class="inline-flex text-white justify-between items-center cursor-pointer select-title"
+                    style="width: 185px;margin-bottom: 6px;justify-content: center;padding-top: 1px;"
+                >
+                    <span class="capitalize-first">{{ i18n('Своё условие') }}</span>
+                </div>
+                <div class="inline-flex relative w-full" style="margin-bottom: 6px;" v-show="request_type == 'analyze' && condition == undefined">
+                    <div @click.stop="toggle_prompt_list_modal()" class="inline-flex text-white justify-between items-center cursor-pointer select-title" style="background: white;border: 1px solid #3b5998;padding: 0;overflow: hidden;color: #858585;max-width: 250px;width: 100%;">
+                        <input
+                            type="text"
+                            autocomplete="off"
+                            class="focus:outline-none"
+                            style="height: 100%;width: 100%;padding: 0 8px 2px;"
+                            :placeholder="i18n('Введите своё условие ...')"
+                            id="analyze-input"
+                            @click.stop="used_prompt_list_modal = true"
+                            v-model="input">
 
-                        <div class="select-option" @click="change_condition('пресс-релиз')" :class="{
-                            active: condition == i18n('и составь пресс-релиз по этой публикации, объемом до 1800 знаков, на русском языке')
-                        }">{{ i18n('Пресс-релиз') }}</div>
-                        <div class="select-option" @click="change_condition('план действий таблицей')" :class="{
-                            active: condition == i18n('и составь план действий для всех участников этой ситуации для ее разрешения и улучшения')
-                        }">{{ i18n('План действий таблицей') }}</div>
-                        <div class="select-option" @click="change_condition('выработай рекомендации')" :class="{
-                            active: condition == i18n('и выработай список из 3-5 рекомендаций для улучшения деятельности организации ... по описанной ситуации')
-                        }">{{ i18n('Выработай рекомендации') }}</div>
-                        <div class="select-option" @click="change_condition('негатив в позитив')" :class="{
-                            active: condition == i18n('и предложи 5 идей как отреагировать на эту публикацию так, чтобы негативный эффект для организации ... перевести в позитивный')
-                        }">{{ i18n('Негатив в позитив') }}</div>
-
-                        <div class="select-option" @click="select_options_modal = condition = undefined" :class="{
-                            active: condition == undefined
-                        }">{{ i18n('Своё условие') }}</div>
+                        <i class="fa-solid fa-angle-down transition-all" style="margin-left:5px;margin-right: 6px;" :style="used_prompt_list_modal ? '' : 'padding-top: 2px;'" :class="{
+                            'rotate-x-180': used_prompt_list_modal
+                        }"></i>
+                    </div>
+                    <div class="absolute top-full right-0 left-0 transition-all select-options" :style="{
+                            height: used_prompt_list_modal ? '' : '0px',
+                        }" style="max-height: 300px;">
+                        <div class="flex flex-col select-none select-options-styles">
+                            <div class="select-option pointer-events-none"
+                                style="border-color: #ccc;color: #ccc;"
+                                v-if="sorted_used_prompt_list.length == 0"
+                            >{{ i18n('Список пуст') }}</div>
+                            <div class="select-option" 
+                                v-else
+                                v-for="used_prompt in sorted_used_prompt_list"
+                                :key="used_prompt"
+                                :title="used_prompt"
+                                @click="select_analyzed_prompt(used_prompt)" :class="{
+                                active: input == used_prompt
+                            }">{{ used_prompt }}</div>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="inline-flex relative w-full" style="margin-bottom:12px;" v-show="condition == undefined">
-                <div @click.stop="toggle_prompt_list_modal()" class="inline-flex text-white justify-between items-center cursor-pointer select-title" style="background: white;border: 1px solid #3b5998;padding: 0;overflow: hidden;color: #858585;max-width: 250px;width: 100%;">
-                    <input
-                        type="text"
-                        class="focus:outline-none"
-                        style="height: 100%;width: 100%;padding: 0 8px 2px;"
-                        :placeholder="i18n('Введите своё условие ...')"
-                        id="analyze-input"
-                        @click.stop="used_prompt_list_modal = true"
-                        v-model="input">
-                    
-                    
-                    <i class="fa-solid fa-angle-down transition-all" style="margin-left:5px;margin-right: 6px;" :style="used_prompt_list_modal ? '' : 'padding-top: 2px;'" :class="{
-                        'rotate-x-180': used_prompt_list_modal
-                    }"></i>
+            
+            <div class="text-wrap-balance" style="color: #A8A8A8;font-size: 13px;margin: 5px 0 12px;">{{ i18n('Укажите, от кого сформулировать обращение') }}:</div>
+            <div class="flex flex-col">
+                <div
+                    @click.stop="request_type = 'reaction';condition = i18n('от организации ... в позитивном ключе, объемом на английском языке.');"
+                    class="inline-flex text-white justify-between items-center cursor-pointer select-title"
+                    style="width: 185px;margin-bottom: 6px;justify-content: center;padding-top: 1px;"
+                >
+                    <span class="capitalize-first">{{ i18n('Позитивный комментарий') }}</span>
                 </div>
-                <div class="absolute top-full right-0 left-0 transition-all select-options" :style="{
-                        height: used_prompt_list_modal ? '' : '0px',
-                    }" style="max-height: 300px;">
-                    <div class="flex flex-col select-none select-options-styles">
-                        <div class="select-option pointer-events-none"
-                            style="border-color: #ccc;color: #ccc;"
-                            v-if="sorted_used_prompt_list.length == 0"
-                        >{{ i18n('Список пуст') }}</div>
-                        <div class="select-option" 
-                            v-else
-                            v-for="used_prompt in sorted_used_prompt_list"
-                            :key="used_prompt"
-                            :title="used_prompt"
-                            @click="select_analyzed_prompt(used_prompt)" :class="{
-                            active: input == used_prompt
-                        }">{{ used_prompt }}</div>
+                <div
+                    @click.stop="request_type = 'reaction';condition = undefined;"
+                    v-show="!(request_type == 'reaction' && condition == undefined)"
+                    class="inline-flex text-white justify-between items-center cursor-pointer select-title"
+                    style="width: 185px;margin-bottom: 6px;justify-content: center;padding-top: 1px;"
+                >
+                    <span class="capitalize-first">{{ i18n('Своё обращение от ...') }}</span>
+                </div>
+                <div class="inline-flex relative w-full" style="margin-bottom: 6px;" v-show="request_type == 'reaction' && condition == undefined">
+                    <div
+                        @click.stop="toggle_prompt_list_modal()" 
+                        class="inline-flex text-white justify-between items-center cursor-pointer select-title"
+                        style="background: white;border: 1px solid #3b5998;padding: 0;overflow: hidden;color: #858585;max-width: 250px;width: 100%;"
+                    >
+                        <input
+                            type="text"
+                            class="focus:outline-none"
+                            style="height: 100%;width: 100%;padding: 0 8px 2px;"
+                            :placeholder="i18n('Деятеля, компании и т.д.')"
+                            id="analyze-input"
+                            @click.stop="used_prompt_list_modal = true"
+                            v-model="input">
+                        
+                        
+                        <i class="fa-solid fa-angle-down transition-all" style="margin-left:5px;margin-right: 6px;" :style="used_prompt_list_modal ? '' : 'padding-top: 2px;'" :class="{
+                            'rotate-x-180': used_prompt_list_modal
+                        }"></i>
                     </div>
+                    <div class="absolute top-full right-0 left-0 transition-all select-options" :style="{
+                            height: used_prompt_list_modal ? '' : '0px',
+                        }" style="max-height: 300px;">
+                        <div class="flex flex-col select-none select-options-styles">
+                            <div class="select-option pointer-events-none"
+                                style="border-color: #ccc;color: #ccc;"
+                                v-if="sorted_used_prompt_list.length == 0"
+                            >{{ i18n('Список пуст') }}</div>
+                            <div
+                                class="select-option" 
+                                v-else
+                                v-for="used_prompt in sorted_used_prompt_list"
+                                :key="used_prompt"
+                                :title="used_prompt"
+                                @click="input = used_prompt;used_prompt_list_modal = false;"
+                                :class="{
+                                    active: input == used_prompt
+                                }">{{ used_prompt }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="flex flex-col">
+                <div
+                    @click.stop="request_type = 'generalization';condition = i18n('Обобщение');"
+                    class="inline-flex text-white justify-between items-center cursor-pointer select-title"
+                    style="width: 185px;margin-top: 12px;justify-content: center;padding-top: 1px;"
+                >
+                    <span class="capitalize-first">{{ i18n('Обобщение') }}</span>
                 </div>
             </div>
         </div>
@@ -96,28 +135,23 @@
     
             <div class="flex" style="gap: 15px;">
                 <div class="w-1/2">
-                    <div style="font-size: 25px;font-weight: 500;display: flex;align-items: center;justify-content: center;height: 80px;">Исходная новость</div>
                     <div
-                        v-html="
+                        v-html='
                             chatgpt_item?.type == 1 && chatgpt_item?.category_id == 13
-                                ? ''
+                                ? ""
                                 : each_replace_all(
-                                    chatgpt_item?.full_text.replaceAll(
-                                        `href=&quot;/`,
-                                        `href=&quot;${chatgpt_item?.res_link}/`
-                                    ).replaceAll(
-                                        `src=&quot;/`,
-                                        `src=&quot;${chatgpt_item?.res_link}/`
-                                    ).replaceAll(
-                                        `srcset=&quot;/`,
-                                        `srcset=&quot;${chatgpt_item?.res_link}/`
-                                    ) + '<br/><br/><br/><br/>', false
+                                    chatgpt_item?.full_text
+                                        .replaceAll(`href="/`,`href="${chatgpt_item?.res_link}/`)
+                                        .replaceAll(`href=`,` target="_blank" href=`)
+                                        .replaceAll(`src="/`,`src="${chatgpt_item?.res_link}/`)
+                                        .replaceAll(`srcset="/`,`srcset="${chatgpt_item?.res_link}/`)
+                                     + "<br/><br/><br/><br/>", false
                                 )
-                        "
-                        class="full-item-text w-full"
+                        '
+                        class="full-item-text w-full overflow-hidden"
                         :style="{
-                            maxHeight: modal_item?.newspaper_modal ? '0px' : '',
-                            paddingTop: modal_item?.newspaper_modal
+                            maxHeight: chatgpt_item?.newspaper_modal ? '0px' : '',
+                            paddingTop: chatgpt_item?.newspaper_modal
                                 ? '0px'
                                 : '10px',
                         }"
@@ -127,7 +161,7 @@
                 <div class="w-1/2">
                     
                     <div style="color: #A8A8A8;font-size: 13px;margin: 8px 0 12px 0;">{{ i18n('Что передается в ChatGPT') }}:</div>
-                    <div style="font-size: 15px;margin-bottom: 12px;line-height: 1.2;">{{ i18n('Проведите подробный анализ данной новости') }} {{ input == '' ? i18n(condition) : input }}</div>
+                    <div style="font-size: 15px;margin-bottom: 12px;line-height: 1.2;">{{ gpt_request_text }}</div>
 
                     <textarea placeholder="Введите дополнительную информацию ..." class="w-full focus:outline-none" v-model="additional_info" style="padding: 9px 7px; border: 1px solid rgb(204, 204, 204); border-radius: 4px; margin-bottom: 12px;"></textarea>
            
@@ -146,8 +180,7 @@
                             data-bs-toggle="modal"
                             data-bs-target="#exampleModal"
                             @click="text_analyze_modal = true"
-                            class="ml-auto"
-                            style="font-size: 13px;color: #2F82FF;text-decoration: underline;position: absolute;right: 0;top: 6px;"
+                            class="ml-auto information-btn"
                         >{{ i18n('Информация') }}</button>
                     </div>
                     <pre style="width: 100%;margin-bottom: 12px;line-height: 1.7!important;font-size: 13.5px!important;white-space: pre-wrap;">{{ output }}</pre>
@@ -160,7 +193,7 @@
             tabindex="-1"
             aria-labelledby="exampleModalLabel"
             aria-hidden="true"
-            :style="text_analyze_modal ? 'opacity: 1;overflow: visible;display: block;background-color: #0000006b;' : 'pointer-events: none;'"
+            :style="text_analyze_modal ? 'opacity: 1;overflow: visible;display: block;background-color: #0000006b;position: fixed;' : 'position: fixed;pointer-events: none;'"
             @click="text_analyze_modal = false">
             <div class="modal-dialog" style="transition: 0.15s;" :style="text_analyze_modal?'top: 25%;':'top: 0px;'" @click.stop>
                 <div class="modal-content">
@@ -206,18 +239,15 @@
                 "выработай рекомендации": this.i18n("и выработай список из 3-5 рекомендаций для улучшения деятельности организации ... по описанной ситуации"),
                 "негатив в позитив": this.i18n("и предложи 5 идей как отреагировать на эту публикацию так, чтобы негативный эффект для организации ... перевести в позитивный"),
             };
-            const tab_info = this.i18n(`Анализ перспективы - это инструмент, при помощи которого вы можете получить от языковой модели подробный анализ публикации с той или иной точки зрения. На вход GPT подается выражение - запрос: <b>"Проведите подробный анализ данной новости с точки зрения ..."</b> <br> В меню <b>"Условие"</b> можно выбрать одну из общественных групп или задать свою.<br><br> После выбора нажмите <b>"Запуск"</b> и подождите, пока сформируется ответ (10-20 секунд).`) + `<br><br>
-                        "${ i18n('Бизнес') }" - ${ i18n("с точки зрения бизнеса") }<br>
-                        "${ i18n('Государство') }" - ${ i18n("с точки зрения государства") }<br>
-                        "${ i18n('Граждане страны') }" - ${ i18n("с точки зрения гражданина страны") }<br>
-                        "${ i18n('Силовые структуры') }" - ${ i18n("с точки зрения силовых структур") }<br>
-                        "${ i18n('Разные точки зрения') }" - ${ i18n("с разных точек зрения") }<br>
-                        "${ i18n('Пресс-релиз') }" - ${ i18n("и составь пресс-релиз по этой публикации, объемом до 1800 знаков, на русском языке") }<br>
-                        "${ i18n('План действий таблицей') }" - ${ i18n("и составь план действий для всех участников этой ситуации для ее разрешения и улучшения") }<br>
-                        "${ i18n('Выработай рекомендации') }" - ${ i18n("и выработай список из 3-5 рекомендаций для улучшения деятельности организации ... по описанной ситуации") }<br>
-                        "${ i18n('Негатив в позитив') }" - ${ i18n("и предложи 5 идей как отреагировать на эту публикацию так, чтобы негативный эффект для организации ... перевести в позитивный") }`
+            const tab_info = this.i18n(`Анализ перспективы - это инструмент, при помощи которого вы можете получить от языковой модели подробный анализ публикации с той или иной точки зрения. На вход GPT подается выражение - запрос: <b>"Проведите подробный анализ данной новости с точки зрения ..."</b> <br> В меню <b>"Условие"</b> можно выбрать одну из общественных групп или задать свою.<br><br> После выбора нажмите <b>"Запуск"</b> и подождите, пока сформируется ответ (10-20 секунд).`)
             return {
                 tab_info: tab_info,
+                default_type_requests: {
+                    analyze: 'Проведите подробный анализ данной новости',
+                    reaction: 'Проанализируйте данную новость и сформируйте публичный комментарий для прессы по событию от лица',
+                    generalization: 'Сформулируйте главную информацию новости в 3-4 предложения. Затем выделите основных действующих лиц, компании, службы',
+                },
+                request_type: 'analyze',
                 default_requests: default_requests,
                 select_options_modal: false,
 
@@ -250,6 +280,9 @@
             }
         },
         computed: {
+            gpt_request_text() {
+                return `${this.i18n(this.default_type_requests[this.request_type])} ${this.input == '' ? this.i18n(this.condition ?? '') : this.input}`
+            },
             load_circle_analyze() {
                 return this.chatgpt_item?.logs && this.condition && this.chatgpt_item?.logs[this.condition] == 'loading'
             },
@@ -309,6 +342,8 @@
                     this.input = used_prompt
                 }
                 this.used_prompt_list_modal = false;
+
+                this.gpt_type = 'analyze';
             },
             toggle_prompt_list_modal() {
                 this.used_prompt_list_modal = !this.used_prompt_list_modal;
@@ -317,11 +352,7 @@
             change_condition(statement) {
                 this.select_options_modal = false;
                 if (this.default_requests[statement]) {this.condition = this.default_requests[statement]} 
-                // if (statement == "бизнес") {this.condition = "с точки зрения бизнеса"} 
-                // if (statement == "государство") {this.condition = "с точки зрения государства"} 
-                // if (statement == "граждане страны") {this.condition = "с точки зрения гражданина страны"} 
-                // if (statement == "сил.структуры") {this.condition = "с точки зрения силовых структур"} 
-                // if (statement == "разные т.з.") {this.condition = "с разных точек зрения"} 
+                this.gpt_type = 'analyze';
             },
             async push_news() {
 
@@ -332,7 +363,7 @@
                     console.log(this.input)
                 }
 
-                if (this.condition == "") {
+                if (this.condition == "" && this.request_type != 'generalization') {
                     alert("Внимание! Вы не выбрали условие!")
                     return 0
                 }
@@ -354,19 +385,37 @@
                 this.chatgpt_item.logs[this.condition] = 'loading'
 
 				this.chatgpt_error = false;
-                
 
-                axios.get(`/ru/gpt-service/get-log?news_id=${temp_chatgpt_item?.item_id}&news_type=${temp_r_type}&type=analyze&promt=${temp_condition}`)
+                const completion_messages = {
+                    analyze: [
+                        {'role': 'system', 'content': 'You are an assistant for the monitoring system. You must give your own analysis of the presented news. ' + `The response language must be in ${this.answer_lang[this.getLang()]}. You can also use the information: ${this.additional_info}`}, // you can also use this information
+                        {'role': 'user', 'content': this.i18n('Проведите подробный анализ данной новости') + ' ' + temp_condition + `. The response language must be in ${this.answer_lang[this.getLang()]}` },
+                        {'role': 'user', 'content': this.i18n('Представленная новость') + ': ' + temp}
+                    ],
+                    reaction: [
+                        {'role': 'system', 'content': 'You are an assistant for the monitoring system. You must analyze the given news and issue an answer based on the given news according to the request. ' + `The response language must be in ${this.answer_lang[this.getLang()]}. You can also use the information: ${this.additional_info}` },
+                        {'role': 'user', 'content': this.i18n('Проанализируйте данную новость и сформируйте публичный комментарий для прессы по событию от лица') + ' ' + temp_condition + `. The response language must be in ${this.answer_lang[this.getLang()]}` },
+                        {'role': 'user', 'content': this.i18n('Представленная новость') + ': ' + temp}
+                    ],
+                    generalization: [
+                        {'role': 'system', 'content': 'You are an assistant for the monitoring system. You must highlight the main thing from the provided news and state it in 3-4 sentences and highlight key persons, players, companies, etc. from the news. Output format - SUMMARY: , KEY_PERSONS_AND_COMPANYS: . ' + `The response language must be in ${this.answer_lang[this.getLang()]}. You can also use the information: ${this.additional_info}` },
+                        {'role': 'user', 'content': this.i18n('Сформулируйте главную информацию новости в 3-4 предложения. Затем выделите основных действующих лиц, компании, службы' + `. The response language must be in ${this.answer_lang[this.getLang()]}`)},
+                        {'role': 'user', 'content': this.i18n('Представляемая новость') + ': ' + temp}
+                    ]
+                };
+                const type = {
+                    analyze: 'analyze',
+                    generalization: 'analyze',
+                    reaction: 'reaction',
+                }[this.request_type];
+
+                axios.get(`/ru/gpt-service/get-log?news_id=${temp_chatgpt_item?.item_id}&news_type=${temp_r_type}&type=${type}&promt=${temp_condition}`)
                     .then(async (response) => {
                         console.log('gpt-service - response = ', response?.data);
                         if (response?.data == false) {
                             const completion = await openai.createChatCompletion({
                                 model: "gpt-3.5-turbo",
-                                messages: [
-                                    {'role': 'system', 'content': 'You are an assistant for the monitoring system. You must give your own analysis of the presented news. ' + `The response language must be in ${this.answer_lang[this.getLang()]}. You can also use the information: ${this.additional_info}`}, // you can also use this information
-                                    {'role': 'user', 'content': this.i18n('Проведите подробный анализ данной новости') + ' ' + temp_condition + `. The response language must be in ${this.answer_lang[this.getLang()]}` },
-                                    {'role': 'user', 'content': this.i18n('Представленная новость') + ': ' + temp}
-                                ],
+                                messages: completion_messages[this.request_type],
                             });
                             console.log('completion', completion);
                             let temp_output = completion.data.choices[0].message.content
@@ -377,7 +426,7 @@
 
                             formData.append('news_id', temp_chatgpt_item?.item_id)
                             formData.append('news_type', temp_r_type)
-                            formData.append('type', 'analyze')
+                            formData.append('type', type)
                             formData.append('promt', temp_condition)
                             formData.append('result', temp_output)
 
@@ -392,7 +441,7 @@
                                     console.log('error', error);
                                 })
                                 .finally(() => {
-                                    if (temp_chatgpt_item?.item_id == this.chatgpt_item?.item_id) {
+                                    if (temp_chatgpt_item?.item_id == this.chatgpt_item?.item_id && [this.input, this.condition].includes(temp_condition)) {
                                         this.output = temp_output
                                     }
                                 })
@@ -422,14 +471,17 @@
 
                 
         
-                const temp_log_key = log_keys.find(prompt => (this.analyze_select.includes(prompt)) && !(["Обобщение", "Summary", "Жалпылау"].includes(prompt)) && this.chatgpt_item?.logs[prompt]?.type == 'analyze')
+                const temp_log_key = log_keys.find(prompt => ([...this.analyze_select, `${this.i18n("Обобщение")}`, `${this.i18n("от организации ... в позитивном ключе, объемом на английском языке.")}`].includes(prompt)))
 
                 if (temp_log_key) {
                     this.condition = temp_log_key
+
+                    if (temp_log_key == `${this.i18n("Обобщение")}`) this.request_type = 'generalization';
+                    else if (temp_log_key == `${this.i18n("от организации ... в позитивном ключе, объемом на английском языке.")}`) this.request_type = 'reaction';
                 }
 
                 if (this.condition == '') {
-                    const log_key = log_keys.find(prompt => (!this.analyze_select.includes(prompt)) && !(["Обобщение", "Summary", "Жалпылау"].includes(prompt)) && this.chatgpt_item?.logs[prompt]?.type == 'analyze')
+                    const log_key = log_keys.find(prompt => (![...this.analyze_select, `${this.i18n("Обобщение")}`, `${this.i18n("от организации ... в позитивном ключе, объемом на английском языке.")}`].includes(prompt)))
                     if (log_key) this.input = log_key
                 }
         
@@ -440,10 +492,9 @@
             chatgpt_item(newValue) {
                 if (newValue != null && this.chatgpt_tab == 'TextAnalyze') {
                     this.updateOutput()
-                    this.used_prompt_list = Object.values(this.chatgpt_item?.logs).filter(log => (
-                        log?.type == 'analyze' &&
-                        !(["Обобщение", "Summary", "Жалпылау"].includes(log?.promt)) &&
-                        !this.analyze_select.includes(log?.promt)
+                    const local_prompts = [...this.analyze_select, `${this.i18n("Обобщение")}`, `${this.i18n("от организации ... в позитивном ключе, объемом на английском языке.")}`];
+                    this.analyze_used_prompt_list = Object.values(this.chatgpt_item?.logs).filter(log => (
+                        !local_prompts.includes(log?.promt) && log?.type == 'analyze'
                     )).map(log => log?.promt)
                 }
                 else if (newValue == null) this.output = '';
@@ -454,24 +505,20 @@
 
                 if (newValue == 'TextAnalyze' && this.chatgpt_item != null) {
                     this.used_prompt_list = Object.values(this.chatgpt_item?.logs).filter(log => (
-                        log?.type == 'analyze' &&
-                        !(["Обобщение", "Summary", "Жалпылау"].includes(log?.promt)) &&
-                        !this.analyze_select.includes(log?.promt)
+                        ![...this.analyze_select, `${this.i18n("Обобщение")}`, `${this.i18n("от организации ... в позитивном ключе, объемом на английском языке.")}`].includes(log?.promt)
                     )).map(log => log?.promt)
-                    if (this.chatgpt_log != null && this.chatgpt_log?.type == 'analyze') {
-                        if (
-                            this.analyze_select.includes(this.chatgpt_log?.promt)
-                        ) {
-                            this.input = ''
-                            this.condition = this.chatgpt_log?.promt
-                        }
-                        else {
-                            this.condition = undefined
-                            this.input = this.chatgpt_log?.promt
-                        }
-                        // this.output = this.chatgpt_log?.result
-                        return;
+
+                    if (
+                        [...this.analyze_select, `${this.i18n("Обобщение")}`, `${this.i18n("от организации ... в позитивном ключе, объемом на английском языке.")}`].includes(this.chatgpt_log?.promt)
+                    ) {
+                        this.input = ''
+                        this.condition = this.chatgpt_log?.promt
                     }
+                    else {
+                        this.condition = undefined
+                        this.input = this.chatgpt_log?.promt
+                    }
+
                     this.updateOutput()
                 }
             },
@@ -486,6 +533,8 @@
                 if (log_keys.length == 0) return;
                 let temp_result = this.chatgpt_item?.logs[newValue != '' ? newValue : this.condition]?.result;
                 this.output = temp_result || ''
+
+                this.gpt_type = 'analyze';
             },
         }
     }
@@ -683,13 +732,38 @@ textarea.form-control {
 .right-modal-menu {
     padding: 14px 13px;
     position: absolute;
-    left: calc(100% + 5px);
-    top: 30px;
-    width: 265px;
-    height: calc(100% - 30px);
+    left: calc(100% - 1px);
+    top: 48.42px;
+    /* width: 265px; */
+    width: 220px;
+    bottom: -48.4px;
     background: #fff;
     overflow: hidden;
-    border-radius: 4px;
+    border-radius: 0 4px 4px 0;
+}
+
+.information-btn {
+    font-size: 13px;
+    color: #1c84c6;
+    position: absolute;
+    right: 0px;
+    top: -5px;
+    padding: 0.875rem 1.75rem;
+    border: 1px solid #1c84c6;
+    border-radius: 0.4em;
+    transition: .15s;
+}
+.information-btn:hover {
+    background: #1c84c6;
+    color: white;
+}
+
+.full-item-text *:has( > img) {
+    max-width: 100% !important;
+}
+
+.full-item-text * > img {
+    height: auto !important;
 }
 
 </style>

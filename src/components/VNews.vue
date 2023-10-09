@@ -629,6 +629,30 @@
         v-show="chatgpt_item"
         @click.stop="chatgpt_item = null"
     >
+        <div class="flex flex-col chat-gpt-modal relative bg-white" @click.stop>
+            <div class="modal-content h-full">
+				<div class="modal-header bg-primary b-r-0">
+					<div class="col-lg-12 p-0">
+						<h3 class="f-l m-0">{{ i18n('Анализ ChatGPT') }}</h3>
+						<button class="close btn p-absolute" data-dismiss="modal" @click.stop="chatgpt_item = null" style="font-size: 20px !important; text-shadow: none; line-height: 20px; opacity: 1; color: #fff; right: 0px;top: 0px">
+							<i class="fa fa-close"></i>
+						</button>
+					</div>
+				</div>
+				<div class="tab-content-container">
+                    <div class="tab-content">
+                        <TextAnalyze/>
+                    </div>
+				</div>
+			</div>
+        </div>
+    </div>
+    <!-- <div
+        class="delete-resource-modal"
+        style="z-index: 100000"
+        v-show="chatgpt_item"
+        @click.stop="chatgpt_item = null"
+    >
         <div class="flex flex-col chat-gpt-modal relative" @click.stop>
             <div class="tab-head">
                 <div class="w-1/2 flex">
@@ -658,13 +682,10 @@
                     <TextReaction v-show="chatgpt_tab == 'TextReaction'"/>
                     <VGeneralization v-show="chatgpt_tab == 'VGeneralization'"/>
                     <MadeRequests v-show="chatgpt_tab == 'MadeRequests'"/>
-                    <!-- <keep-alive>
-                        <component :is="chatgpt_tab" />
-                    </keep-alive> -->
                 </div>
             </div>
         </div>
-    </div>
+    </div> -->
 
     <!-- One-Item -->
     <div
@@ -1006,22 +1027,18 @@
                     </div>
                 </div>
                 <div
-                    v-html="
+                    v-html='
                         r_type == 1 && modal_item?.category_id == 13
-                            ? ''
+                            ? ""
                             : each_replace_all(
-                                modal_item?.full_text.replaceAll(
-                                    `href=&quot;/`,
-                                    `href=&quot;${modal_item?.res_link}/`
-                                ).replaceAll(
-                                    `src=&quot;/`,
-                                    `src=&quot;${modal_item?.res_link}/`
-                                ).replaceAll(
-                                    `srcset=&quot;/`,
-                                    `srcset=&quot;${modal_item?.res_link}/`
-                                ) + '<br/><br/><br/><br/>', false
+                                modal_item?.full_text
+                                    .replaceAll(`href="/`,`href="${modal_item?.res_link}/`)
+                                    .replaceAll(`href=`,` target="_blank" href=`)
+                                    .replaceAll(`src="/`,`src="${modal_item?.res_link}/`)
+                                    .replaceAll(`srcset="/`,`srcset="${modal_item?.res_link}/`)
+                                 + "<br/><br/><br/><br/>", false
                             )
-                    "
+                    '
                     class="full-item-text w-full"
                     :style="{
                         maxHeight: modal_item?.newspaper_modal ? '0px' : '',
@@ -1825,17 +1842,17 @@ import {
 } from "@/response/header";
 import axios from "axios";
 import TextAnalyze from '@/components/ChatGPT/TextAnalyze.vue'
-import TextReaction from '@/components/ChatGPT/TextReaction.vue'
-import VGeneralization from '@/components/ChatGPT/VGeneralization.vue'
-import MadeRequests from '@/components/ChatGPT/MadeRequests.vue'
+// import TextReaction from '@/components/ChatGPT/TextReaction.vue'
+// import VGeneralization from '@/components/ChatGPT/VGeneralization.vue'
+// import MadeRequests from '@/components/ChatGPT/MadeRequests.vue'
 import VPagination from '@/components/UI/VPagination.vue'
 
 export default {
     components: {
         TextAnalyze,
-        TextReaction,
-        VGeneralization,
-        MadeRequests,
+        // TextReaction,
+        // VGeneralization,
+        // MadeRequests,
         VPagination,
     },
     setup() {
@@ -3583,16 +3600,20 @@ i.positive {
     background: white;
     overflow: hidden;
     border: 1px solid #d4d4d4;
-    border-radius: 0 0 5px 5px;
+    border-radius: 0 0 0 5px;
     height: 100%;
 }
 .tab-content {
     /* padding: 22px; */
     padding: 14px 17px;
-    height: 100%;
+    height: calc(100% - 28px);
     overflow-y: scroll;
     overflow-x: visible;
     margin: 2px 2px 0 0;
+
+    border: 2px solid #e7eaec;
+    margin: 14px 17px;
+    border-radius: 4px;
 }
 .imas-tag {
     display: inline !important;
@@ -3600,6 +3621,7 @@ i.positive {
     color: #fff !important;
     padding: 0 4px !important;
     border-radius: 3px !important;
+    padding-bottom: .1em !important;
 }
 .similars-count {
     position: absolute;

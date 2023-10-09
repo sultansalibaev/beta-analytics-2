@@ -4,6 +4,18 @@
 
 @tailwind utilities;
 
+/* @layer base {
+} */
+
+.capitalize-first:first-letter {
+    display: inline;
+    text-transform: uppercase;
+}
+
+.text-wrap-balance {
+    text-wrap: balance;
+}
+
 * {
     box-sizing: border-box;
 }

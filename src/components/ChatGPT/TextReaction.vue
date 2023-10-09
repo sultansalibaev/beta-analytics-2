@@ -54,28 +54,29 @@
     
             <div class="flex" style="gap: 15px;">
                 <div class="w-1/2">
-                    <div style="font-size: 25px;font-weight: 500;display: flex;align-items: center;justify-content: center;height: 80px;">Исходный текст публикаций</div>
                     <div
                         v-html="
                             chatgpt_item?.type == 1 && chatgpt_item?.category_id == 13
                                 ? ''
                                 : each_replace_all(
                                     chatgpt_item?.full_text.replaceAll(
-                                        `href=&quot;/`,
-                                        `href=&quot;${chatgpt_item?.res_link}/`
+                                        `href=/`,
+                                        `href=${chatgpt_item?.res_link}/`
+                                    )
+                                    .replaceAll(`href=`,` target="_blank" href=`)
+                                    .replaceAll(
+                                        `src=/`,
+                                        `src=${chatgpt_item?.res_link}/`
                                     ).replaceAll(
-                                        `src=&quot;/`,
-                                        `src=&quot;${chatgpt_item?.res_link}/`
-                                    ).replaceAll(
-                                        `srcset=&quot;/`,
-                                        `srcset=&quot;${chatgpt_item?.res_link}/`
+                                        `srcset=/`,
+                                        `srcset=${chatgpt_item?.res_link}/`
                                     ) + '<br/><br/><br/><br/>', false
                                 )
                         "
                         class="full-item-text w-full"
                         :style="{
-                            maxHeight: modal_item?.newspaper_modal ? '0px' : '',
-                            paddingTop: modal_item?.newspaper_modal
+                            maxHeight: chatgpt_item?.newspaper_modal ? '0px' : '',
+                            paddingTop: chatgpt_item?.newspaper_modal
                                 ? '0px'
                                 : '10px',
                         }"
@@ -185,7 +186,7 @@
                 return this.chatgpt_item?.logs && this.input && this.chatgpt_item?.logs[this.input] == 'loading'
             },
             sorted_used_prompt_list() {
-                let temp_prompt = 'от организации .... в позитивном ключе, объемом на английском языке.'
+                let temp_prompt = 'от организации ... в позитивном ключе, объемом на английском языке.'
                 let temp_prompt_list = [
                     ...this.used_prompt_list,
                     ...(

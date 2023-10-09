@@ -397,7 +397,6 @@
 
 <script>
 import i18n from "@/response/utils/i18n"
-// import VSelect from '@/components/UI/VSelect.vue';
 import VRange from "@/components/UI/VRange.vue";
 import ResetFilter from "@/components/UI/icons/ResetFilter.vue"
 import PieChart from "@/components/widgets/PieChart.vue";
@@ -460,7 +459,6 @@ export default {
     components: {
         PieChart,
         ColumnChart,
-        // VSelect,
         VRange,
         ResetFilter,
     },
