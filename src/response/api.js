@@ -759,6 +759,27 @@ export const getGptLogs = (item_ids = items.value?.map(item => item?.item_id)?.j
         })
 };
 
+export const getGptUserLogs = async () => {
+	
+	try {
+		let response = await axios.get(`/ru/gpt-service/get-user-logs`);
+		
+		let user_logs = {};
+		
+		response?.data?.forEach(log => {
+			if (!user_logs[log.type]) {
+				user_logs[log.type] = [];
+			}
+			user_logs[log.type] = [...user_logs[log.type], log];
+		});
+		
+		return user_logs
+	}
+	catch (error) {
+		console.error('getGptUserLogs', error);
+	}
+};
+
 export const getSimilarItems = (item_id, per_page = 1) => {
 	
 	similar_items_loading.value = true;

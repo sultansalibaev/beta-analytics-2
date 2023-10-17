@@ -640,8 +640,25 @@
 					</div>
 				</div>
 				<div class="tab-content-container">
-                    <div class="tab-content">
-                        <TextAnalyze/>
+                    <div class="tab-head" style="margin: 14px 17px 0;">
+                        <div class="w-1/2 flex">
+                            <div class="tab-item inline-block" @click="chatgpt_tab = 'MadeRequests'" :class="{
+                                selected: chatgpt_tab == 'MadeRequests'
+                            }">{{ i18n('Проделанные запросы') }}</div>
+                        </div>
+                        <div class="tab-item" @click="chatgpt_tab = 'TextAnalyze'" :class="{
+                            selected: chatgpt_tab == 'TextAnalyze'
+                        }">{{ i18n('Анализ новости') }}</div>
+                        <div class="tab-item" @click="chatgpt_tab = 'TextReaction'" :class="{
+                            selected: chatgpt_tab == 'TextReaction'
+                        }">{{ i18n('Пройзвольный текст') }}</div>
+                    </div>
+                    <div class="tab-content" style="margin-top: 0;" :style="{
+                        padding: chatgpt_tab != 'TextReaction' ? '14px 17px' : '0'
+                    }">
+                        <MadeRequests v-show="chatgpt_tab == 'MadeRequests'" />
+                        <TextAnalyze v-show="chatgpt_tab == 'TextAnalyze'" />
+                        <TextReaction v-show="chatgpt_tab == 'TextReaction'" />
                     </div>
 				</div>
 			</div>
@@ -1842,17 +1859,17 @@ import {
 } from "@/response/header";
 import axios from "axios";
 import TextAnalyze from '@/components/ChatGPT/TextAnalyze.vue'
-// import TextReaction from '@/components/ChatGPT/TextReaction.vue'
+import TextReaction from '@/components/ChatGPT/TextReaction.vue'
 // import VGeneralization from '@/components/ChatGPT/VGeneralization.vue'
-// import MadeRequests from '@/components/ChatGPT/MadeRequests.vue'
+import MadeRequests from '@/components/ChatGPT/MadeRequests.vue'
 import VPagination from '@/components/UI/VPagination.vue'
 
 export default {
     components: {
         TextAnalyze,
-        // TextReaction,
+        TextReaction,
         // VGeneralization,
-        // MadeRequests,
+        MadeRequests,
         VPagination,
     },
     setup() {
@@ -3567,7 +3584,8 @@ i.positive {
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif ;
     font-size: 16px;
     box-shadow: none !important;
-    min-width: 940px;
+    /* min-width: 940px; */
+    min-width: 65%;
 }
 
 @media (max-width: 1000px) {
@@ -3588,13 +3606,23 @@ i.positive {
     margin-right: 10px;
     cursor: pointer;
     margin-bottom: -1px;
-    background: white;
+    /* background: white; */
+    
+    border-color: transparent !important;
+    color: #A7B1C2;
+}
+
+.tab-item:hover {
+    color: #676a6c;
 }
 .tab-item:not(.tab-item.selected):not(.tab-item:hover) {
     color: #929191;
 }
 .tab-item.selected {
     border-bottom: none;
+    background: white;
+    color: #495057 !important;
+    border-color: #dee2e6 #dee2e6 #fff !important;
 }
 .tab-content-container {
     background: white;
@@ -3606,7 +3634,7 @@ i.positive {
 .tab-content {
     /* padding: 22px; */
     padding: 14px 17px;
-    height: calc(100% - 28px);
+    height: calc(100% - 60px);
     overflow-y: scroll;
     overflow-x: visible;
     margin: 2px 2px 0 0;

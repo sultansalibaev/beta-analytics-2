@@ -11,119 +11,80 @@
                     class="inline-flex text-white justify-between items-center cursor-pointer select-title"
                     style="width: 185px;margin-bottom: 6px;justify-content: center;padding-top: 1px;"
                     v-for="[request_name, request_value] in Object.entries(default_requests)"
-                    :key="request_name"
+                    :key="i18n(request_name)"
+                    :title="request_value"
                 >
                     <span class="capitalize-first">{{ i18n(request_name) }}</span>
                 </div>
                 <div
-                    @click.stop="request_type = 'analyze';condition = undefined;"
-                    v-show="!(request_type == 'analyze' && condition == undefined)"
+                    @click.stop="request_type = 'analyze';condition = null;input = '';"
+                    v-show="!(request_type == 'analyze' && (!(['', undefined, ...all_default_request_list].includes(condition)) || input != ''))"
                     class="inline-flex text-white justify-between items-center cursor-pointer select-title"
                     style="width: 185px;margin-bottom: 6px;justify-content: center;padding-top: 1px;"
+                    :title="i18n('Ввести своё условие ... для анализа')"
                 >
                     <span class="capitalize-first">{{ i18n('Своё условие') }}</span>
                 </div>
-                <div class="inline-flex relative w-full" style="margin-bottom: 6px;" v-show="request_type == 'analyze' && condition == undefined">
-                    <div @click.stop="toggle_prompt_list_modal()" class="inline-flex text-white justify-between items-center cursor-pointer select-title" style="background: white;border: 1px solid #3b5998;padding: 0;overflow: hidden;color: #858585;max-width: 250px;width: 100%;">
-                        <input
-                            type="text"
-                            autocomplete="off"
-                            class="focus:outline-none"
-                            style="height: 100%;width: 100%;padding: 0 8px 2px;"
-                            :placeholder="i18n('Введите своё условие ...')"
-                            id="analyze-input"
-                            @click.stop="used_prompt_list_modal = true"
-                            v-model="input">
-
-                        <i class="fa-solid fa-angle-down transition-all" style="margin-left:5px;margin-right: 6px;" :style="used_prompt_list_modal ? '' : 'padding-top: 2px;'" :class="{
-                            'rotate-x-180': used_prompt_list_modal
-                        }"></i>
-                    </div>
-                    <div class="absolute top-full right-0 left-0 transition-all select-options" :style="{
-                            height: used_prompt_list_modal ? '' : '0px',
-                        }" style="max-height: 300px;">
-                        <div class="flex flex-col select-none select-options-styles">
-                            <div class="select-option pointer-events-none"
-                                style="border-color: #ccc;color: #ccc;"
-                                v-if="sorted_used_prompt_list.length == 0"
-                            >{{ i18n('Список пуст') }}</div>
-                            <div class="select-option" 
-                                v-else
-                                v-for="used_prompt in sorted_used_prompt_list"
-                                :key="used_prompt"
-                                :title="used_prompt"
-                                @click="select_analyzed_prompt(used_prompt)" :class="{
-                                active: input == used_prompt
-                            }">{{ used_prompt }}</div>
-                        </div>
-                    </div>
-                </div>
+                <KeepAlive>
+                    <component
+                        style="margin-bottom: 6px;"
+                        v-show="request_type == 'analyze' && (!(['', undefined, ...all_default_request_list].includes(condition)) || input != '')"
+                        :is="'VSearchSelect'"
+                        :list="used_prompt_list.filter(used_prompt => (used_prompt?.type == 'analyze' && is_not_summary(used_prompt?.name)))"
+                        :trigger="'name'"
+                        :name="'name'"
+                        :list_modal="analyze_prompts_modal"
+                        :modal_name="'analyze_prompts'"
+                        :set_list_modal="(prompt_name) => { analyze_prompts_modal = prompt_name }"
+                        :callback="(prompt_name) => { select_analyzed_prompt(prompt_name) }"
+                        :input-callback="(value) => { input = value }"
+                        :placeholder="i18n('Введите своё условие ...')"
+                    />
+                </KeepAlive>
             </div>
             
             <div class="text-wrap-balance" style="color: #A8A8A8;font-size: 13px;margin: 5px 0 12px;">{{ i18n('Укажите, от кого сформулировать обращение') }}:</div>
             <div class="flex flex-col">
                 <div
-                    @click.stop="request_type = 'reaction';condition = i18n('от организации ... в позитивном ключе, объемом на английском языке.');"
+                    @click.stop="request_type = 'reaction';condition = i18n('организации ... в позитивном ключе, объемом на английском языке.');"
                     class="inline-flex text-white justify-between items-center cursor-pointer select-title"
                     style="width: 185px;margin-bottom: 6px;justify-content: center;padding-top: 1px;"
+                    :title="i18n('организации ... в позитивном ключе, объемом на английском языке.')"
                 >
                     <span class="capitalize-first">{{ i18n('Позитивный комментарий') }}</span>
                 </div>
                 <div
-                    @click.stop="request_type = 'reaction';condition = undefined;"
-                    v-show="!(request_type == 'reaction' && condition == undefined)"
+                    @click.stop="request_type = 'reaction';condition = null;input = '';"
+                    v-show="!(request_type == 'reaction' && (!(['', undefined, ...all_default_request_list].includes(condition)) || input != ''))"
                     class="inline-flex text-white justify-between items-center cursor-pointer select-title"
                     style="width: 185px;margin-bottom: 6px;justify-content: center;padding-top: 1px;"
                 >
                     <span class="capitalize-first">{{ i18n('Своё обращение от ...') }}</span>
                 </div>
-                <div class="inline-flex relative w-full" style="margin-bottom: 6px;" v-show="request_type == 'reaction' && condition == undefined">
-                    <div
-                        @click.stop="toggle_prompt_list_modal()" 
-                        class="inline-flex text-white justify-between items-center cursor-pointer select-title"
-                        style="background: white;border: 1px solid #3b5998;padding: 0;overflow: hidden;color: #858585;max-width: 250px;width: 100%;"
-                    >
-                        <input
-                            type="text"
-                            class="focus:outline-none"
-                            style="height: 100%;width: 100%;padding: 0 8px 2px;"
-                            :placeholder="i18n('Деятеля, компании и т.д.')"
-                            id="analyze-input"
-                            @click.stop="used_prompt_list_modal = true"
-                            v-model="input">
-                        
-                        
-                        <i class="fa-solid fa-angle-down transition-all" style="margin-left:5px;margin-right: 6px;" :style="used_prompt_list_modal ? '' : 'padding-top: 2px;'" :class="{
-                            'rotate-x-180': used_prompt_list_modal
-                        }"></i>
-                    </div>
-                    <div class="absolute top-full right-0 left-0 transition-all select-options" :style="{
-                            height: used_prompt_list_modal ? '' : '0px',
-                        }" style="max-height: 300px;">
-                        <div class="flex flex-col select-none select-options-styles">
-                            <div class="select-option pointer-events-none"
-                                style="border-color: #ccc;color: #ccc;"
-                                v-if="sorted_used_prompt_list.length == 0"
-                            >{{ i18n('Список пуст') }}</div>
-                            <div
-                                class="select-option" 
-                                v-else
-                                v-for="used_prompt in sorted_used_prompt_list"
-                                :key="used_prompt"
-                                :title="used_prompt"
-                                @click="input = used_prompt;used_prompt_list_modal = false;"
-                                :class="{
-                                    active: input == used_prompt
-                                }">{{ used_prompt }}</div>
-                        </div>
-                    </div>
-                </div>
+                <KeepAlive>
+                    <component
+                        style="margin-bottom: 6px;"
+                        v-show="request_type == 'reaction' && (!(['', undefined, ...all_default_request_list].includes(condition)) || input != '')"
+                        :is="'VSearchSelect'"
+                        :list="used_prompt_list.filter(used_prompt => (used_prompt?.type == 'reaction'))"
+                        :trigger="'name'"
+                        :name="'name'"
+                        :list_modal="reaction_prompts_modal"
+                        :modal_name="'reaction_prompts'"
+                        :set_list_modal="(prompt_name) => { reaction_prompts_modal = prompt_name }"
+                        :callback="(prompt_name) => { select_analyzed_prompt(prompt_name) }"
+                        :input-callback="(value) => { input = value }"
+                        :placeholder="i18n('Своё обращение от ...')"
+                        :title="i18n('Деятеля, компании и т.д.')"
+                    />
+                </KeepAlive>
             </div>
             <div class="flex flex-col">
                 <div
                     @click.stop="request_type = 'generalization';condition = i18n('Обобщение');"
                     class="inline-flex text-white justify-between items-center cursor-pointer select-title"
                     style="width: 185px;margin-top: 12px;justify-content: center;padding-top: 1px;"
+                    :title="i18n('Обобщение')"
                 >
                     <span class="capitalize-first">{{ i18n('Обобщение') }}</span>
                 </div>
@@ -133,7 +94,7 @@
             
             <textarea class="form-control" id="textarea_analyze" style="display:none;" rows="10" :value="chatgpt_item?.text.maxLength(4_000)" disabled></textarea>
     
-            <div class="flex" style="gap: 15px;">
+            <div class="flex" id="gpt-analyze" style="gap: 15px;">
                 <div class="w-1/2">
                     <div
                         v-html='
@@ -183,7 +144,14 @@
                             class="ml-auto information-btn"
                         >{{ i18n('Информация') }}</button>
                     </div>
-                    <pre style="width: 100%;margin-bottom: 12px;line-height: 1.7!important;font-size: 13.5px!important;white-space: pre-wrap;">{{ output }}</pre>
+                    <div v-show="output != ''" style="color: #A8A8A8;font-size: 13px;margin: 8px 0 12px 0;">{{ i18n('Ответ от ChatGPT') }}:</div>
+                    <div v-show="output != ''" class="w-full relative" style="padding-bottom: 40px;">
+                        <div contenteditable="true" id="chatgpt-result" class="w-full whitespace-pre-wrap focus:outline-none" style="margin-bottom: 12px;line-height: 1.5!important;font-size: 13.5px!important;">{{ output }}</div>
+                        <div class="absolute right-0 bottom-0 flex items-center">
+                            <button class="default-btn delete-resource-btn delete-btn-hover" @click="delete_prompt">Удалить</button>
+                            <button class="default-btn delete-resource-btn success-btn-hover" @click="update_prompt" style="background: rgb(28, 179, 148)">Обновить</button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -218,6 +186,7 @@
     import { getGptLogs } from '@/response/api'
 	import { r_type, search_tags } from '@/response/header'
     import { getLang } from "@/response/utils/langIs"
+    import VSearchSelect from "@/components/UI/VSearchSelect.vue"
     import axios from 'axios'
                 
     const configuration = new Configuration({
@@ -227,6 +196,9 @@
     const openai = new OpenAIApi(configuration);
 
     export default {
+        components: {
+            VSearchSelect
+        },
         data() {
             const default_requests = {
                 "бизнес": this.i18n("с точки зрения бизнеса"),
@@ -258,13 +230,16 @@
                 dropdown_menu: false,
                 used_prompt_list_modal: false,
                 used_prompt_list: [],
-                analyze_select: Object.values(default_requests),
+                all_default_request_list: [...Object.values(default_requests), `${this.i18n("Обобщение")}`, `${this.i18n("организации ... в позитивном ключе, объемом на английском языке.")}`],
                 answer_lang: {
                     ru: 'Russian',
                     en: 'English',
                     kz: 'Kazakh',
                 },
                 additional_info: '',
+
+                analyze_prompts_modal: null,
+                reaction_prompts_modal: null,
             }
         },
         setup() {
@@ -281,31 +256,16 @@
         },
         computed: {
             gpt_request_text() {
-                return `${this.i18n(this.default_type_requests[this.request_type])} ${this.input == '' ? this.i18n(this.condition ?? '') : this.input}`
+                return `${this.i18n(this.default_type_requests[this.request_type])} ${this.condition == this.i18n('Обобщение') ? '' : this.input == '' ? this.i18n(this.condition ?? '') : this.input ?? ''}`
             },
             load_circle_analyze() {
                 return this.chatgpt_item?.logs && this.condition && this.chatgpt_item?.logs[this.condition] == 'loading'
             },
-            sorted_used_prompt_list() {
-                if (this.input == '') return this.used_prompt_list;
-                else {
-                    return this.used_prompt_list
-                        .filter(used_prompt => used_prompt?.lowerIncludes(this.input))
-                        .sort((a,b) => {
-                            if (a?.lowerIncludes(this.input) == false && b?.lowerIncludes(this.input) == false) {
-                                return 0
-                            }
-                            else if (a?.lowerIncludes(this.input) && b?.lowerIncludes(this.input)) {
-                                return a?.indexOf(this.input) < b?.indexOf(this.input) ? -1 : 0
-                            }
-                            else{
-                                return a?.lowerIncludes(this.input) && b?.lowerIncludes(this.input) == false ? -1 : 0
-                            }
-                        });
-                }
-            },
         },
         methods: {
+            is_not_summary(prompt_name) {
+                return !(["Обобщение", "Summary", "Жалпылау"].includes(prompt_name))
+            },
             each_replace_all(text, slice_text = true) {
                 text = text.trim();
                 if (!text) return text;
@@ -333,7 +293,7 @@
             },
             select_analyzed_prompt(used_prompt) {
 
-                if (this.analyze_select.includes(used_prompt)) {
+                if (Object.values(this.default_requests).includes(used_prompt)) {
                     this.input = ''
                     this.condition = used_prompt
                 }
@@ -341,6 +301,7 @@
                     this.condition = undefined
                     this.input = used_prompt
                 }
+
                 this.used_prompt_list_modal = false;
 
                 this.gpt_type = 'analyze';
@@ -353,6 +314,95 @@
                 this.select_options_modal = false;
                 if (this.default_requests[statement]) {this.condition = this.default_requests[statement]} 
                 this.gpt_type = 'analyze';
+            },
+            delete_prompt() {
+
+                const temp_chatgpt_item = JSON.parse(JSON.stringify(this.chatgpt_item))
+
+                if (this.input.length > 0) {
+                    this.condition = this.input
+                }
+
+                const temp_condition = this.condition;
+                const temp_r_type = this.r_type;
+                const type = {
+                    analyze: 'analyze',
+                    generalization: 'analyze',
+                    reaction: 'reaction',
+                }[this.request_type];
+
+                console.log('delete_prompt', {
+                    news_id: temp_chatgpt_item?.item_id,
+                    news_type: temp_r_type,
+                    type,
+                    promt: temp_condition,
+                });
+
+                let formData = new FormData();
+
+                formData.append('news_id', temp_chatgpt_item?.item_id)
+                formData.append('news_type', temp_r_type)
+                formData.append('type', type)
+                formData.append('promt', temp_condition)
+
+                axios.post(`/ru/gpt-service/delete-log`, formData)
+                    .then((response) => {
+                        console.log('gpt-service - create-log response = ', response);
+                        if (response?.data == 1) {
+                            this.getGptLogs()
+                            this.output = ''
+                        }
+                    })
+                    .catch(error => {
+                        console.log('error', error);
+                    })
+                    // .finally(() => {
+                    //     if (temp_chatgpt_item?.item_id == this.chatgpt_item?.item_id && [this.input, this.condition].includes(temp_condition)) {
+                    //         this.output = temp_output
+                    //     }
+                    // })
+            },
+            update_prompt() {
+                
+                const temp_chatgpt_item = JSON.parse(JSON.stringify(this.chatgpt_item))
+                
+                if (this.input.length > 0) {
+                    this.condition = this.input
+                }
+
+                const temp_condition = this.condition;
+                const temp_r_type = this.r_type;
+                const type = {
+                    analyze: 'analyze',
+                    generalization: 'analyze',
+                    reaction: 'reaction',
+                }[this.request_type];
+
+                this.output = document.querySelector('#chatgpt-result')?.innerText ?? this.output;
+
+                let formData = new FormData();
+
+                formData.append('news_id', temp_chatgpt_item?.item_id)
+                formData.append('news_type', temp_r_type)
+                formData.append('type', type)
+                formData.append('promt', temp_condition)
+                formData.append('result', this.output)
+
+                axios.post(`/ru/gpt-service/update-log`, formData)
+                    .then((response) => {
+                        console.log('gpt-service - create-log response = ', response);
+                        if (response?.data == 1 && temp_chatgpt_item?.logs) {
+                            this.getGptLogs()
+                        }
+                    })
+                    .catch(error => {
+                        console.log('error', error);
+                    })
+                    // .finally(() => {
+                    //     if (temp_chatgpt_item?.item_id == this.chatgpt_item?.item_id && [this.input, this.condition].includes(temp_condition)) {
+                    //         this.output = temp_output
+                    //     }
+                    // })
             },
             async push_news() {
 
@@ -414,7 +464,7 @@
                         console.log('gpt-service - response = ', response?.data);
                         if (response?.data == false) {
                             const completion = await openai.createChatCompletion({
-                                model: "gpt-3.5-turbo",
+                                model: "gpt-4",
                                 messages: completion_messages[this.request_type],
                             });
                             console.log('completion', completion);
@@ -429,6 +479,7 @@
                             formData.append('type', type)
                             formData.append('promt', temp_condition)
                             formData.append('result', temp_output)
+                            formData.append('total_tokens', (completion?.data?.usage?.total_tokens ?? 0))
 
                             axios.post(`/ru/gpt-service/create-log`, formData)
                                 .then((response) => {
@@ -471,17 +522,17 @@
 
                 
         
-                const temp_log_key = log_keys.find(prompt => ([...this.analyze_select, `${this.i18n("Обобщение")}`, `${this.i18n("от организации ... в позитивном ключе, объемом на английском языке.")}`].includes(prompt)))
+                const temp_log_key = log_keys.find(prompt => (this.all_default_request_list.includes(prompt)))
 
                 if (temp_log_key) {
                     this.condition = temp_log_key
 
                     if (temp_log_key == `${this.i18n("Обобщение")}`) this.request_type = 'generalization';
-                    else if (temp_log_key == `${this.i18n("от организации ... в позитивном ключе, объемом на английском языке.")}`) this.request_type = 'reaction';
+                    else if (temp_log_key == `${this.i18n("организации ... в позитивном ключе, объемом на английском языке.")}`) this.request_type = 'reaction';
                 }
 
                 if (this.condition == '') {
-                    const log_key = log_keys.find(prompt => (![...this.analyze_select, `${this.i18n("Обобщение")}`, `${this.i18n("от организации ... в позитивном ключе, объемом на английском языке.")}`].includes(prompt)))
+                    const log_key = log_keys.find(prompt => (!this.all_default_request_list.includes(prompt)))
                     if (log_key) this.input = log_key
                 }
         
@@ -492,41 +543,63 @@
             chatgpt_item(newValue) {
                 if (newValue != null && this.chatgpt_tab == 'TextAnalyze') {
                     this.updateOutput()
-                    const local_prompts = [...this.analyze_select, `${this.i18n("Обобщение")}`, `${this.i18n("от организации ... в позитивном ключе, объемом на английском языке.")}`];
-                    this.analyze_used_prompt_list = Object.values(this.chatgpt_item?.logs).filter(log => (
-                        !local_prompts.includes(log?.promt) && log?.type == 'analyze'
-                    )).map(log => log?.promt)
+                    const local_prompts = this.all_default_request_list;
+                    this.used_prompt_list = Object.values(this.chatgpt_item?.logs).filter(log => (
+                        !local_prompts.includes(log?.promt)
+                    )).map(log => ({...log, name: log?.promt}))
+
+                    console.log('used_prompt_list', this.used_prompt_list);
                 }
                 else if (newValue == null) this.output = '';
             },
             chatgpt_tab(newValue) {
                 
+                setTimeout(() => {
+                    let element = document.querySelector('#gpt-analyze');
+
+                    if (element) element.scrollIntoView({ behavior: "smooth", block: "start" });
+                }, 20);
+
                 this.input = ''
 
                 if (newValue == 'TextAnalyze' && this.chatgpt_item != null) {
                     this.used_prompt_list = Object.values(this.chatgpt_item?.logs).filter(log => (
-                        ![...this.analyze_select, `${this.i18n("Обобщение")}`, `${this.i18n("от организации ... в позитивном ключе, объемом на английском языке.")}`].includes(log?.promt)
-                    )).map(log => log?.promt)
+                        !this.all_default_request_list.includes(log?.promt)
+                    )).map(log => ({...log, name: log?.promt}))
+
+                    console.log('used_prompt_list', this.used_prompt_list);
 
                     if (
-                        [...this.analyze_select, `${this.i18n("Обобщение")}`, `${this.i18n("от организации ... в позитивном ключе, объемом на английском языке.")}`].includes(this.chatgpt_log?.promt)
+                        this.all_default_request_list.includes(this.chatgpt_log?.promt)
                     ) {
                         this.input = ''
                         this.condition = this.chatgpt_log?.promt
                     }
                     else {
                         this.condition = undefined
-                        this.input = this.chatgpt_log?.promt
+                        this.input = this.chatgpt_log?.promt ?? ''
                     }
 
                     this.updateOutput()
                 }
             },
             condition(newValue) {
+
+                if (newValue != undefined) this.input = '';
+
                 const log_keys = Object.keys(this.chatgpt_item?.logs);
+
                 if (log_keys.length == 0) return;
-                let temp_result = this.chatgpt_item?.logs[this.input != '' ? this.input : newValue]?.result;
-                this.output = temp_result || ''
+
+                let temp_log = this.chatgpt_item?.logs[this.input != '' ? this.input : newValue];
+
+                let currentPromptType = {
+                    analyze: 'analyze',
+                    generalization: 'analyze',
+                    reaction: 'reaction',
+                }[this.request_type];
+
+                this.output = currentPromptType == temp_log?.type ? temp_log?.result : ''
             },
             input(newValue) {
                 const log_keys = Object.keys(this.chatgpt_item?.logs);
@@ -536,7 +609,7 @@
 
                 this.gpt_type = 'analyze';
             },
-        }
+        },
     }
 </script>
 
@@ -764,6 +837,20 @@ textarea.form-control {
 
 .full-item-text * > img {
     height: auto !important;
+}
+
+.success-btn-hover,
+.delete-btn-hover {
+    transition: .15s;
+    cursor: pointer;
+    font-size: 14.5px;
+}
+.delete-btn-hover:hover {
+    background: #d55454 !important;
+}
+
+.success-btn-hover:hover {
+    background: rgb(20, 131, 109) !important;
 }
 
 </style>
