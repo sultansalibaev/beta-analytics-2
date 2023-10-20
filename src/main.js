@@ -1,6 +1,9 @@
 Array.prototype.join_title = function () {
     return [...this].map(item => ('• '+item)).join('\n');
 }
+Number.prototype.minmax = function (min, max) {
+    return this < min ? min : this > max ? max : this;
+}
 Number.prototype.push_space = function () {
     return [...[...this.toString()].reverse().join('').match(/.{1,3}/g).join(' ')].reverse().join('')
 }

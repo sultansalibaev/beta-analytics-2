@@ -770,8 +770,19 @@ export const getGptUserLogs = async () => {
 			if (!user_logs[log.type]) {
 				user_logs[log.type] = [];
 			}
+			// let lastLog = user_logs[log.type]?.at(-1);
+			// if (lastLog?.promt === log?.promt) {
+			// 	if (!Array.isArray(lastLog?.result)) {
+			// 		lastLog.result = [lastLog.result];
+			// 		lastLog.currentResult = 0;
+			// 	}
+			// 	lastLog.result = [...lastLog?.result, log?.result]
+			// }
+			// else {
 			user_logs[log.type] = [...user_logs[log.type], log];
+			// }
 		});
+
 		
 		return user_logs
 	}

@@ -1,6 +1,8 @@
 <template>
     <div @click.stop="select_options_modal = false; used_prompt_list_modal = false;" class="h-full flex flex-col">
-
+        <!-- <div class="sticky top-0 z-[14]" data-projection-id="13" style="transform: none;transform-origin: 50% 50% 0px;opacity: 1;height: 20px;display: flex;align-items: center;"><h3 class="h-9 pb-2 pt-3 px-3 gizmo:px-2 text-xs text-gray-500 font-medium text-ellipsis overflow-hidden break-all bg-gray-50 gizmo:bg-white dark:bg-gray-900 gizmo:dark:bg-black gizmo:text-gizmo-gray-600" style="
+    height: auto;
+">Июль</h3></div> -->
         <div class="right-modal-menu">
             <a @click="current_user_logs_type = ''" 
                 class="flex px-3 min-h-[30px] py-1 items-center gap-3 transition-colors duration-200 cursor-pointer rounded-md border dark:border-white/20 gizmo:min-h-0 hover:bg-gray-500/10 h-11 gizmo:h-10 gizmo:rounded-lg gizmo:border-[rgba(0,0,0,0.1)] bg-white dark:bg-transparent flex-grow overflow-hidden">
@@ -80,12 +82,12 @@
         <div
             class="padding-[40px] m-auto max-w-[750px] text-center"
             style="font-size: 20px;text-wrap: pretty;color: gray;"
-            v-if="(user_logs[current_user_logs_type] ?? []).length == 0"
+            v-if="current_user_logs.length == 0"
         >
             Готов ответить на ваши вопросы, помочь с задачами или просто поболтать. <br><br>Чем я могу помочь сегодня?
         </div>
         <div class="chatgpt-messages w-full flex flex-col text-sm">
-            <template v-for="log in (user_logs[current_user_logs_type] ?? [])" :key="log?.id">
+            <template v-for="(log, index) in current_user_logs" :key="log?.id">
 
                 <div class="group w-full text-token-text-primary border-b border-black/10 gizmo:border-0 border-gray-400/50 gizmo:border-0 gizmo:bg-transparent  gizmo:bg-transparent"
                     data-testid="conversation-turn-2" style="--avatar-color: #19c37d;">
@@ -99,42 +101,88 @@
                                             style="font-size: 25px;text-align: center;width: 36px;color: #bda1ff;"></i>
                                     </div>
                                 </div>
-                                <div
-                                    class="text-xl flex items-center justify-center gap-1 absolute left-0 top-2 -ml-4 -translate-x-full gizmo:top-1 gizmo:-ml-6 invisible">
-                                    <button disabled=""
-                                        class="text-white disabled:text-gray-300 disabled:text-gray-400"><svg
+                                <!-- currentLogsPromt -->
+                                <!-- currentLogsResult -->
+                                <div v-show="Array.isArray(log?.promt) && log?.promt?.length > 1" class="text-xl flex items-center justify-center gap-1 absolute top-2 -translate-x-full mr-[10px]">
+                                    <button 
+                                        @click="minusCurrentPromt(log, index)"
+                                        :style="currentLogsPromt[index] == 0 && 'color: darkgray;pointer-events: none;'"
+                                    >
+                                        <svg
                                             stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24"
                                             stroke-linecap="round" stroke-linejoin="round" class="icon-xs" height="1.2em"
                                             width="1.2em" xmlns="http://www.w3.org/2000/svg">
                                             <polyline points="15 18 9 12 15 6"></polyline>
-                                        </svg></button><span class="flex-grow flex-shrink-0 tabular-nums">1 /
-                                        1</span><button disabled=""
-                                        class="text-white disabled:text-gray-300 disabled:text-gray-400"><svg
+                                        </svg>
+                                    </button>
+                                    <span class="flex-grow flex-shrink-0 tabular-nums">{{ ((currentLogsPromt[index] + 1) || log?.promt.length) }} / {{ log?.promt?.length }}</span>
+                                    <button
+                                        @click="plusCurrentPromt(log, index)"
+                                        :style="(currentLogsPromt[index] ?? (log?.promt.length - 1)) == (log?.promt.length - 1) && 'color: darkgray;pointer-events: none;'"
+                                    >
+                                        <svg
                                             stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24"
                                             stroke-linecap="round" stroke-linejoin="round" class="icon-xs" height="1.2em"
                                             width="1.2em" xmlns="http://www.w3.org/2000/svg">
                                             <polyline points="9 18 15 12 9 6"></polyline>
-                                        </svg></button>
+                                        </svg>
+                                    </button>
                                 </div>
                             </div>
                             <div
                                 class="relative flex w-[calc(100%-50px)] flex-col gap-1 gizmo:w-full md:gap-3 lg:w-[calc(100%-115px)] gizmo:text-gizmo-gray-600 gizmo:text-gray-300">
-                                <div class="flex flex-grow flex-col gap-3 max-w-full">
-                                    <div
-                                        class="min-h-[20px] flex flex-col items-start gap-3 whitespace-pre-wrap break-words overflow-x-auto">
-                                        <div class="">{{ log?.promt }}</div>
+                                
+                                <div class="flex flex-grow flex-col gap-3 max-w-full" v-show="editable_logs[getLogPromt(log, index)]">
+                                    <span
+                                        :id="editable_logs[getLogPromt(log, index)] && 'chatgpt-editable-text'"
+                                        tabindex="0"
+                                        data-id="root"
+                                        rows="1"
+                                        :placeholder="i18n('Отправить сообщение')"
+                                        :class="{
+                                            'incorrect-request': !isCorrectRequest || user_logs_loading[current_user_logs_type]
+                                        }"
+                                        class="chatgpt-textbox-scrollbar gray-scrollbar m-0 w-full resize-none border-0 bg-transparent py-[10px] pr-10 focus:ring-0 focus-visible:ring-0 bg-transparent md:py-4 md:pr-12 gizmo:md:py-3.5 pl-3 md:pl-4 focus:outline-none"
+                                        style="overflow-y: auto;max-height: 200px;min-height: 42px;line-height: 1.3;color: black;"
+                                        role="textbox"
+                                        contenteditable="plaintext-only"
+                                        :style="{
+                                            boxShadow: `0 0 7px ${isCorrectRequest ? 'rgba(0,0,0,.1)' : 'rgba(255,0,0,.3)'}`,
+                                            borderRadius: '8px'
+                                        }"
+                                        @input="editable_log_text = $event.target.innerText"
+                                        @keydown.enter="edit_log($event, log, index)"
+                                    >{{ getLogPromt(log, index) }}</span>
+                                    <div class="text-center mt-2 flex justify-center">
+                                        <button class="btn relative btn-primary mr-2" as="button" @click="edit_log($event, log, index)">
+                                            <div class="flex w-full gap-2 items-center justify-center">Сохранить и отправить</div>
+                                        </button>
+                                        <button class="btn relative btn-neutral" as="button" @click="editable_logs[getLogPromt(log, index)] = false">
+                                            <div class="flex w-full gap-2 items-center justify-center">Отмена</div>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="flex flex-grow flex-col gap-3 max-w-full" v-show="!editable_logs[getLogPromt(log, index)]">
+                                    <div class="min-h-[20px] flex flex-col items-start gap-3 whitespace-pre-wrap break-words overflow-x-auto">
+                                        <div class="">{{ getLogPromt(log, index) }}</div>
                                     </div>
                                 </div>
                                 <div
+                                    v-show="!editable_logs[getLogPromt(log, index)]"
                                     class="text-gray-400 flex self-end lg:self-center justify-center gizmo:lg:justify-start mt-2 gizmo:mt-0 visible lg:gap-1 lg:absolute lg:top-0 lg:translate-x-full lg:right-0 lg:mt-0 lg:pl-2 gap-2 md:gap-3 gizmo:absolute gizmo:right-0 gizmo:top-1/2 gizmo:-translate-y-1/2 gizmo:transform">
                                     <button
-                                        class="p-1 gizmo:pl-0 rounded-md disabled:hover:text-gray-400 hover:text-gray-200 text-gray-400 hover:bg-gray-100 hover:text-gray-700 hover:bg-gray-300 md:invisible md:group-hover:visible"><svg
+                                        class="p-1 gizmo:pl-0 rounded-md disabled:hover:text-gray-400 hover:text-gray-200 text-gray-400 hover:bg-gray-100 hover:text-gray-700 hover:bg-gray-300 md:invisible md:group-hover:visible"
+                                        @click="editable_logs[getLogPromt(log, index)] = true"
+                                    >
+                                        <!-- @click="() => {current_editable_log_index = index + 1;send_gpt_request($event)}" -->
+                                        <svg
                                             stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24"
                                             stroke-linecap="round" stroke-linejoin="round" class="icon-sm" height="1.2em"
                                             width="1.2em" xmlns="http://www.w3.org/2000/svg">
                                             <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
                                             <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-                                        </svg></button>
+                                        </svg>
+                                    </button>
                                 </div>
                                 <div class="flex justify-between empty:hidden lg:block"></div>
                             </div>
@@ -159,22 +207,30 @@
                                         </svg>
                                     </div>
                                 </div>
-                                <div
-                                    class="text-xl flex items-center justify-center gap-1 absolute left-0 top-2 -ml-4 -translate-x-full gizmo:top-1 gizmo:-ml-6 invisible">
-                                    <button disabled=""
-                                        class="text-white disabled:text-gray-300 disabled:text-gray-400"><svg
+                                <div v-show="(typeof log.result != 'string' && getLogResultArray(log, index).length > 1)" class="text-xl flex items-center justify-center gap-1 absolute top-2 -translate-x-full mr-[10px]">
+                                    <button
+                                        @click="minusCurrentResult(log, index)"
+                                        :style="currentLogsResult[getLogPromt(log, index)] == 0 && 'color: darkgray;pointer-events: none;'"
+                                    >
+                                        <svg
                                             stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24"
                                             stroke-linecap="round" stroke-linejoin="round" class="icon-xs" height="1.2em"
                                             width="1.2em" xmlns="http://www.w3.org/2000/svg">
                                             <polyline points="15 18 9 12 15 6"></polyline>
-                                        </svg></button><span class="flex-grow flex-shrink-0 tabular-nums">1 /
-                                        1</span><button disabled=""
-                                        class="text-white disabled:text-gray-300 disabled:text-gray-400"><svg
+                                        </svg>
+                                    </button>
+                                    <span class="flex-grow flex-shrink-0 tabular-nums">{{ ((currentLogsResult[getLogPromt(log, index)] + 1) || getLogResultArray(log, index).length) }} / {{ getLogResultArray(log, index).length }}</span>
+                                    <button
+                                        @click="plusCurrentResult(log, index)"
+                                        :style="(currentLogsResult[getLogPromt(log, index)] ?? (getLogResultArray(log, index).length - 1)) == (getLogResultArray(log, index).length - 1) && 'color: darkgray;pointer-events: none;'"
+                                    >
+                                        <svg
                                             stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24"
                                             stroke-linecap="round" stroke-linejoin="round" class="icon-xs" height="1.2em"
                                             width="1.2em" xmlns="http://www.w3.org/2000/svg">
                                             <polyline points="9 18 15 12 9 6"></polyline>
-                                        </svg></button>
+                                        </svg>
+                                    </button>
                                 </div>
                             </div>
                             <div
@@ -183,9 +239,12 @@
                                     <div
                                         class="min-h-[20px] flex flex-col items-start gap-3 whitespace-pre-wrap break-words overflow-x-auto">
                                         <div class="markdown prose w-full break-words prose-invert light">
-                                            <p :class="{
-                                                'gpt-response-loading': log?.result == ''
-                                            }">{{ log?.result == '' ? '...' : log?.result }}</p>
+                                            <p
+                                                :class="{
+                                                    'gpt-response-loading': !getLogResult(log, index)
+                                                }"
+                                                class="font-bold"
+                                            >{{ getLogResult(log, index) || '...' }}</p>
                                         </div>
                                     </div>
                                 </div>
@@ -227,6 +286,20 @@
                 </svg>
             </button> -->
         </div>
+        <div
+            v-if="user_logs[current_user_logs_type]?.length && !user_logs_loading[current_user_logs_type]"
+            class="mt-auto mx-auto pb-[14px] pt-[20px]"
+            style="border-radius: 0px 0px 5px 5px;position: absolute;bottom: 54px;right: calc(140px + 17px);margin-bottom: -17px !important;z-index: 1;padding: 0px;">
+            <button @click="regenerate_gpt_request" class="btn relative btn-neutral -z-0 whitespace-nowrap bg-white border hover:bg-gray-200" as="button" style="border-width: 1px;border-color: lightgray;">
+                <div class="flex w-full gap-2 items-center justify-center"><svg stroke="currentColor" fill="none"
+                        stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"
+                        class="flex-shrink-0 icon-xs" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
+                        <polyline points="1 4 1 10 7 10"></polyline>
+                        <polyline points="23 20 23 14 17 14"></polyline>
+                        <path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"></path>
+                    </svg>{{ i18n('Повторная генерация') }}</div>
+            </button>
+        </div>
         <div class="w-full mt-auto mx-auto pb-[14px] pt-[20px]"
             style="border-radius: 0 0 5px 5px;position: absolute;bottom: 0px;right: 17px;left: 17px;margin-bottom: -17px !important;max-width: 720px;z-index: 1;padding: 0;">
 
@@ -245,9 +318,9 @@
                             borderRadius: '8px'
                         }"
                         @input="request_text = $event.target.innerText"
-                        @keydown.enter="send_gpt_request"></span>
+                        @keydown.enter="() => {current_editable_log_index = current_user_logs?.length;send_gpt_request($event)}"></span>
                     <!-- <span class="textarea" role="textbox" contenteditable></span> -->
-                    <button @click="send_gpt_request"
+                    <button @click="() => {current_editable_log_index = current_user_logs?.length;send_gpt_request($event)}"
                         class="chatgpt-request-send absolute p-1 rounded-md md:bottom-3 gizmo:md:bottom-2.5 md:p-2 md:right-3 hover:bg-gray-900 disabled:hover:bg-transparent right-2 disabled:text-gray-400 enabled:bg-brand-purple gizmo:enabled:bg-transparent gizmo:text-gray-500 gizmo:text-gray-300 bottom-1.5 transition-colors disabled:opacity-40"
                         data-testid="send-button">
                         <span class="" data-state="closed">
@@ -375,7 +448,11 @@ export default {
                 previous_name: null,
                 name: null,
             },
-            chatgpt_error_modal: false
+            chatgpt_error_modal: false,
+            currentLogsResult: {},
+            currentLogsPromt: {},
+            current_editable_log_index: 0,
+            editable_logs: {},
         }
     },
     setup() {
@@ -392,6 +469,48 @@ export default {
         }
     },
     computed: {
+        current_user_logs() {
+            if (!this.current_user_logs_type) return []
+
+            let user_logs = [];
+            
+            JSON.parse(JSON.stringify(this.user_logs[this.current_user_logs_type] ?? []))?.forEach(log => {
+                if (user_logs.length == 0 || (user_logs?.at(log.news_id)) == undefined) {
+                    log.result = {
+                        [log.promt]: [log.result]
+                    }
+                    log.promt = [log.promt]
+                    user_logs.push(log)
+                    return;
+                }
+                let lastLog = user_logs?.at(log.news_id) ?? log;
+
+                // В каком формате хранить чтобы потом мочь свапать
+
+                if (!Array.isArray(lastLog?.promt)) {
+                    lastLog.promt = [lastLog?.promt];
+                }
+                if (!lastLog?.promt.includes(log.promt)) {
+                    lastLog?.promt?.push(log.promt)
+                }
+                
+                if (typeof lastLog.result == 'string') {
+                    lastLog.result = {};
+                }
+                if (lastLog.result[log.promt] === undefined) {
+                    lastLog.result[log.promt] = [];
+                }
+                lastLog.result[log.promt] = [...lastLog.result[log.promt], log.result]
+
+                user_logs[log.news_id] = lastLog;
+            });
+
+            user_logs = user_logs.filter(val => val)
+
+            console.log('user_logs', user_logs);
+
+            return user_logs
+        },
         isCorrectRequest() {
             return !(['analyze','reaction',...this.user_chat_names].includes(this.request_text))
         },
@@ -415,6 +534,70 @@ export default {
         },
     },
     methods: {
+        async edit_log(event, log, index) {
+            this.current_editable_log_index = index;
+            this.request_text = document.querySelector('#chatgpt-editable-text').innerText;
+            this.editable_logs[this.getLogPromt(log, index)] = false;
+            await this.send_gpt_request(event);
+        },
+        getLogPromt(log, index) {
+            return log?.promt[
+                this.currentLogsPromt[index] ?? (log?.promt?.length - 1)
+            ];
+        },
+        getLogResult(log, index) {
+            let temp_promt = log?.promt[
+                this.currentLogsPromt[index] ?? (log?.promt?.length - 1)
+            ];
+
+            return log?.result[temp_promt]?.at(this.currentLogsResult[temp_promt] ?? -1);
+        },
+        getLogResultArray(log, index) {
+            let temp_promt = log?.promt[
+                this.currentLogsPromt[index] ?? (log?.promt?.length - 1)
+            ];
+
+            return log?.result[temp_promt] ?? [];
+        },
+        minusCurrentResult(log, index) {
+            let temp_promt = this.getLogPromt(log, index);
+            let temp_results = this.getLogResultArray(log, index);
+
+            if (this.currentLogsResult[temp_promt] == undefined) {
+                this.currentLogsResult[temp_promt] = temp_results.length - 1;
+            }
+            this.currentLogsResult[temp_promt] = (this.currentLogsResult[temp_promt] - 1).minmax(0, temp_results.length - 1)
+        },
+        plusCurrentResult(log, index) {
+            let temp_promt = this.getLogPromt(log, index);
+            let temp_results = this.getLogResultArray(log, index);
+
+            if (this.currentLogsResult[temp_promt] == undefined) {
+                this.currentLogsResult[temp_promt] = temp_results.length - 1;
+            }
+            this.currentLogsResult[temp_promt] = (this.currentLogsResult[temp_promt] + 1).minmax(0, temp_results.length - 1)
+        },
+        minusCurrentPromt(log, index) {
+            if (this.currentLogsPromt[index] == undefined) {
+                this.currentLogsPromt[index] = log?.promt?.length - 1;
+            }
+            this.currentLogsPromt[index] = (this.currentLogsPromt[index] - 1).minmax(0, log?.promt?.length - 1)
+        },
+        plusCurrentPromt(log, index) {
+            if (this.currentLogsPromt[index] == undefined) {
+                this.currentLogsPromt[index] = log?.promt?.length - 1;
+            }
+            this.currentLogsPromt[index] = (this.currentLogsPromt[index] + 1).minmax(0, log?.promt?.length - 1)
+        },
+        regenerate_gpt_request() {
+            const index = this.current_user_logs.length - 1;
+            this.current_editable_log_index = index;
+            const temp_log = this.current_user_logs?.at(index);
+            this.request_text = this.getLogPromt(temp_log, index);
+
+            this.currentLogsResult[this.request_text] = this.getLogResultArray(temp_log, index).length - 1
+            this.send_gpt_request();
+        },
         update_user_logs_type_name() {
             const new_chat_name = this.edit_some_chat.name;
             const previous_name_chat_name = this.edit_some_chat.previous_name;
@@ -477,10 +660,10 @@ export default {
                     console.log('error', error);
                 })
         },
-        copyResponse(log) {
+        copyResponse(log, index) {
 
             var tmp = document.createElement("INPUT");
-            tmp.value = log?.result;
+            tmp.value = this.getLogResult(log, index);
 
             document.body.appendChild(tmp);
             tmp.select();
@@ -500,13 +683,16 @@ export default {
             }, 20);
         },
         async send_gpt_request(event) {
-            if (!this.request_text?.length || event.shiftKey || !this.isCorrectRequest || this.user_logs_loading[this.current_user_logs_type]) return;
+            if (!this.request_text?.length || (event?.shiftKey) || !this.isCorrectRequest || this.user_logs_loading[this.current_user_logs_type]) return;
 
             setTimeout(() => {
                 document.querySelector('#chatgpt-prompt-textarea').innerHTML = '';
             }, 10);
 
             const temp_request_text = this.request_text;
+            console.log('send_gpt_request', temp_request_text);
+            const temp_current_editable_index = this.current_editable_log_index;
+            const temp_current_user_logs = this.current_user_logs;
 
             this.request_text = '';
 
@@ -530,22 +716,29 @@ export default {
             let textLength = parseInt((`The response language must be in ${this.answer_lang[this.getLang()]}.` + temp_request_text).length);
             let previousMessages = [];
 
-            for (let i = this.user_logs[type].length - 1; i >= 0; i--) {
-                const log = this.user_logs[type][i];
+            console.log('user_logs', this.user_logs[type]);
 
-                textLength += parseInt((log.promt + log.result).length);
+            for (let i = temp_current_user_logs.length - 1; i >= 0; i--) {
+                const log = temp_current_user_logs[i];
+
+                textLength += parseInt((this.getLogPromt(log, i) + this.getLogResult(log, i)).length);
 
                 if (textLength >= maxLength) break;
 
-                previousMessages.push({ role: 'user', content: log.promt });
-                previousMessages.push({ role: 'assistant', content: log.result });
+                previousMessages.push({ role: 'user', content: this.getLogPromt(log, i) });
+                previousMessages.push({ role: 'assistant', content: this.getLogResult(log, i) });
+
+                console.log('temp_current_user_logs content', this.getLogResult(log, i), log, i, this.currentLogsResult);
             }
+
+            delete
 
             this.user_logs[type].push({
                 date: new Date().format('Y-m-d h:i:s'),
                 promt: temp_request_text,
                 result: "",
-                type: type
+                type: type,
+                news_id: temp_current_editable_index
             });
 
 
@@ -571,10 +764,12 @@ export default {
                 console.log('completion', completion);
                 let temp_output = completion.data.choices[0].message.content
     
-                if (!temp_output) return
+                if (!temp_output) return;
     
                 if (type != '') {
                     this.user_logs[type].at(-1).result = temp_output;
+                    
+                    this.currentLogsResult[this.user_logs[type].at(-1).promt] = temp_current_user_logs.at(-1).result.length - 1
     
                     // scrollToBottom
                     if (this.current_user_logs_type == type) {
@@ -589,12 +784,12 @@ export default {
                     try {
                         messages.push({ role: 'assistant', content: temp_output });
                         messages.push({ role: 'user', content: this.i18n('Сгенерируй название этой беседы (ближе к сути), длиной не более 50 символов.') });
-    
+
                         completion2 = await openai.createChatCompletion({
                             model: "gpt-4",
                             messages,
                         })
-    
+
                         const old_log = this.user_logs[type];
                         delete this.user_logs[type];
                         
@@ -607,10 +802,10 @@ export default {
                     }
                 }
                 this.user_logs_loading[type] = false;
-    
+
                 let formData = new FormData();
-    
-                formData.append('news_id', 0)
+
+                formData.append('news_id', temp_current_editable_index)
                 formData.append('news_type', 0)
                 formData.append('type', type)
                 formData.append('promt', temp_request_text)
@@ -744,6 +939,8 @@ export default {
         },
         current_user_logs_type() {
             this.scrollToResponse();
+            this.currentLogsResult = {};
+            this.currentLogsPromt = {};
         },
     },
     async mounted() {
@@ -977,7 +1174,7 @@ textarea.form-control {
     bottom: -48.4px;
     background: #fff;
     overflow: hidden;
-    border-radius: 0 4px 4px 0;
+    border-radius: 0 0 4px 0;
     font-size: 14px;
 }
 
@@ -1077,7 +1274,7 @@ textarea.form-control {
 }
 
 .chatgpt-messages {
-    padding-bottom: 76px;
+    padding-bottom: calc(76px + 33px + 5px);
 }
 
 .chatgpt-messages::-webkit-scrollbar {

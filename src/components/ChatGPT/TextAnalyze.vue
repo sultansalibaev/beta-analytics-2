@@ -812,7 +812,7 @@ textarea.form-control {
     bottom: -48.4px;
     background: #fff;
     overflow: hidden;
-    border-radius: 0 4px 4px 0;
+    border-radius: 0 0 4px 0;
 }
 
 .information-btn {

@@ -629,9 +629,11 @@
         v-show="chatgpt_item"
         @click.stop="chatgpt_item = null"
     >
-        <div class="flex flex-col chat-gpt-modal relative bg-white" @click.stop>
+        <div class="flex flex-col chat-gpt-modal relative bg-white" @click.stop :class="{
+            'ml-[-110px]': chatgpt_tab != 'MadeRequests'
+        }">
             <div class="modal-content h-full">
-				<div class="modal-header bg-primary b-r-0">
+				<div class="modal-header bg-primary b-r-0" :style="chatgpt_tab != 'MadeRequests' ? 'width: calc(100% + 220px);' : ''">
 					<div class="col-lg-12 p-0">
 						<h3 class="f-l m-0">{{ i18n('Анализ ChatGPT') }}</h3>
 						<button class="close btn p-absolute" data-dismiss="modal" @click.stop="chatgpt_item = null" style="font-size: 20px !important; text-shadow: none; line-height: 20px; opacity: 1; color: #fff; right: 0px;top: 0px">
@@ -651,7 +653,7 @@
                         }">{{ i18n('Анализ новости') }}</div>
                         <div class="tab-item" @click="chatgpt_tab = 'TextReaction'" :class="{
                             selected: chatgpt_tab == 'TextReaction'
-                        }">{{ i18n('Пройзвольный текст') }}</div>
+                        }">{{ i18n('Свой запрос') }}</div>
                     </div>
                     <div class="tab-content" style="margin-top: 0;" :style="{
                         padding: chatgpt_tab != 'TextReaction' ? '14px 17px' : '0'

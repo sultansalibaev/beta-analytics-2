@@ -280,6 +280,7 @@ const _i18n = {
     "Своё обращение от ...": ["Your message from...", "Сіздің хабарламаңыз..."],
     "Позитивный комментарий": ["Positive comment", "Позитивті пікір"],
     "Ввести своё условие ... для анализа": ["Enter your condition... for analysis", "Талдау үшін... жағдайыңызды енгізіңіз"],
+    "Свой запрос": ["Your request", "Сіздің өтінішіңіз"],
 };
 
 import { langIs } from '@/response/utils/langIs'
