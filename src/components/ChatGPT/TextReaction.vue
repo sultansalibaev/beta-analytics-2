@@ -254,7 +254,7 @@
                                         <button
                                             class="flex ml-auto gizmo:ml-0 gap-2 items-center rounded-md p-1 text-xl gizmo:gap-1.5 gizmo:pl-0 text-gray-400 hover:bg-gray-300 hover:text-gray-200 disabled:hover:text-gray-400 hover:bg-gray-100 hover:text-gray-700"
                                             @click="copyResponse(log)">
-                                            <svg v-show="!log?.copied" stroke="currentColor" fill="none" stroke-width="2"
+                                            <svg v-show="!copied_log[getLogResult(log, index)]" stroke="currentColor" fill="none" stroke-width="2"
                                                 viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"
                                                 class="icon-sm" height="1.2em" width="1.2em"
                                                 xmlns="http://www.w3.org/2000/svg">
@@ -263,7 +263,7 @@
                                                 </path>
                                                 <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
                                             </svg>
-                                            <svg v-show="log?.copied" stroke="currentColor" fill="none" stroke-width="2"
+                                            <svg v-show="copied_log[getLogResult(log, index)]" stroke="currentColor" fill="none" stroke-width="2"
                                                 viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"
                                                 class="icon-sm" height="1.2em" width="1.2em"
                                                 xmlns="http://www.w3.org/2000/svg">
@@ -318,9 +318,9 @@
                             borderRadius: '8px'
                         }"
                         @input="request_text = $event.target.innerText"
-                        @keydown.enter="() => {current_editable_log_index = current_user_logs?.length;send_gpt_request($event)}"></span>
+                        @keydown.enter="(event) => {current_editable_log_index = current_user_logs?.length;send_gpt_request(event)}"></span>
                     <!-- <span class="textarea" role="textbox" contenteditable></span> -->
-                    <button @click="() => {current_editable_log_index = current_user_logs?.length;send_gpt_request($event)}"
+                    <button @click="(event) => {current_editable_log_index = current_user_logs?.length;send_gpt_request(event)}"
                         class="chatgpt-request-send absolute p-1 rounded-md md:bottom-3 gizmo:md:bottom-2.5 md:p-2 md:right-3 hover:bg-gray-900 disabled:hover:bg-transparent right-2 disabled:text-gray-400 enabled:bg-brand-purple gizmo:enabled:bg-transparent gizmo:text-gray-500 gizmo:text-gray-300 bottom-1.5 transition-colors disabled:opacity-40"
                         data-testid="send-button">
                         <span class="" data-state="closed">
@@ -453,6 +453,7 @@ export default {
             currentLogsPromt: {},
             current_editable_log_index: 0,
             editable_logs: {},
+            copied_log: {},
         }
     },
     setup() {
@@ -663,16 +664,17 @@ export default {
         copyResponse(log, index) {
 
             var tmp = document.createElement("INPUT");
-            tmp.value = this.getLogResult(log, index);
+            let temp_result = this.getLogResult(log, index);
+            tmp.value = temp_result;
 
             document.body.appendChild(tmp);
             tmp.select();
             document.execCommand("copy");
             document.body.removeChild(tmp);
 
-            log.copied = true;
+            this.copied_log[temp_result] = true;
             setTimeout(() => {
-                log.copied = false;
+                this.copied_log[temp_result] = false;
             }, 1500);
         },
         scrollToResponse() {
@@ -769,7 +771,7 @@ export default {
                 if (type != '') {
                     this.user_logs[type].at(-1).result = temp_output;
                     
-                    this.currentLogsResult[this.user_logs[type].at(-1).promt] = temp_current_user_logs.at(-1).result.length - 1
+                    this.currentLogsResult[this.user_logs[type].at(-1).promt] = (temp_current_user_logs?.at(-1)?.result?.length ?? 1) - 1
     
                     // scrollToBottom
                     if (this.current_user_logs_type == type) {

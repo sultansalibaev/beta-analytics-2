@@ -13,7 +13,6 @@ import {
 
 import i18n from '@/response/utils/i18n'
 
-import Highcharts from "highcharts";
 
 export const inColumnPercentage = reactive(ref(false));
 export const showColumnPercentage = reactive(ref(true));
@@ -76,7 +75,6 @@ import axios from 'axios'
 import { get_map_params } from "@/response/options/mapOptions"
 import { selected_categories, selected_languages, dateRange, get_selected_smi_categories } from "@/response/data/index"
 import { selected_main_sentiments, project, selected_social_categories } from "@/response/header"
-import { s_time, f_time } from '@/data'
 
 const waiting = reactive(ref(false))
 
@@ -101,7 +99,7 @@ export function getResourceData() {
     waiting.value = true
     console.log(`resource-data = category_id = ${category_id}`);
     axios
-        .get(`/ru/analyticstats/get-project-resource-data?p_id=${project.value.id}&r_type=${r_type.value}&category_id=${category_id}&countries=${countries}&regions=${regions}&sentiments=${sentiments}&language=${language}&s_date=${dateRange.value.startDate.format("Y-m-d")} ${s_time.value}&f_date=${dateRange.value.endDate.format("Y-m-d")} ${f_time.value}&from=${resources.value.length}&resource_length=${resource_count.value}`)
+        .get(`/ru/analyticstats/get-project-resource-data?p_id=${project.value.id}&r_type=${r_type.value}&category_id=${category_id}&countries=${countries}&regions=${regions}&sentiments=${sentiments}&language=${language}&s_date=${dateRange.value.startDate.format("Y-m-d")} 00:00:00&f_date=${dateRange.value.endDate.format("Y-m-d")} 23:59:59&from=${resources.value.length}&resource_length=${resource_count.value}`)
         .then(response => {
             console.log('response', response);
             if (response.data.empty_resource_ids) return;
@@ -243,8 +241,6 @@ export const columnOptions = computed(() => {
                 style: {
                     fontWeight: "bold",
                     color: // theme
-                        (Highcharts.defaultOptions.title.style &&
-                            Highcharts.defaultOptions.title.style.color) ||
                         "gray",
                     textOutline: "none",
                 },
