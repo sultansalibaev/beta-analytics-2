@@ -99,7 +99,7 @@ export function getResourceData() {
     waiting.value = true
     console.log(`resource-data = category_id = ${category_id}`);
     axios
-        .get(`/ru/analyticstats/get-project-resource-data?p_id=${project.value.id}&r_type=${r_type.value}&category_id=${category_id}&countries=${countries}&regions=${regions}&sentiments=${sentiments}&language=${language}&s_date=${dateRange.value.startDate.format("Y-m-d")} 00:00:00&f_date=${dateRange.value.endDate.format("Y-m-d")} 23:59:59&from=${resources.value.length}&resource_length=${resource_count.value}`)
+        .get(`/ru/analyticstats/get-project-resource-data?p_id=${project.value.id}&r_type=${r_type.value}&category_id=${category_id}&countries=${countries}&regions=${regions}&sentiments=${sentiments}&language=${language}&s_date=${dateRange.value.startDate.format("Y-m-d")} 00:00&f_date=${dateRange.value.endDate.format("Y-m-d")} 23:59&from=${resources.value.length}&resource_length=${resource_count.value}`)
         .then(response => {
             console.log('response', response);
             if (response.data.empty_resource_ids) return;
