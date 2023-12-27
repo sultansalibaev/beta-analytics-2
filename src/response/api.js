@@ -363,6 +363,8 @@ export function getMainPlacesCount(reset_all_anyway = true) {
 			places.value['countries'] = map_world;
 			places.value['regions'] = map_kz;
 
+			console.log('places', places.value);
+
 			if (r_type.value == 1) {
 				getMainSmiCategoriesAndLanguagesCount()
 			}

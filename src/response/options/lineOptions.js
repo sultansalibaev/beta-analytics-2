@@ -1,5 +1,51 @@
 import "@/response/utils";
 
+
+import Highcharts from "highcharts";
+import { f_time, s_time } from "@/data";
+
+Highcharts.setOptions({
+    lang: {
+        months: Object.keys({
+            [i18n('Январь')]: true,
+            [i18n('Февраль')]: true,
+            [i18n('Март')]: true,
+            [i18n('Апрель')]: true,
+            [i18n('Май')]: true,
+            [i18n('Июнь')]: true,
+            [i18n('Июль')]: true,
+            [i18n('Август')]: true,
+            [i18n('Сентябрь')]: true,
+            [i18n('Октябрь')]: true,
+            [i18n('Ноябрь')]: true,
+            [i18n('Декабрь')]: true,
+        }),
+        shortMonths: Object.keys({
+            [i18n('Янв')]: true,
+            [i18n('Фев')]: true,
+            [i18n('Март')]: true,
+            [i18n('Апр')]: true,
+            [i18n('Май')]: true,
+            [i18n('Июнь')]: true,
+            [i18n('Июль')]: true,
+            [i18n('Авг')]: true,
+            [i18n('Сент')]: true,
+            [i18n('Окт')]: true,
+            [i18n('Ноя')]: true,
+            [i18n('Дек')]: true,
+        }),
+        weekdays: Object.keys({
+            [i18n('Воскресенье')]: true,
+            [i18n('Понедельник')]: true,
+            [i18n('Вторник')]: true,
+            [i18n('Среда')]: true,
+            [i18n('Четверг')]: true,
+            [i18n('Пятница')]: true,
+            [i18n('Суббота')]: true,
+        })
+    },
+});
+
 import {
     selected_dates,
     selected_sentiment_dates,
@@ -193,8 +239,10 @@ export const lineOptions = computed(() => {
             gridLineColor: "#e4e4e4",
             gridLineDashStyle: "dot",
             ...( dateRange.value.startDate == dateRange.value.endDate ? {} : {
-                min: new Date(`${dateRange.value.startDate} 00:00:00`).valueOf(),
-                max: new Date(`${dateRange.value.endDate} 23:59:59`).valueOf(),
+                min: new Date(`${dateRange.value.startDate} ${s_time.value}:00`).valueOf(),
+                max: new Date(`${dateRange.value.endDate} ${f_time.value}:59`).valueOf(),
+                // min: new Date(`${dateRange.value.startDate} 00:00:00`).valueOf(),
+                // max: new Date(`${dateRange.value.endDate} 23:59:59`).valueOf(),
             })
         },
 

@@ -11,6 +11,8 @@ import {
     resource_count,
 } from "@/response/data/index";
 
+import { s_time, f_time } from '@/data'
+
 import i18n from '@/response/utils/i18n'
 
 
@@ -71,6 +73,7 @@ export const reset_sentiment_resource = function () {
         "-1": {},
     };
 };
+
 import axios from 'axios'
 import { get_map_params } from "@/response/options/mapOptions"
 import { selected_categories, selected_languages, dateRange, get_selected_smi_categories } from "@/response/data/index"
@@ -99,7 +102,7 @@ export function getResourceData() {
     waiting.value = true
     console.log(`resource-data = category_id = ${category_id}`);
     axios
-        .get(`/ru/analyticstats/get-project-resource-data?p_id=${project.value.id}&r_type=${r_type.value}&category_id=${category_id}&countries=${countries}&regions=${regions}&sentiments=${sentiments}&language=${language}&s_date=${dateRange.value.startDate.format("Y-m-d")} 00:00&f_date=${dateRange.value.endDate.format("Y-m-d")} 23:59&from=${resources.value.length}&resource_length=${resource_count.value}`)
+        .get(`/ru/analyticstats/get-project-resource-data?p_id=${project.value.id}&r_type=${r_type.value}&category_id=${category_id}&countries=${countries}&regions=${regions}&sentiments=${sentiments}&language=${language}&s_date=${dateRange.value.startDate.format("Y-m-d")} ${s_time.value}&f_date=${dateRange.value.endDate.format("Y-m-d")} ${f_time.value}&from=${resources.value.length}&resource_length=${resource_count.value}`)
         .then(response => {
             console.log('response', response);
             if (response.data.empty_resource_ids) return;

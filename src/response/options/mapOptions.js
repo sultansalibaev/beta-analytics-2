@@ -3,10 +3,12 @@
 
 import { computed, reactive, ref, watch } from 'vue';
 
+
 import i18n from "@/response/utils/i18n"
 import { reset_sentiment } from "@/response/options/barOptions"
 
-import { selected_regions, current_country_id, getCountryRegions } from "@/response/data/index"
+import Highcharts from "highcharts";
+import { selected_regions, places, current_country_id, getCountryRegions, country_regions_loading } from "@/response/data/index"
 import { isKazakstan, countries } from "@/response/header"
 import { create_global_filter, global_filter } from '../filter';
 // import { countries } from '../data';
@@ -97,6 +99,24 @@ export const select_region = (id, selected) => {
 }
 
 
+export function region__MouseOver(hc_key) {
+    let element = document.querySelector(`.highcharts-key-${hc_key}`)
+    if (element) {
+        old_color = element.getAttribute('fill')
+        element.setAttribute('fill', 'rgb(26,179,148)')
+    }
+}
+
+let old_color = ''
+
+export function region__MouseOut(hc_key, selected) {
+    let element = document.querySelector(`.highcharts-key-${hc_key}`)
+    if (element && !selected && old_color != 'rgb(26,179,148)') {
+        element.setAttribute('fill', old_color)
+    }
+}
+
+
 export const regionMouseOver = function (id, hc_key) {
     region_active.value[id] = true;
     const element = document.querySelector(".region." + hc_key);
@@ -105,6 +125,14 @@ export const regionMouseOver = function (id, hc_key) {
 
 export const regionMouseOut = function (id) {
     region_active.value[id] = false;
+}
+
+function getMapData(obj) {
+    if (!obj?.features) return [];
+    return obj.features.map(region => ({
+        'hc-key': region?.properties['hc-key'],
+        value: null,
+    }))
 }
 
 export let mapOptions = computed(() => ({
@@ -174,7 +202,7 @@ export let mapOptions = computed(() => ({
                         }
                     },
                     mouseOver: function () {
-                        // old_color = this.color
+                        old_color = this.color
                         regionMouseOver(this.options.id, this.options['hc-key'])
                     },
                     mouseOut: function () {
@@ -199,7 +227,23 @@ export let mapOptions = computed(() => ({
                 },
             },
 
+            // mapData: Highcharts.maps[map_switcher.value ? `map-${countries.value[current_country_id.value]?.regions_file_name}` : "map-world"],
             //allAreas: false,
+            data: (country_regions_loading.value ? [] : getMapData(Highcharts.maps[(map_switcher.value ? `map-${countries.value[current_country_id.value]?.regions_file_name}` : "map-world")])).map(item => {
+                let find_cntry = places.value[map_type_switcher.value][item['hc-key']];
+                if (find_cntry != undefined) {
+                    find_cntry.selected = selected_regions.value[find_cntry.id];
+                    if (find_cntry.color == 'rgb(26,179,148)') {
+                        let { color, ...temp_find_cntry } = find_cntry
+                        color;
+                        find_cntry = temp_find_cntry
+                    }
+                    return find_cntry;
+                }
+                else {
+                    return item;
+                }
+            })
             
         }
     ]
