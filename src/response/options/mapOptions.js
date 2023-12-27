@@ -227,7 +227,7 @@ export let mapOptions = computed(() => ({
                 },
             },
 
-            // mapData: Highcharts.maps[map_switcher.value ? `map-${countries.value[current_country_id.value]?.regions_file_name}` : "map-world"],
+            mapData: Highcharts.maps[map_switcher.value ? `map-${countries.value[current_country_id.value]?.regions_file_name}` : "map-world"],
             //allAreas: false,
             data: (country_regions_loading.value ? [] : getMapData(Highcharts.maps[(map_switcher.value ? `map-${countries.value[current_country_id.value]?.regions_file_name}` : "map-world")])).map(item => {
                 let find_cntry = places.value[map_type_switcher.value][item['hc-key']];
